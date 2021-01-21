@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED-->
+  <meta charset="UTF-8">
+  <title>NRIC Vault</title>
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@1.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+</head>
+<body>
+
+  <div id="app">
+    <v-app>
+      <v-content>
+        <v-container>
+          <h1>NRIC Vault Access</h1>
+          <v-spacer></v-spacer>
+          <v-btn @click="getSOAP('filestore', 'IdentificationService', 'describe')" flat large color="#07519E">get soap data</v-btn>
+          <v-spacer></v-spacer>
+          <div style="width:90%;" v-if="soap_data!=''" >
+            <!-- Containing div for all data and functions from the SOAP API -->
+            <div v-if="soap_token!='NONE'">
+              <!-- Show the token and user id returned from the SOAP authentication -->
+              <strong>SOAP TOKEN</strong>: {{ soap_token }}<br>
+              <strong>SOAP USER ID</strong>: {{ soap_userId }}
+            </div>
+            <strong>VAULT SOAP SERVICES</strong>:
+
+            <v-spacer></v-spacer>
+
+            <template v-for="service in information_services">
+              <!-- Buttons to access information services -->
+              <v-btn @click="getSOAP('information', service, 'describe')" flat default color="#2BA8E0">{{ service }}</v-btn>
+            </template><br>
+
+            <template v-for="service in filestore_services">
+              <!-- Buttons to access filestore services -->
+              <v-btn @click="getSOAP('filestore', service, 'describe')" flat default color="#CF1E4C">{{ service }}</v-btn>
+            </template><br>
+
+            <template v-for="service in standard_services">
+              <!-- Buttons to access the main corpus of services in Vault -->
+              <v-btn @click="getSOAP('standard', service, 'describe')" flat default color="#F68C20">{{ service }}</v-btn>
+            </template>
+
+            <v-spacer></v-spacer>
+
+            <ul>
+              <li v-for="(item, index) in soap_data">
+                <template v-if="index=='DESCRIPTION'">
+                  <!-- Description type data is returned as inputs and outputs for a particular function -->
+                  <strong>FUNCTIONS</strong>
+                  <div v-for="(descr, func) in soap_data.DESCRIPTION">
+                    <template v-if="nestLevel(descr.input) > 1">
+                      <v-btn @click="postSOAP(soap_data.SERVICE_TYPE, soap_data.SERVICE, func)" small color="#DCDDDE">{{ func }} (POST)</v-btn><br>
+                    </template>
+                    <template v-else>
+                      <v-btn @click="getSOAP(soap_data.SERVICE_TYPE, soap_data.SERVICE, func)" small color="#DCDDDE">{{ func }} (GET)</v-btn><br>
+                    </template>
+
+                    <form :id="'FORM|' + soap_data.SERVICE_TYPE + '|' + soap_data.SERVICE + '|' + func">
+                      <table style="padding-left:50px;">
+                        <template v-if="nestLevel(descr.input) > 1">
+                          <tr>
+                            <td>INPUT: </td>
+                            <td style="padding-left:5px;"><textarea rows="10" cols="100" name="post_data" style="background-color:white;padding:5px;" type="text">{{ descr.input | json }}</textarea></td>
+                          </tr>
+                        </template>
+                        <template v-else>
+                          <tr v-for="(place_holder, field_name) in descr.input">
+                            <td>{{ field_name }}: </td>
+                            <td style="padding-left:5px;"><input :name="field_name" style="background-color:white;padding:5px;" type="text" :placeholder="place_holder" /></td>
+                          </tr>
+                        </template>
+
+
+                        <tr>
+                          <td>&nbsp;</td><td></td>
+                        </tr>
+                        <tr>
+                          <td><strong>INPUT:</strong></td><td>{{ descr.input }}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>OUTPUT:</strong> </td><td>{{ descr.output }}</td>
+                        </tr>
+                        <tr>
+                          <td>&nbsp;</td><td></td>
+                        </tr>
+                      </table>
+                    </form>
+                  </div>
+                </template>
+                <template v-else>
+                  <!-- Objects that are not function descriptions are viewed as the raw item and index -->
+                  <strong>{{ index }}</strong> | {{ item }}
+                </template>
+              </li>
+            </ul>
+
+          </div>
+
+        </v-container>
+      </v-content>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@1.x/dist/vuetify.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/vue-router"></script>
+
+  <script>
+    // include routes to access the 3-legged token code
+    var router = new VueRouter({
+      mode: 'history',
+      routes: []
+    })
+    new Vue({
+      router,
+      el: '#app',
+      data: {
+        // main Autodesk Vault services. found in the directory:
+        // \Program Files\Autodesk\ADMS Professional 2020\Server\Web\Services\v*
+        standard_services: [
+          "AdminService", "BehaviorService",
+          "CategoryService", "ChangeOrderService",
+          "ContentService", "CustomEntityService",
+          "DocumentService", "DocumentServiceExtensions",
+          "ForumService", "ItemService",
+          "JobService", "KnowledgeLibraryService",
+          "KnowledgeVaultService", "LifeCycleService",
+          "NumberingService", "PackageService",
+          "PropertyService", "ReplicationService",
+          "RevisionService", "SecurityService",
+          "SharePointService",
+        ],
+
+        // filestore services. found in the directory:
+        // \Program Files\Autodesk\ADMS Professional 2020\Server\Web\Services\Filestore\v25
+        filestore_services : [
+          "AuthService", "FilestoreService",
+          "FilestoreVaultService", "IdentificationService",
+        ],
+
+        // information services. found in the directory:
+        // \Program Files\Autodesk\ADMS Professional 2020\Server\Web\Services
+        information_services : [
+          "InformationService"
+        ],
+
+        // objects to show and handle data from Vault's SOAP API
+        soap_data: '',
+        soap_token: 'NONE',
+        soap_userId: 'NONE',
+        query_data: {}
+      },
+      filters: {
+        tostring: function(value) {
+          if (!value) return ''
+          value = value.toString()
+          return value
+        }
+      },
+      methods: {
+        nestLevel: function(obj) {
+          let level = 1;
+          for(var key in obj) {
+              if (!obj.hasOwnProperty(key)) continue;
+
+              if(typeof obj[key] == 'object'){
+                  let depth = this.nestLevel(obj[key]) + 1;
+                  level = Math.max(depth, level);
+              }
+          }
+          return level;
+        },
+        getSOAP: function(serviceType, serviceName, funcName) {
+          // launch a SOAP request w the corresponding type, service, and function, including SOAP auth token and user ID.
+
+          // retrieve input data from form, if available
+          let form_data = ""
+          try {
+            let formId = 'FORM|'+ serviceType + '|' + serviceName + '|' + funcName
+            let form = document.getElementById(formId)
+            form_data = new URLSearchParams(new FormData(form)).toString()
+          } catch(err) {
+            this.soap_data = err
+          }
+
+          axios.get(
+            "/soap/" + serviceType + "/" +
+            serviceName + "/" + funcName + "/" +
+            this.soap_token + "/" + this.soap_userId + "?" + form_data
+          ).then(response => {
+            this.soap_data = response.data
+            if ("TICKET" in this.soap_data) {
+              this.soap_token = this.soap_data["TICKET"]
+            }
+
+            if ("USER_ID" in this.soap_data) {
+              this.soap_userId = this.soap_data["USER_ID"]
+            }
+
+          })
+        },
+        postSOAP: function(serviceType, serviceName, funcName) {
+          // launch a SOAP request w the corresponding type, service, and function, including SOAP auth token and user ID.
+
+          // retrieve input data from form, if available
+          let form_data = {}
+          try {
+            let formId = 'FORM|'+ serviceType + '|' + serviceName + '|' + funcName
+            form = document.getElementById(formId)
+            form_data = JSON.parse(form.post_data.value)
+          } catch(err) {
+            this.soap_data = err
+          }
+
+          axios.post(
+            "/soap/" + serviceType + "/" +
+            serviceName + "/" + funcName + "/" +
+            this.soap_token + "/" + this.soap_userId,
+            form_data
+          ).then(response => {
+            this.soap_data = response.data
+            if ("TICKET" in this.soap_data) {
+              this.soap_token = this.soap_data["TICKET"]
+            }
+
+            if ("USER_ID" in this.soap_data) {
+              this.soap_userId = this.soap_data["USER_ID"]
+            }
+
+          })
+        }
+      }
+    });
+  </script>
+</body>
+</html>

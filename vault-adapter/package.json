@@ -1,0 +1,22 @@
+{
+  "name": "vault-adapter",
+  "version": "0.1.0",
+  "description": "software layer to communicate between Vault and Deep Lynx",
+  "author": "Brennan Harris <brennan.harris@inl.gov>",
+  "main": "app.js",
+  "keywords": [
+    "nodejs",
+    "express",
+    "promise",
+    "vue"
+  ],
+  "dependencies": {
+    "express": "4.17.1",
+    "axios": "0.19.2",
+    "vue": "2.6.11",
+    "vuetify": "2.3.8"
+  },
+  "scripts": {
+    "dev": "node app.js"
+  }
+}

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  creationTimestamp: null
+  labels:
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+      creationTimestamp: null
+      labels:
+    spec:
+      containers:
+      - args:
+        - npm
+        - run
+        - dev
+        env:
+        - name: FILESTORE_SERVICES
+          valueFrom:
+            configMapKeyRef:
+              key: FILESTORE_SERVICES
+              name: api-env
+        - name: INFORMATION_SERVICES
+          valueFrom:
+            configMapKeyRef:
+              key: INFORMATION_SERVICES
+              name: api-env
+        - name: STANDARD_SERVICES
+          valueFrom:
+            configMapKeyRef:
+              key: STANDARD_SERVICES
+              name: api-env
+        image: web
+        imagePullPolicy: ""
+        name: web
+        ports:
+        - containerPort: 8002
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: {}

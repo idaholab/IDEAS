@@ -1,0 +1,12 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: npm run dev
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "8003:8003"
+    env_file:
+      - .env
