@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  FILESTORE_SERVICES: AutodeskDM/Services/FileStore/v25
+  INFORMATION_SERVICES: AutodeskDM/Services
+  STANDARD_SERVICES: AutodeskDM/Services/v25
+  VAULT_URL: http://ADDRESS
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+  name: api-env

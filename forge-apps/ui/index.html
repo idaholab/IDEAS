@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED-->
+  <meta charset="UTF-8">
+  <title>NRIC Vault</title>
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@1.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+</head>
+<body>
+
+  <div id="app">
+    <v-app>
+      <v-content>
+        <v-container>
+          <h1>NRIC Vault Access</h1>
+
+          <v-spacer></v-spacer>
+          <!-- Section for main app functions; establish whether the app will get ADSK tokens or initilize the SOAP service -->
+          <v-btn @click="vaultAuth_2L" flat large color="#07519E">get 2-legged token</v-btn>
+          <v-btn @click="vaultAuth_3L" flat large color="#07519E">get 3-legged token</v-btn>
+          <v-spacer></v-spacer>
+
+          <!-- Placeholder elements for two-legged token data once it's retrieved -->
+          <div style="width:90%;" v-if="token_2l!=''">
+            <strong>TWO-LEGGED TOKEN</strong>:<br>
+            <div style="width:600px;overflow-wrap: break-word;">{{ token_2l }}</div>
+            <v-btn @click="getBuckets" flat small color="#F68C20">show app buckets</v-btn> | {{ bucket_info }}
+            <br><br>
+          </div>
+
+          <!-- Placeholder elements for three-legged token data once it's retrieved, including the intermediate code -->
+          <div style="width:90%;" v-if="token_code!=undefined">
+            <strong>THREE-LEGGED CODE</strong>:<br>
+            <div style="width:600px;overflow-wrap: break-word;">{{ token_code }}</div>
+            <v-btn @click="get3Ltoken" flat small color="#8DC340">get 3-legged token</v-btn>
+            <div v-if="token_3l!=''">
+              <div style="width:600px;overflow-wrap: break-word;">{{ token_3l }}</div>
+              <v-btn @click="getUserData" flat small color="#F68C20">show user data</v-btn> | {{ user_data }}
+            </div>
+            <br><br>
+          </div>
+
+        </v-container>
+      </v-content>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@1.x/dist/vuetify.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/vue-router"></script>
+
+  <script>
+    // include routes to access the 3-legged token code
+    var router = new VueRouter({
+      mode: 'history',
+      routes: []
+    })
+    new Vue({
+      router,
+      el: '#app',
+      data: {
+        // objects to show and handle two-legged Autodesk token
+        auth2l_response: [],
+        auth2l_resp_time: 0,
+        auth2l_resp_life: 0,
+        token_2l: '',
+        bucket_info: {},
+
+        // objects to show and handle three-legged Autodesk token
+        auth3l_response: [],
+        auth3l_resp_time: 0,
+        auth3l_resp_life: 0,
+        token_3l: '',
+        token_code: '',
+        creds: {},
+        user_data: {},
+
+      },
+      mounted: function() {
+        // when redirect from Autodesk provides a token code as a GET parameter, set variable token_code
+        this.token_code = this.$route.query.code
+      },
+      filters: {
+        tostring: function(value) {
+          if (!value) return ''
+          value = value.toString()
+          return value
+        }
+      },
+      methods: {
+        vaultAuth_2L: function (event) {
+          // get data from path /auth, and parse the response to system vars
+          axios.get("/auth").then(response => {  // Headers
+            this.auth2l_response = response.data
+            this.token_2l = this.auth2l_response["access_token"]
+            this.auth2l_resp_time = new Date().getTime() / 1000 | 0;
+            this.auth2l_resp_life = this.auth_response["expires_in"]
+          })
+        },
+        vaultAuth_3L: function (event) {
+          axios.get("/get_creds").then(response => {
+            // get data from path /get_creds, and open the response in the Autodesk permissions page
+            this.creds = response.data
+            window.open(
+              "https://developer.api.autodesk.com/authentication/v1/authorize?"+
+              "response_type=code&client_id="+
+              this.creds["client_id"] +
+              "&redirect_uri=http%3A%2F%2Flocalhost%3A8004%2F&scope=data:read%20user:read",
+              "_self"
+            )
+          })
+        },
+        get3Ltoken: function (event) {
+          // get data from path /auth w a 3-legged token code, and parse the response to system vars
+          axios.get("/auth/" + this.token_code).then(response => {
+            this.auth3l_response = response.data
+            this.token_3l = this.auth3l_response["access_token"]
+            this.auth3l_resp_time = new Date().getTime() / 1000 | 0;
+            this.auth3l_resp_life = this.auth_response["expires_in"]
+          })
+        },
+        getBuckets: function(event) {
+          // use the 2-legged token to grab app bucket, if any
+          axios.get("/get_buckets/" + this.token_2l).then(response => {
+            this.bucket_info = response.data
+          })
+        },
+        getUserData: function(event) {
+          // use the 3-legged token to get user data
+          axios.get("/get_user_data/" + this.token_3l).then(response => {
+            this.user_data = response.data
+          })
+        },
+      }
+    });
+  </script>
+</body>
+</html>

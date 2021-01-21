@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED-->
+  <meta charset="UTF-8">
+  <title>Vault Filestore</title>
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@1.x/dist/vuetify.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <style>
+    td, th {
+      text-align: center;
+      padding: 5px;
+    }
+
+    th {
+      padding-left: 30px;
+      padding-right: 30px;
+      border: 1px solid black;
+    }
+
+    tr {
+      border: 1px solid black;
+    }
+
+    .item_table {
+      background-color: #E1E1E1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-content>
+        <v-container>
+          <h1>Vault Filestore Portal
+            <v-dialog v-model="dialog" width="500">
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon medium v-bind="attrs" v-on="on">
+                  mdi-iframe-variable
+                </v-icon>
+              </template>
+              <v-card>
+                <v-card-title class="headline grey lighten-2">
+                  System Variables
+                </v-card-title>
+                <v-card-text>
+                  <strong>access URL</strong>: {{ access_url }}<br>
+                  <strong>ticket</strong>: {{ ticket }}<br>
+                  <strong>user_id</strong>: {{ user_id }}<br>
+                  <strong>item_id</strong>: {{ item_id }}<br>
+                  <strong>item_master_id</strong>: {{ item_master_id }}<br>
+                  <strong>file_id</strong>: {{ file_id }}
+                </v-card-text>
+                <v-divider></v-divider>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" text @click="dialog=false">Close</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </h1>
+          <v-spacer></v-spacer>
+          <br>
+          <v-spacer></v-spacer>
+          <v-btn v-if="!vault_items" @click="get_all_items()">get all items</v-btn>
+
+          <template v-if="vault_items">
+            <table class="item_table">
+              <tr>
+                <th colspan="3">ITEMS</th>
+              </tr>
+              <tr>
+                <th>Title</th>
+                <th>Version #</th>
+                <th>Last Modified By</th>
+              </tr>
+              <tr v-for="item in vault_items">
+                <td><v-btn small v-bind:href="'/?item_id=' + item.attributes.Id + '&item_master_id=' + item.attributes.MasterId + '&item_title=' + item.attributes.Title">{{ item.attributes.Title }}</v-btn></td>
+                <td>{{ item.attributes.VerNum }}</td>
+                <td>{{ item.attributes.LastModUserName }}</td>
+              </tr>
+              <tr>
+                <th colspan="3">
+                  <v-btn small @click="hide_items()">hide items</v-btn>
+                </th>
+              </tr>
+            </table>
+          </template>
+
+          <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
+          <template v-if="item_data">
+            <br><br>
+            <h2>Current Item: {{ item_title }}</h2>
+            <table>
+              <tr>
+                <th colspan="4">ITEM LINK</th>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  <input id="item_link" size="50" type="text" v-bind:value="item_route">
+                </td>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  <v-btn small @click="copy_text('item_link')">Copy link</btn>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  &nbsp;
+                </td>
+              </tr>
+              <tr>
+                <th colspan="4">FILES</th>
+              </tr>
+              <tr>
+                <th>Name</th>
+                <th>Comment</th>
+                <th>Created By</th>
+                <th>ID</th>
+              </tr>
+              <tr v-for="file in item_data.files">
+                <td><v-btn small v-bind:href="'/?file_id=' + file.attributes.Id + '&file_name=' + file.attributes.Name">{{ file.attributes.Name }}</v-btn></td>
+                <td>{{ file.attributes.Comm }}</td>
+                <td>{{ file.attributes.CreateUserName }}</td>
+                <td>{{ file.attributes.Id }}</td>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  &nbsp;
+                </td>
+              </tr>
+              <tr>
+                <th colspan="4">ITEM REVISIONS</th>
+              </tr>
+              <tr>
+                <th>Version</th>
+                <th>Datetime</th>
+                <th>Modified by</th>
+                <th>ID</th>
+              </tr>
+              <tr v-for="rev in item_data.history">
+                <td>{{ rev.attributes.VerNum }}</td>
+                <td>{{ rev.attributes.LastModDate }}</td>
+                <td>{{ rev.attributes.LastModUserName }}</td>
+                <td>{{ rev.attributes.Id }}</td>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  &nbsp;
+                </td>
+              </tr>
+            </table>
+          </template>
+
+          <template v-if="file_data">
+            <br><br>
+            <h2>Current File: {{ file_name }}</h2>
+            <table>
+              <tr>
+                <th colspan="2">FILE LINK</th>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <input id="file_link" size="50" type="text" v-bind:value="file_route">
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <v-btn small @click="copy_text('file_link')">Copy link</btn>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  &nbsp;
+                </td>
+              </tr>
+              <tr>
+                <th colspan="2">DOWNLOAD</th>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <v-btn v-if="download_in_progress" small disabled>Downloading...</v-btn>
+                  <v-btn v-else small @click="download_file()">Download {{ file_name }}</v-btn>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  &nbsp;
+                </td>
+              </tr>
+              <tr>
+                <th colspan="2">
+                  METADATA
+                </th>
+              </tr>
+              <tr>
+                <th>Key</th>
+                <th>Value</th>
+              </tr>
+              <tr v-for="(item, index) in file_data.metadata">
+                <td><strong>{{ index }}</strong></td>
+                <td>{{ item }}</td>
+              </tr>
+            <table>
+          </template>
+
+
+        </v-container>
+      </v-content>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@1.x/dist/vuetify.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/vue-router"></script>
+
+  <script>
+    var router = new VueRouter({
+      mode: 'history',
+      routes: []
+    })
+    new Vue({
+      router,
+      el: '#app',
+      data: {
+        // objects to show and handle data from Vault's SOAP API
+        vault_items: null,
+        ticket: null,
+        user_id: null,
+        access_url: null,
+
+        item_id: null,
+        item_master_id: null,
+        item_title: null,
+        item_data: null,
+        item_route: null,
+
+        file_id: null,
+        file_name: null,
+        file_data: null,
+        file_route: null,
+        download_in_progress: false,
+
+        dialog: false
+
+      },
+      mounted: function() {
+        this.startup()
+      },
+      methods: {
+        startup: function() {
+          // get authentication data
+          axios.get("/auth").then(response => {
+            this.ticket = response.data.ticket
+            this.user_id = response.data.user_id
+            this.access_url = response.data.access_url
+            //this.get_all_items()
+
+            // if item_id is provided, fetch all relevant data
+            if (this.$route.query.item_id) {
+              this.item_id = this.$route.query.item_id
+              this.item_master_id = this.$route.query.item_master_id
+              this.item_title = this.$route.query.item_title
+              this.item_route = this.access_url + this.$router.currentRoute.fullPath
+              this.get_single_item(this.item_id, this.item_master_id)
+            }
+
+            // if file_id id provided, fetch all relevant data
+            if (this.$route.query.file_id) {
+              this.file_id = this.$route.query.file_id
+              this.file_name = this.$route.query.file_name
+              this.file_route = this.access_url + this.$router.currentRoute.fullPath
+              this.get_single_file(this.file_id)
+            }
+
+            //this.file_id = this.$route.query.file_id
+          })
+        },
+        get_all_items: function() {
+          axios.get("/items/" + this.ticket + "/" + this.user_id).then(response => {
+            this.vault_items = response.data.items
+          })
+        },
+        hide_items: function() {
+          this.vault_items = null
+        },
+        get_single_item: function(item_id, item_master_id) {
+          axios.get("/item/" + item_id + "/" + item_master_id + "/" + this.ticket + "/" + this.user_id).then(response => {
+            this.item_data = response.data.item_data
+          })
+        },
+        get_single_file: function(file_id) {
+          axios.get("/file/" + file_id + "/" + this.ticket + "/" + this.user_id).then(response => {
+            this.file_data = response.data
+          })
+        },
+        copy_text: function(dom_id) {
+          //alert(dom_id)
+          let copy_text = document.getElementById(dom_id)
+          copy_text.select()
+          copy_text.setSelectionRange(0, 99999)
+          document.execCommand("copy")
+        },
+        download_file: function() {
+          this.download_in_progress = true
+          axios.get("/download/" + this.file_id + "/" + this.ticket + "/" + this.user_id).then(response => {
+            let file64 = response.data
+            let fileLink = document.createElement('a');
+            fileLink.href = 'data:application/octet-stream;base64,' + file64;
+            fileLink.setAttribute('download', this.file_name);
+            document.body.appendChild(fileLink);
+            fileLink.click();
+            this.download_in_progress = false
+          })
+        }
+      }
+    });
+  </script>
+</body>
+</html>

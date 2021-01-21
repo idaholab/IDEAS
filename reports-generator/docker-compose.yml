@@ -1,0 +1,41 @@
+# Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
+
+version: '3'
+services:
+  client:
+    build: ./client
+    command: 'npm run start'
+    ports: 
+      - '8080:8080'
+    volumes:
+      - './client/:/usr/src/app/client'
+      - '/usr/src/app/client/node_modules'
+      - './assets:/usr/src/assets'
+    env_file:
+      - 'api.env'
+  webapi:
+    build: ./webapi
+    command: 'npm run start'
+    ports: 
+        - '3000:3000'
+    volumes: 
+      - './webapi/:/usr/src/app/webapi'
+      - '/usr/src/app/webapi/node_modules'
+      - './assets:/usr/src/assets'
+    depends_on:
+      - 'client'
+      - 'postgres'
+    environment:
+      DATABASE_URL: postgres://reporter@postgres/reports
+    env_file:
+      - 'api.env'
+  postgres:
+    image: postgres:12.3-alpine
+    environment:
+      POSTGRES_USER: reporter
+      POSTGRES_DB: reports
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+volumes:
+  assets:
+  adapters:
