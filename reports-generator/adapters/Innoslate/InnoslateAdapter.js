@@ -16,12 +16,48 @@ class InnoslateAdapter {
         }
     }
 
-    async get(projId) {
+    async getAll(projId) {
         await this.getProject(projId);
 
         await this.getDocuments();
 
         await this.getEntities();
+
+        return this.data;
+    }
+
+    async getObjects() {
+        
+        await Promise.all([axios.get(`${this.host}:${this.port}/o/nric/p/`)]).then(responses => {
+            responses.forEach(response => {
+                try {
+                    response.data.forEach(project => {
+                        this.data.projects.push(
+                            new Project(
+                                project.id,
+                                project.name,
+                                project.description
+                            )
+                        )
+                    });
+                } 
+                catch (error) {
+                    if (error instanceof TypeError) {
+                        let id = response.data.id;
+                        let name = response.data.name;
+                        let description = response.data.description;
+                        this.data.projects.push(new Project(
+                            id,
+                            name,
+                            description
+                        ));
+                    }
+                    else {
+                        console.log(error);
+                    }
+                }
+            });
+        });
 
         return this.data;
     }
@@ -32,7 +68,6 @@ class InnoslateAdapter {
 
         If there is only one project, the response.data object is not iterable and must be handled more verbosely.
     */
-        
         await Promise.all([axios.get(`${this.host}:${this.port}/o/nric/p/${projId}`)]).then(responses => {
             responses.forEach(response => {
                 try {
