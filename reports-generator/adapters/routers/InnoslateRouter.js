@@ -13,10 +13,19 @@ const host = process.env.INNOSLATE_HOST;
 const port = process.env.INNOSLATE_PORT;
 
 // Route
+innoslateRouter.get('/', async function(req, res, next) {
+
+    let adapter = new InnoslateAdapter(host, port);
+    let data = await adapter.getObjects();
+
+    res.send(data);
+})
+
+
 innoslateRouter.get('/:projId', async function(req, res, next) {
 
     let adapter = new InnoslateAdapter(host, port);
-    let data = await adapter.get(req.params['projId']);
+    let data = await adapter.getAll(req.params['projId']);
 
     res.send(data);
 
