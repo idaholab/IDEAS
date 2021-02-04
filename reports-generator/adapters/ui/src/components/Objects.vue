@@ -1,23 +1,26 @@
 <template>
-<div>
+  <div>
     <table>
-        <th>Data</th><th>ID</th>
-        <tr v-for="object in objects" :key="object.id">
-            <td>
-                {{object.name}} 
-            </td>
-            <td>
-                {{object.id}}
-            </td>
-            <td>
-                <v-btn v-if="url"
-                v-on:click="push(object.id, url)"
-                :disabled="clicked.includes(object.id)"
-                >Push</v-btn>
-            </td>
-        </tr>
+      <th>Data</th>
+      <th>ID</th>
+      <tr v-for="object in objects" :key="object.id">
+        <td>
+          {{ object.name }}
+        </td>
+        <td>
+          {{ object.id }}
+        </td>
+        <td>
+          <v-btn
+            v-if="url"
+            v-on:click="push(object.id, url)"
+            :disabled="clicked.includes(object.id)"
+            >Push</v-btn
+          >
+        </td>
+      </tr>
     </table>
-</div>
+  </div>
 </template>
 
 
@@ -32,11 +35,19 @@ export default {
         url: String
     },
     methods: {
-        async push(proj, url) {
-            let data = await axios.get(`http://localhost:3001/innoslate/${proj}`);
-            this.clicked.push(proj)
-            console.log(data);
-            console.log(url)
+        async push(proj) {
+
+            let data = await axios.get(`http://localhost:3001/innoslate/${proj}`).then(response => {
+                return [response.data];
+            });
+            this.clicked.push(proj);
+
+            const token = "TOKEN";
+            const container = "CONTAINER";
+            const source = "SOURCE";
+            
+            let headers = {Authorization: `Bearer ${token}`};
+            await axios.post(`http://localhost:8090/containers/${container}/import/datasources/${source}/imports`, data, {headers: headers})
         }
     },
     data: () => ({
@@ -49,13 +60,13 @@ export default {
 
 <style scoped>
 table {
-    margin: 0 auto;
+  margin: 0 auto;
 }
 th {
-    text-align: left;
+  text-align: left;
 }
 td {
-    vertical-align: middle;
-    min-width: 5rem;
+  vertical-align: middle;
+  min-width: 5rem;
 }
 </style>

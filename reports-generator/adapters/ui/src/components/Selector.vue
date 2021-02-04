@@ -61,7 +61,7 @@ const axios = require('axios');
         {name: "Innoslate", url: "http://localhost:3001/innoslate/"}
       ],
       destinations: [
-        {name: "deep-lynx", url: "/deep-lynx"},
+        {name: "deep-lynx", url: "http://localhost:8090"},
         {name: "test", url: "/test"}
       ],
       url: null
