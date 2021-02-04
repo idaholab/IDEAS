@@ -16,19 +16,19 @@ class Entity {
         rels,
         version
     ) {
-        this.id = id,
+        this.id = String(id),
         this.number = number,
         this.sortNumber = sortNumber,
         this.name = name,
         this.description = description,
-        this.created = created,
-        this.modified = modified,
+        this.created = String(created),
+        this.modified = String(modified),
         this.createdBy = createdBy,
         this.modifiedBy = modifiedBy,
         this.is_requirement = is_requirement,
         this.rationale = rationale,
         this.rels = rels,
-        this.version = version
+        this.version = String(version)
     }
 }
 
