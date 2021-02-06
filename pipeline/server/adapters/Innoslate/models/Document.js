@@ -11,14 +11,14 @@ class Document {
         modifiedBy,
         version
         ) {
-            this.id = id,
+            this.id = String(id),
             this.name = name,
             this.description = description,
-            this.created = created,
-            this.modified = modified,
+            this.created = String(created),
+            this.modified = String(modified),
             this.createdBy = createdBy,
             this.modifiedBy = modifiedBy,
-            this.version = version,
+            this.version = String(version),
             this.entities = []
         }
 }
