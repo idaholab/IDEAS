@@ -42,15 +42,15 @@ export default {
             let data = await axios.get(`http://localhost:3001/innoslate/${proj}`).then(response => {
                 return [response.data];
             });
+
             this.clicked.push(proj);
 
-            console.log(data);
-            // const token = "TOKEN";
-            // const container = "CONTAINER";
-            // const source = "SOURCE";
+            const token = process.env.DEEP_LYNX_TOKEN;
+            const container = process.env.DEEP_LYNX_CONTAINER;
+            const source = process.env.DEEP_LYNX_DATASOURCE;
             
-            // let headers = {Authorization: `Bearer ${token}`};
-            // await axios.post(`http://localhost:8090/containers/${container}/import/datasources/${source}/imports`, data, {headers: headers})
+            let headers = {Authorization: `Bearer ${token}`};
+            await axios.post(`http://localhost:8090/containers/${container}/import/datasources/${source}/imports`, data, {headers: headers})
         }
     },
     data: () => ({
