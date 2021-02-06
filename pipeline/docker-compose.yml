@@ -1,0 +1,39 @@
+# Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
+
+version: '3'
+services:
+  ui:
+    build: ./ui
+    command: 'npm run serve'
+    ports:
+      - '8080:8080'
+    volumes:
+      - './ui:/usr/src/app/ui'
+      - '/usr/src/app/ui/node_modules'
+      - './ui/src/assets:/usr/src/assets/ui'
+  adapter:
+    build: ./server
+    command: 'npm run serve'
+    ports:
+      - '3001:3001'
+    volumes:
+      - './server:/usr/src/app/server'
+      - '/usr/src/app/server/node_modules'
+    env_file: 
+      - './server/.env'
+  # innoslate:
+  #   build: ./Innoslate/api
+  #   command: 'npm run serve'
+  #   ports:
+  #     - '3000:3000'
+  #   volumes: 
+  #     - './Innoslate/api:/usr/src/app/api'
+  #     - '/usr/src/app/api/node_modules'
+  #     - './Innoslate/api/assets:/usr/src/assets/Innoslate'
+  #   env_file: 
+  #     - './Innoslate/api/.env'
+
+volumes:
+  assets:
+  adapters:
+  Innoslate:
