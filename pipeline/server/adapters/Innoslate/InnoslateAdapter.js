@@ -7,9 +7,8 @@ const axios = require('axios');
 
 class InnoslateAdapter {
 
-    constructor(host, base, key) {
+    constructor(host, key) {
         this.host = host,
-        this.base = base,
         this.key = key,
         this.data = {
             projects: []
@@ -30,7 +29,11 @@ class InnoslateAdapter {
 
             If there is only one project, the response.data object is not iterable and must be handled more verbosely.
         */
-        await Promise.all([axios.get(`${this.host}/o/nric/p/`, {headers: {'Authorization': `basic ${this.key}`}})]).then(responses => {
+        await Promise.all([axios.get(`${this.host}/o/nric/p/`, 
+        {
+            headers: {'Authorization': `basic ${this.key}`}
+        })
+        ]).then(responses => {
             responses.forEach(response => {
                 try {
                     response.data.forEach(project => {
@@ -62,6 +65,7 @@ class InnoslateAdapter {
         });
 
         return this.data;
+        
     }
 
     async getProject(projId) {
