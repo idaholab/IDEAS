@@ -39,7 +39,7 @@ export default {
     methods: {
         async push(proj) {
 
-            let data = await axios.get(`${process.env.VUE_APP_INNOSLATE_HOST}:${process.env.VUE_APP_INNOSLATE_PORT}/innoslate/${proj}`).then(response => {
+            let data = await axios.get(`${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/innoslate/${proj}`).then(response => {
                 return [response.data];
             });
 
