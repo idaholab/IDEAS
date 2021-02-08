@@ -12,7 +12,7 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
           alt="Vuetify Logo"
           class="shrink mr-2"
           contain
-          src=".\assets\deep-lynx-white.png"
+          src="./assets/deep-lynx-white.png"
           transition="scale-transition"
           width="40"
         />
