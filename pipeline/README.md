@@ -14,5 +14,6 @@ This application runs in Docker containers, using Docker Compose.
     * Configure these environment variables for your Deep-Lynx host and port. This is the destination you want Pipeline to load data.
     * To post data to Deep-Lynx, you will need a bearer token, container, and data source.
 4. `cd pipeline/` and `docker-compose build`, then `docker-compose up`.
-5. Navigate to http://localhost:8081
 
+## Running Pipeline
+Navigate to http://localhost:8081 and select your source and destination endpoints. For each object, you can 'Push' data into Deep-Lynx.
