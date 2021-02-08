@@ -39,18 +39,18 @@ export default {
     methods: {
         async push(proj) {
 
-            let data = await axios.get(`http://localhost:3001/innoslate/${proj}`).then(response => {
+            let data = await axios.get(`${process.env.VUE_APP_INNOSLATE_HOST}:${process.env.VUE_APP_INNOSLATE_PORT}/innoslate/${proj}`).then(response => {
                 return [response.data];
             });
 
             this.clicked.push(proj);
 
-            const token = process.env.DEEP_LYNX_TOKEN;
-            const container = process.env.DEEP_LYNX_CONTAINER;
-            const source = process.env.DEEP_LYNX_DATASOURCE;
+            const token = process.env.VUE_APP_DEEP_LYNX_TOKEN;
+            const container = process.env.VUE_APP_DEEP_LYNX_CONTAINER;
+            const source = process.env.VUE_APP_DEEP_LYNX_DATASOURCE;
             
-            let headers = {Authorization: `Bearer ${token}`};
-            await axios.post(`http://localhost:8090/containers/${container}/import/datasources/${source}/imports`, data, {headers: headers})
+            const headers = {Authorization: `Bearer ${token}`};
+            await axios.post(`${process.env.VUE_APP_DEEP_LYNX_HOST}:${process.env.VUE_APP_DEEP_LYNX_PORT}/containers/${container}/import/datasources/${source}/imports`, data, {headers: headers})
         }
     },
     data: () => ({

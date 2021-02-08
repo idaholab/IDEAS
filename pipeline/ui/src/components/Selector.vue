@@ -60,10 +60,10 @@ const axios = require('axios');
     data: () => ({
       objects: null,
       sources: [
-        {name: "Innoslate", url: "http://localhost:3001/innoslate/"}
+        {name: "Innoslate", url: `${process.env.VUE_APP_INNOSLATE_HOST}:${process.env.VUE_APP_INNOSLATE_PORT}/innoslate/`}
       ],
       destinations: [
-        {name: "deep-lynx", url: "http://localhost:8090"},
+        {name: "deep-lynx", url: `${process.env.VUE_APP_DEEP_LYNX_HOST}:${process.env.VUE_APP_DEEP_LYNX_PORT}`},
         {name: "test", url: "/test"}
       ],
       url: null

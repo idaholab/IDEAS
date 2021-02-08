@@ -5,9 +5,9 @@ const express = require('express');
 const app = express();
 
 // Configuration
-//require('dotenv').config();
-const host = '0.0.0.0';
-const port = 3001;
+require('dotenv').config();
+const host = process.env.ADAPTER_HOST;
+const port = process.env.ADAPTER_PORT;
 
 // Middleware
 const cors = require('cors');
