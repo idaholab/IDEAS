@@ -6,8 +6,8 @@ const app = express();
 
 // Configuration
 require('dotenv').config();
-const host = process.env.ADAPTER_HOST;
-const port = process.env.ADAPTER_PORT;
+const host = process.env.SERVER_HOST;
+const port = process.env.SERVER_PORT;
 
 // Middleware
 const cors = require('cors');
