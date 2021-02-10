@@ -11,7 +11,7 @@ services:
       - './ui:/usr/src/app/ui'
       - '/usr/src/app/ui/node_modules'
     env_file:
-      - './ui/.env'
+      - '.env'
   adapter:
     build: ./server
     command: 'npm run serve'
@@ -21,4 +21,4 @@ services:
       - './server:/usr/src/app/server'
       - '/usr/src/app/server/node_modules'
     env_file: 
-      - './server/.env'
+      - '.env'

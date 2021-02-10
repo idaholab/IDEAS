@@ -6,8 +6,8 @@ module.exports = {
     devtool: 'source-map'
   },
   devServer: {
-    host: '0.0.0.0',
-    port: 8081,
+    host: process.env.PIPELINE_HOST,
+    port: process.env.PIPELINE_PORT,
     progress: false
     }
 }
