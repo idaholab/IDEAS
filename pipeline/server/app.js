@@ -4,11 +4,6 @@
 const express = require('express');
 const app = express();
 
-// Configuration
-require('dotenv').config();
-const host = process.env.SERVER_HOST;
-const port = process.env.SERVER_PORT;
-
 // Middleware
 const cors = require('cors');
 const corsOptions = { origin: '*'}; // Dev environment only
