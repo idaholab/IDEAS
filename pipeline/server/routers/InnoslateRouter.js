@@ -21,11 +21,26 @@ innoslateRouter.get('/', async function(req, res, next) {
     res.send(data);
 })
 
-innoslateRouter.get('/:projId', async function(req, res, next) {
-
-    
+// GET Project Entities
+innoslateRouter.get('/entities/:projId', async function(req, res, next) {
     let adapter = new InnoslateAdapter(host, key);
     let data = await adapter.extractData(req.params['projId']);
+
+    res.send(data);
+})
+
+// GET Project Data
+innoslateRouter.get('/project/:projId', async function(req, res, next) {
+    let adapter = new InnoslateAdapter(host, key);
+    let data = await adapter.extractData(req.params['projId']);
+
+    res.send(data);
+})
+
+// GET Organizations
+innoslateRouter.get('/organizations', async function(req, res, next) {
+    let adapter = new InnoslateAdapter(host, key);
+    let data = await adapter.getOrganizations();
 
     res.send(data);
 })

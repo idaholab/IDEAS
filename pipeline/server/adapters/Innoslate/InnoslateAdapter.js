@@ -3,7 +3,9 @@
 const Project = require('./models/Project');
 const Document = require('./models/Document');
 const Entity = require('./models/Entity');
+const Organization = require('./models/Organization');
 const axios = require('axios');
+const { response } = require('express');
 
 class InnoslateAdapter {
 
@@ -11,15 +13,15 @@ class InnoslateAdapter {
         this.host = host,
         this.key = key,
         this.data = {
-            projects: []
+            projects: [],
+            organizations: []
             // We can add more properties here!
         }
     }
 
     async extractData(projId) {
         await this.getProject(projId);
-        await this.getDocuments();
-        await this.getEntities();
+        await this.extractEntities(projId);
         return this.data;
     }
 
@@ -196,7 +198,7 @@ class InnoslateAdapter {
             promises[document] = project.documents.map(document => {
                 return axios.get(`${this.host}/o/nric/entities/${document.id}`, 
                 {
-                    params: {'levels': '25', 'includeRelations': 'source of, decomposed by'}, 
+                    params: {levels: '25', includeRelations: 'source of, decomposed by'}, 
                     headers: {'Authorization': `basic ${this.key}`}
                 })
             });
@@ -265,6 +267,84 @@ class InnoslateAdapter {
                             console.log(error);
                         }
                     } 
+                });
+            });
+        });
+    }
+
+    async getOrganizations() {
+        await Promise.all([axios.get(`${this.host}/o`, {
+            headers: {
+                'Authorization': `basic ${this.key}`
+            }
+        })]).then(responses => {
+            responses.forEach(response => {
+                try {
+                    response.data.forEach(organization => {
+                        this.data.organizations.push(
+                            new Organization(
+                                organization.slug,
+                                organization.name,
+                                organization.description,
+                                organization.created,
+                                organization.modified,
+                                organization.createdBy,
+                                organization.modifiedBy,
+                                organization.version
+                            )
+                        )
+                    })
+                }
+                catch (error) {
+                    if (error instanceof TypeError) {
+                        console.log(response.data);
+                        this.data.organizations.push(
+                            new Organization(
+                                response.data.slug,
+                                response.data.name,
+                                response.data.description,
+                                response.data.created,
+                                response.data.modified,
+                                response.data.createdBy,
+                                response.data.modifiedBy,
+                                response.data.version
+                            )
+                        )
+                    }
+                    else {
+                        console.log(error)
+                    }
+                }
+            });
+        });
+
+        return this.data;
+    }
+
+    async extractEntities(projId) {
+        await Promise.all([axios.get(`${this.host}/o/nric/entities`, {
+            params: {'query': 'order:modified-', 'projectId': projId}, 
+            headers: {'Authorization': `basic ${this.key}`}
+        })]).then(responses => {
+            responses.forEach((response, project) => {
+                response.data.forEach(entity => {
+                    this.data.projects[project].entities.push(
+                        new Entity (
+                            entity.id,
+                            entity.number,
+                            entity.sortNumber,
+                            entity.name,
+                            entity.description,
+                            entity.created,
+                            entity.modified,
+                            entity.createdBy,
+                            entity.modifiedBy,
+                            entity.is_requirement,
+                            entity.rationale,
+                            entity.rels,
+                            entity.version
+                        )
+                    );
                 });
             });
         });
