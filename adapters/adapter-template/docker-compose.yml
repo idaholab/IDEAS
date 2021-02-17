@@ -1,0 +1,24 @@
+# Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
+
+version: '3'
+services:
+  ui:
+    build: ./ui
+    command: 'npm run serve'
+    ports:
+      - '8181:8181'
+    volumes:
+      - './ui:/usr/src/app/ui'
+      - '/usr/src/app/ui/node_modules'
+    env_file:
+      - '.env'
+  adapter:
+    build: ./server
+    command: 'npm run serve'
+    ports:
+      - '3131:3131'
+    volumes:
+      - './server:/usr/src/app/server'
+      - '/usr/src/app/server/node_modules'
+    env_file:
+      - '.env'
