@@ -39,7 +39,7 @@ export default {
     methods: {
         async push(proj) {
 
-            let data = await axios.get(`${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/innoslate/project/${proj}`).then(response => {
+            let data = await axios.get(`${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/innoslate/non-document-data/${proj}`).then(response => {
                 return [response.data];
             });
 
@@ -50,6 +50,7 @@ export default {
             const source = process.env.VUE_APP_DEEP_LYNX_DATASOURCE;
             
             const headers = {Authorization: `Bearer ${token}`};
+            
             await axios.post(`${process.env.VUE_APP_DEEP_LYNX_HOST}:${process.env.VUE_APP_DEEP_LYNX_PORT}/containers/${container}/import/datasources/${source}/imports`, data, {headers: headers})
         }
     },
