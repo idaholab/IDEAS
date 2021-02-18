@@ -6,7 +6,8 @@ class Project {
         this.name = name,
         this.description = description,
         this.documents = [],
-        this.entities = []
+        this.entities = [],
+        this.organizations = []
     }
 }
 

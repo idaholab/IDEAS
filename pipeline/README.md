@@ -1,19 +1,17 @@
 # Pipeline  
-Pipeline is an ETL application designed to configure a "pipeline" for data extraction, transfer, and loading into [Deep-Lynx](https://github.com/idaholab/Deep-Lynx).
+Pipeline is an ETL application designed to configure a "pipeline" for data extraction, transformation, and loading into [Deep-Lynx](https://github.com/idaholab/Deep-Lynx).
 
-## Installation Prerequisites
+## Prerequisites
 This application runs in Docker containers, using Docker Compose.
 
-## Installation Instructions
+## Getting Setup
 1. Clone the parent repository `git clone https://github.com/idaholab/NRIC-DE.git`.
-2. In the `pipeline/server` directory, rename the `.env-sample` file to `.env`.
-    * Ensure that your `.gitignore` targets this file. 
-    * For each data source, specify a `HOST` and `KEY`. These variables are where your data lives and where you want Pipeline to extract from.
-3. In the `pipeline/ui` directory, rename the `.env-sample` file to `.env`.
-    * Ensure that your `.gitignore` targets this file. 
-    * Configure these environment variables for your Deep-Lynx host and port. This is the destination you want Pipeline to load data.
-    * To post data to Deep-Lynx, you will need a bearer token, container, and data source.
-4. `cd pipeline/` and `docker-compose build`, then `docker-compose up`.
+2. In the `pipeline` directory, rename the `.env-sample` file to `.env`.
+    * Ensure that the `.gitignore` targets this file. 
+    * The Pipeline Container, Adapter Server, Server Container, and Deep Lynx environments are already specified in their recommended configuration.
+    * To post data to Deep-Lynx, you will need to set the `VUE_APP_DEEP_LYNX_X_API_KEY` and `VUE_APP_DEEP_LYNX_X_API_SECRET` variables. Deep-Lynx provides you these values on initial startup.
+    * For each data source, specify a `HOST`, and a `KEY` to authenticate Pipeline requests.
+4. From the `pipeline` directory, run `docker-compose build`, then `docker-compose up`.
 
-## Running Pipeline
+## Running The Application
 Navigate to http://localhost:8081 and select your source and destination endpoints. For each object, you can 'Push' data into Deep-Lynx.
