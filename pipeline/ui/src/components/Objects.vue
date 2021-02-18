@@ -14,8 +14,8 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
         </td>
         <td>
           <v-btn
-            v-if="url"
-            v-on:click="push(object.id, url)"
+            v-if="url && container && data_source"
+            v-on:click="push(object.id, url, container, data_source)"
             :disabled="clicked.includes(object.id)"
             >Push</v-btn
           >
@@ -34,23 +34,21 @@ export default {
     name: 'Objects',
     props: {
         objects: Array,
-        url: String
+        url: String,
+        token: String,
+        container: String,
+        data_source: String
     },
     methods: {
-        async push(proj) {
+        async push(projId, url, container, data_source) {
 
-            let data = await axios.get(`${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/innoslate/${proj}`).then(response => {
+            let data = await axios.get(`${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/innoslate/non-document-data/${projId}`).then(response => {
                 return [response.data];
             });
+            this.clicked.push(projId);
 
-            this.clicked.push(proj);
-
-            const token = process.env.VUE_APP_DEEP_LYNX_TOKEN;
-            const container = process.env.VUE_APP_DEEP_LYNX_CONTAINER;
-            const source = process.env.VUE_APP_DEEP_LYNX_DATASOURCE;
-            
-            const headers = {Authorization: `Bearer ${token}`};
-            await axios.post(`${process.env.VUE_APP_DEEP_LYNX_HOST}:${process.env.VUE_APP_DEEP_LYNX_PORT}/containers/${container}/import/datasources/${source}/imports`, data, {headers: headers})
+            const headers = {Authorization: `Bearer ${this.token}`};
+            await axios.post(`${url}/containers/${container}/import/datasources/${data_source}/imports`, data, {headers: headers})
         }
     },
     data: () => ({

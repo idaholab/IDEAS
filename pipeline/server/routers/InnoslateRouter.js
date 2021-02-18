@@ -21,11 +21,18 @@ innoslateRouter.get('/', async function(req, res, next) {
     res.send(data);
 })
 
-innoslateRouter.get('/:projId', async function(req, res, next) {
-
-    
+// GET Document Data
+innoslateRouter.get('/document-data/:projId', async function(req, res, next) {
     let adapter = new InnoslateAdapter(host, key);
-    let data = await adapter.extractData(req.params['projId']);
+    let data = await adapter.extractDocument(req.params['projId']);
+
+    res.send(data);
+})
+
+// GET Non-Document Data
+innoslateRouter.get('/non-document-data/:projId', async function(req, res, next) {
+    let adapter = new InnoslateAdapter(host, key);
+    let data = await adapter.extractNonDocument(req.params['projId']);
 
     res.send(data);
 })
