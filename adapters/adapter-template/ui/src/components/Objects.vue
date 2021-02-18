@@ -45,13 +45,13 @@ export default {
 
             this.clicked.push(proj);
 
-            const token = process.env.VUE_APP_DEEP_LYNX_TOKEN;
-            const container = process.env.VUE_APP_DEEP_LYNX_CONTAINER;
-            const source = process.env.VUE_APP_DEEP_LYNX_DATASOURCE;
-            
+            const token = "test" //process.env.VUE_APP_DEEP_LYNX_TOKEN;
+            const container = "test" //process.env.VUE_APP_DEEP_LYNX_CONTAINER;
+            const source = "test" //process.env.VUE_APP_DEEP_LYNX_DATASOURCE;
+
             const headers = {Authorization: `Bearer ${token}`};
-            
-            await axios.post(`${process.env.VUE_APP_DEEP_LYNX_HOST}:${process.env.VUE_APP_DEEP_LYNX_PORT}/containers/${container}/import/datasources/${source}/imports`, data, {headers: headers})
+
+            await axios.post(`${process.env.VUE_APP_DEEP_LYNX_ADDRESS}/containers/${container}/import/datasources/${source}/imports`, data, {headers: headers})
         }
     },
     data: () => ({

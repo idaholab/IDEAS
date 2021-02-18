@@ -5,8 +5,8 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
   <v-row>
     <v-col>
       <div class="selector">
-        <v-select 
-          :items="sources" 
+        <v-select
+          :items="sources"
           item-text="name"
           item-value="url"
           label="Source"
@@ -17,8 +17,8 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
       </div>
 
       <div class="selector">
-        <v-select 
-        :items="destinations" 
+        <v-select
+        :items="destinations"
         item-text="name"
         item-value="url"
         label="Destination"
@@ -28,7 +28,7 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
         </v-select>
       </div>
     </v-col>
-  
+
     <v-col>
     <template v-if="objects">
       <Objects :objects="objects" :url="url" class="objects"/>
@@ -63,7 +63,7 @@ const axios = require('axios');
         {name: "Innoslate", url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/innoslate/`}
       ],
       destinations: [
-        {name: "deep-lynx", url: `${process.env.VUE_APP_DEEP_LYNX_HOST}:${process.env.VUE_APP_DEEP_LYNX_PORT}`},
+        {name: "deep-lynx", url: `${process.env.VUE_APP_DEEP_LYNX_ADDRESS}`},
         {name: "test", url: "/test"}
       ],
       url: null
