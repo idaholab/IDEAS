@@ -12,7 +12,6 @@ class NonDocumentAdapter {
         this.key = key,
         this.data = {
             projects: [],
-            organizations: []
             // We can add more properties here!
         }
     }
@@ -73,10 +72,10 @@ class NonDocumentAdapter {
                 'Authorization': `basic ${this.key}`
             }
         })]).then(responses => {
-            responses.forEach(response => {
+            responses.forEach((response, project) => {
                 try {
                     response.data.forEach(organization => {
-                        this.data.organizations.push(
+                        this.data.projects[project].organizations.push(
                             new Organization(
                                 organization.slug,
                                 organization.name,
@@ -92,8 +91,7 @@ class NonDocumentAdapter {
                 }
                 catch (error) {
                     if (error instanceof TypeError) {
-                        console.log(response.data);
-                        this.data.organizations.push(
+                        this.data.projects[project].organizations.push(
                             new Organization(
                                 response.data.slug,
                                 response.data.name,
