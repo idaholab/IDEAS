@@ -14,7 +14,7 @@ const key = process.env.INNOSLATE_KEY;
 
 // Routes
 innoslateRouter.get('/', async function(req, res, next) {
-    
+
     let adapter = new InnoslateAdapter(host, key);
     let data = await adapter.getObjects();
 
