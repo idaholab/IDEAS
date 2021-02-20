@@ -9,12 +9,17 @@ const cors = require('cors');
 const corsOptions = { origin: '*'}; // Dev environment only
 app.use(cors(corsOptions));
 
-app.get('/healthcheck', function(req, res) {
-    res.status(200).send();
+// App routes
+app.get('/health', function(req, res) {
+    res.status(200).send("OK");
 })
 
-// Innoslate Router
-const innoslateRouter = require('./routers/InnoslateRouter');
-app.use('/innoslate', innoslateRouter);
+// Deep Lynx Router
+const deepLynxRouter = require('./routers/DeepLynxRouter');
+app.use('/deeplynx', deepLynxRouter);
+
+// Datasource Router
+const datasourceRouter = require('./routers/DatasourceRouter');
+app.use('/datasource', datasourceRouter);
 
 module.exports = app;
