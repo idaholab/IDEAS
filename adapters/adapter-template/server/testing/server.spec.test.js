@@ -2,7 +2,8 @@
 
 const request = require('supertest');
 const app = require('../app');
-const innoslateRouter = require('../routers/InnoslateRouter');
+const deepLynxRouter = require('../routers/DeepLynxRouter');
+const datasourceRouter = require('../routers/DatasourceRouter');
 
 beforeAll(() => {
     // Environment
@@ -10,13 +11,14 @@ beforeAll(() => {
     require('dotenv').config({path: relative_env_path});
 
     // Routers
-    app.use('/innoslate', innoslateRouter);
+    app.use('/datasource', datasourceRouter);
+    app.use('/deeplynx', deepLynxRouter);
 })
 
-describe("Healthcheck", () => {
+describe("health", () => {
     test("It should respond HTTP 200", async () => {
-        const response = await request(app).get("/healthcheck").then(response => {
-            return response;    
+        const response = await request(app).get("/health").then(response => {
+            return response;
         });
         expect(response.statusCode).toBe(200);
     });
@@ -24,14 +26,14 @@ describe("Healthcheck", () => {
 
 describe("Server Endpoints", () => {
     test("It should print the environment variable", () => {
-        expect(parseInt(process.env.SERVER_PORT)).toBe(3001);
+        expect(parseInt(process.env.APP_VUE_SERVER_PORT)).toBe(3131);
     });
-    test("It should return Innoslate data", async () => {
+    test("It should return datasource data", async () => {
         // const response = await request(app).get('/innoslate').then(response => {
         //     return response;
         // });
         // console.log(response.data);
         // expect(response).toBeTruthy();
-        return request(app).get("/innoslate").expect(200);
+        return request(app).get("/").expect(200);
     })
 })
