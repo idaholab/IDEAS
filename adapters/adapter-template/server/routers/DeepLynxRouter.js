@@ -34,15 +34,15 @@ deepLynxRouter.get('/get_token', async function(req, res) {
 });
 
 deepLynxRouter.get('/get_containers/:token', async function (req, res) {
-  let transformer = new DeepLynxTransformer(host, req.params["token"])
+  let transformer = new DeepLynxTransformer(host, req.params["token"]);
   let data = await transformer.getContainers();
 
   res.send(data);
 })
 
 deepLynxRouter.get('/get_datasources/:container_id/:token', async function (req, res) {
-  let transformer = new DeepLynxTransformer(host, req.params["token"])
-  let data = await transformer.getDatasources(req.params["container_id"]);
+  let transformer = new DeepLynxTransformer(host, req.params["token"]);
+  let data = await transformer.getDatasources(req.params["container"]);
 
   res.send(data);
 })
