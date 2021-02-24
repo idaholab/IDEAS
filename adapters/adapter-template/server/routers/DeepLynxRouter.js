@@ -3,6 +3,9 @@
 // Express
 const express = require('express');
 const deepLynxRouter = express.Router();
+const bodyParser = require('body-parser');
+deepLynxRouter.use(bodyParser.urlencoded({ extended: true }));
+deepLynxRouter.use(express.json());
 
 // Transformer
 const DeepLynxTransformer = require('../transformers/DeepLynxTransformer.js');
@@ -24,27 +27,39 @@ deepLynxRouter.get('/health', async function(req, res) {
 
 deepLynxRouter.get('/get_token', async function(req, res) {
     let transformer = new DeepLynxTransformer(host);
-    let data = await transformer.getToken(
-      deepLynxAPIkey,
-      deepLynxAPIsecret,
-      deepLynxTokenExpiry
+    let token = await transformer.getToken(
+        deepLynxAPIkey,
+        deepLynxAPIsecret,
+        deepLynxTokenExpiry
     );
 
-    res.send(data);
+    res.send(token);
 });
 
 deepLynxRouter.get('/get_containers/:token', async function (req, res) {
-  let transformer = new DeepLynxTransformer(host, req.params["token"]);
-  let data = await transformer.getContainers();
+    let transformer = new DeepLynxTransformer(host, req.params["token"]);
+    let containers = await transformer.getContainers();
 
-  res.send(data);
+    res.send(containers);
 })
 
 deepLynxRouter.get('/get_datasources/:container_id/:token', async function (req, res) {
-  let transformer = new DeepLynxTransformer(host, req.params["token"]);
-  let data = await transformer.getDatasources(req.params["container"]);
+    let transformer = new DeepLynxTransformer(host, req.params["token"]);
+    let datasources = await transformer.getDatasources(req.params["container_id"]);
 
-  res.send(data);
+    res.send(datasources);
+})
+
+deepLynxRouter.post('/manual_import/:container_id/:datasource_id/:token', async function (req, res) {
+    let transformer = new DeepLynxTransformer(host, req.params["token"]);
+    
+    let import_response = await transformer.postManualImport(
+        req.params["container_id"],
+        req.params["datasource_id"],
+        req.body
+    );
+
+    res.send(import_response);
 })
 
 module.exports = deepLynxRouter;
