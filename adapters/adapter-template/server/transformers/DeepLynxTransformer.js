@@ -32,13 +32,11 @@ class DeepLynxTransformer {
 
     async getToken(apiKey, apiSecret, tokenExpiry) {
         await axios.get(`${this.host}/oauth/token`,
-            {headers:
-                {
-                    'x-api-key': apiKey,
-                    'x-api-secret': apiSecret,
-                    'x-api-expiry': tokenExpiry
-                }
-            }
+            {headers:{
+                'x-api-key': apiKey,
+                'x-api-secret': apiSecret,
+                'x-api-expiry': tokenExpiry
+            }}
         ).then(response => {
             try {
                 this.data.token = response.data;
@@ -73,8 +71,8 @@ class DeepLynxTransformer {
 
     async getDatasources(container_id) {
         await axios.get(
-          `${this.host}/containers/${container_id}/import/datasources`,
-          this.config
+            `${this.host}/containers/${container_id}/import/datasources`,
+            this.config
         ).then(response => {
             this.data.datasources = [];
             response.data.value.forEach(datasource => {
@@ -83,9 +81,21 @@ class DeepLynxTransformer {
                     'id': datasource.id,
                     'type': datasource.type,
                     'config': datasource.config
-                })
-            })
-            //this.data.containers = response.data.value;
+                });
+            });
+        }).catch(error => {
+            this.data.error = error;
+        });
+        return this.data;
+    }
+
+    async postManualImport(container_id, datasource_id, import_data) {
+        await axios.post(
+            `${this.host}/containers/${container_id}/import/datasources/${datasource_id}/imports`,
+            import_data,
+            this.config
+        ).then(response => {
+            this.data = response.data;
         }).catch(error => {
             this.data.error = error;
         });

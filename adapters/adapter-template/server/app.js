@@ -8,6 +8,8 @@ const app = express();
 const cors = require('cors');
 const corsOptions = { origin: '*'}; // Dev environment only
 app.use(cors(corsOptions));
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // App routes
 app.get('/health', function(req, res) {
