@@ -4,7 +4,7 @@
   "description": "source adapters for deep lynx",
   "main": "index.js",
   "scripts": {
-    "serve": "nodemon server.js",
+    "serve": "nodemon --legacy-watch server.js",
     "test": "jest"
   },
   "author": "",
