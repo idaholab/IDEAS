@@ -41,10 +41,11 @@ const axios = require('axios');
       DeepLynx
     },
     methods: {
-      async getObjects(url) {
-        this.objects = await axios.get(url).then(response => {
-          alert(url);
-          return response.data.objects;
+      getObjects(url) {
+        axios.get(url).then(response => {
+          this.objects = response.data.objects;
+        }).catch(error => {
+          this.error_message = error;
         });
       },
       setURL(url) {
@@ -52,17 +53,14 @@ const axios = require('axios');
       }
     },
     data: () => ({
+      error_message: null,
       objects: null,
       sources: [
-        {name: "Example users", url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_all_users`},
-        {name: "Example posts", url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_all_posts`}
-      ],
-      destinations: [
-        {name: "deep-lynx", url: `${process.env.VUE_APP_DEEP_LYNX_ADDRESS}`},
-        {name: "test", url: "/test"}
+        {name: "Example users", url: `http://${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_all_users`},
+        {name: "Example posts", url: `http://${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_all_posts`}
       ],
       url: null
-    }),
+    })
   }
 </script>
 
