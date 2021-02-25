@@ -13,28 +13,36 @@ const host = process.env.DATASOURCE_HOST;
 const key = process.env.DATASOURCE_KEY;
 
 // Routes
-datasourceRouter.get('/get_all_users', async function(req, res, next) {
+datasourceRouter.get('/get_all_users', async function(req, res) {
 
     let transformer = new DatasourceTransformer(host, key);
-    let data = await transformer.getAllUsers();
+    let user_list = await transformer.getAllUsers();
 
-    res.send(data);
+    res.send(user_list);
 })
 
-datasourceRouter.get('/get_all_posts', async function(req, res, next) {
+datasourceRouter.get('/get_single_user/:id', async function(req, res) {
 
     let transformer = new DatasourceTransformer(host, key);
-    let data = await transformer.getAllPosts();
+    let user = await transformer.getSingleUser(req.params["id"]);
 
-    res.send(data);
+    res.send(user);
 })
 
-datasourceRouter.get('/get_single_post/:id', async function(req, res, next) {
+datasourceRouter.get('/get_all_posts', async function(req, res) {
 
     let transformer = new DatasourceTransformer(host, key);
-    let data = await transformer.getSinglePost(req.params['id']);
+    let post_list = await transformer.getAllPosts();
 
-    res.send(data);
+    res.send(post_list);
+})
+
+datasourceRouter.get('/get_single_post/:id', async function(req, res) {
+
+    let transformer = new DatasourceTransformer(host, key);
+    let post = await transformer.getSinglePost(req.params['id']);
+
+    res.send(post);
 })
 
 module.exports = datasourceRouter;

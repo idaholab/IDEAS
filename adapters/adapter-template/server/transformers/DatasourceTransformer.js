@@ -12,41 +12,20 @@ class DatasourceTransformer {
     constructor(host, key) {
         this.host = host,
         this.key = key
-        this.data = {}
+        this.data = {
+          'objects': []
+        }
     }
 
     async getAllUsers() {
         await axios.get(`${this.host}/users`
           //,{headers: {'Authorization': `basic ${this.key}`}}  // UNCOMMENT if source requires auth
         ).then(response => {
-            this.data.users = [];
             response.data.forEach(user => {
                 try {
-                    this.data.users.push(
-                        new User(
-                            user.id,
-                            user.name,
-                            user.username,
-                            user.email,
-                            new Address (
-                                user.address.street,
-                                user.address.suite,
-                                user.address.city,
-                                user.address.zipcode,
-                                new Geolocation(
-                                    user.address.geo.lat,
-                                    user.address.geo.lng
-                                )
-                            ),
-                            user.phone,
-                            user.website,
-                            new Company(
-                                user.company.name,
-                                user.company.catchPhrase,
-                                user.company.bs
-                            )
-                        )
-                    )
+                    this.data.objects.push(
+                        {'id': user.id, 'name': user.name}
+                    );
                 }
                 catch (error) {
                     console.log(error);
@@ -57,20 +36,53 @@ class DatasourceTransformer {
         return this.data;
     }
 
+    async getSingleUser(ident) {
+        await axios.get(`${this.host}/users/${ident}`
+          //,{headers: {'Authorization': `basic ${this.key}`}}  // UNCOMMENT if source requires auth
+        ).then(response => {
+            try {
+                this.data.objects.push(
+                    new User(
+                        response.data.id,
+                        response.data.name,
+                        response.data.username,
+                        response.data.email,
+                        new Address (
+                            response.data.address.street,
+                            response.data.address.suite,
+                            response.data.address.city,
+                            response.data.address.zipcode,
+                            new Geolocation(
+                                response.data.address.geo.lat,
+                                response.data.address.geo.lng
+                            )
+                        ),
+                        response.data.phone,
+                        response.data.website,
+                        new Company(
+                            response.data.company.name,
+                            response.data.company.catchPhrase,
+                            response.data.company.bs
+                        )
+                    )
+                )
+            }
+            catch (error) {
+                console.log(error);
+                this.data.error = error;
+            }
+        });
+        return this.data;
+    }
+
     async getAllPosts() {
         await axios.get(`${this.host}/posts`
           //,{headers: {'Authorization': `basic ${this.key}`}}  // UNCOMMENT if source requires auth
         ).then(response => {
-            this.data.posts = [];
             response.data.forEach(post => {
                 try {
-                    this.data.posts.push(
-                        new Post(
-                            post.userId,
-                            post.id,
-                            post.title,
-                            post.body
-                        )
+                    this.data.objects.push(
+                        {'id': post.id, 'name': post.title}
                     )
                 }
                 catch (error) {
@@ -86,9 +98,8 @@ class DatasourceTransformer {
         await axios.get(`${this.host}/posts/${ident}`
           //,{headers: {'Authorization': `basic ${this.key}`}}  // UNCOMMENT if source requires auth
         ).then(response => {
-            this.data.posts = [];
             try {
-                this.data.posts.push(
+                this.data.objects.push(
                     new Post(
                       response.data.userId,
                       response.data.id,

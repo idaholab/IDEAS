@@ -14,18 +14,23 @@ class DeepLynxTransformer {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
-        }
+        },
         this.data = {}
     }
 
     async getHealth() {
-        await axios.get(`${this.host}/health`).then(response => {
+        await axios.get(
+            `${this.host}/health`
+        ).then(response => {
             try {
                 this.data = response.data;
             }
             catch (error) {
+                this.data.error = error;
                 console.log(error);
             }
+        }).catch(error => {
+            this.data.error = error;
         });
         return this.data;
     }
@@ -45,6 +50,8 @@ class DeepLynxTransformer {
                 this.data.error = error;
                 console.log(error);
             }
+        }).catch(error => {
+            this.data.error = error;
         });
         return this.data;
     }
@@ -60,9 +67,8 @@ class DeepLynxTransformer {
                     'name': container.name,
                     'description': container.description,
                     'id': container.id
-                })
-            })
-            //this.data.containers = response.data.value;
+                });
+            });
         }).catch(error => {
             this.data.error = error;
         });
