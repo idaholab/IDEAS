@@ -51,7 +51,7 @@ export default {
 
             const headers = {Authorization: `Bearer ${token}`};
 
-            await axios.post(`${process.env.VUE_APP_DEEP_LYNX_ADDRESS}/containers/${container}/import/datasources/${source}/imports`, data, {headers: headers})
+            await axios.post(`${process.env.DEEP_LYNX_ADDRESS}/containers/${container}/import/datasources/${source}/imports`, data, {headers: headers})
         }
     },
     data: () => ({

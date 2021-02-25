@@ -2,16 +2,16 @@
 
 version: '3'
 services:
-  # ui:
-  #   build: ./ui
-  #   command: 'npm run serve'
-  #   ports:
-  #     - '${VUE_APP_UI_PORT}:${VUE_APP_UI_PORT}'
-  #   volumes:
-  #     - './ui:/usr/src/app/ui'
-  #     - '/usr/src/app/ui/node_modules'
-  #   env_file:
-  #     - '.env'
+  ui:
+    build: ./ui
+    command: 'npm run serve'
+    ports:
+      - '${VUE_APP_UI_PORT}:${VUE_APP_UI_PORT}'
+    volumes:
+      - './ui:/usr/src/app/ui'
+      - '/usr/src/app/ui/node_modules'
+    env_file:
+      - '.env'
   adapter:
     build: ./server
     command: 'npm run serve'

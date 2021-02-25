@@ -15,17 +15,8 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
           class="select">
         </v-select>
       </div>
-
-      <div class="selector">
-        <v-select
-        :items="destinations"
-        item-text="name"
-        item-value="url"
-        label="Destination"
-        v-on:change="setURL"
-        placeholder="Destination"
-        class="select">
-        </v-select>
+      <div>
+        <DeepLynx/>
       </div>
     </v-col>
 
@@ -40,17 +31,20 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
 <script>
 import Objects from './Objects.vue';
+import DeepLynx from './DeepLynx.vue';
 const axios = require('axios');
 
   export default {
     name: 'Selector',
     components: {
-      Objects
+      Objects,
+      DeepLynx
     },
     methods: {
       async getObjects(url) {
         this.objects = await axios.get(url).then(response => {
-          return response.data.projects;
+          alert(url);
+          return response.data.objects;
         });
       },
       setURL(url) {
@@ -60,7 +54,8 @@ const axios = require('axios');
     data: () => ({
       objects: null,
       sources: [
-        {name: "Innoslate", url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/innoslate/`}
+        {name: "Example users", url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_all_users`},
+        {name: "Example posts", url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_all_posts`}
       ],
       destinations: [
         {name: "deep-lynx", url: `${process.env.VUE_APP_DEEP_LYNX_ADDRESS}`},

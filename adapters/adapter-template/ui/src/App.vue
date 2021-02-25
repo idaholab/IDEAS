@@ -16,13 +16,13 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
           transition="scale-transition"
           width="40"
         />
-        <h1>Pipeline</h1>
+        <h1>Deep Lynx Adapter Template</h1>
       </div>
 
       <v-spacer></v-spacer>
 
       <v-btn
-        href="https://github.com/idaholab/NRIC-DE/tree/main/reports-generator/adapters"
+        href="https://github.com/idaholab/NRIC-DE/tree/main/adapters/adapter-template"
         target="_blank"
         text
       >

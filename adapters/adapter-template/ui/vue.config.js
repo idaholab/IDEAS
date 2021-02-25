@@ -6,8 +6,8 @@ module.exports = {
     devtool: 'source-map'
   },
   devServer: {
-    host: '0.0.0.0',
-    port: 8181,
+    host: process.env.VUE_APP_SERVER_HOST,
+    port: process.env.VUE_APP_UI_PORT,
     progress: false
     }
 }
