@@ -8,21 +8,21 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
         <v-select
           :items="sources"
           item-text="name"
-          item-value="url"
-          label="Source"
+          item-value="urls"
+          label="List Source"
           v-on:change="getObjects"
-          placeholder="Source"
+          placeholder="List Source"
           class="select">
         </v-select>
       </div>
       <div>
-        <DeepLynx/>
+        <DeepLynx @clicked="setDeepLynxURL"/>
       </div>
     </v-col>
 
     <v-col>
     <template v-if="objects">
-      <Objects :objects="objects" :url="url" class="objects"/>
+      <Objects :objects="objects" :transformURL="transformURL" :deepLynxURL="deepLynxURL" class="objects"/>
     </template>
     </v-col>
   </v-row>
@@ -41,25 +41,36 @@ const axios = require('axios');
       DeepLynx
     },
     methods: {
-      getObjects(url) {
-        axios.get(url).then(response => {
+      getObjects(urls) {
+        axios.get(urls[0]).then(response => {
           this.objects = response.data.objects;
         }).catch(error => {
           this.error_message = error;
         });
+        this.transformURL = urls[1];
       },
-      setURL(url) {
-        this.url = url
+      setDeepLynxURL(url) {
+        this.deepLynxURL = url;
       }
+
     },
     data: () => ({
       error_message: null,
       objects: null,
       sources: [
-        {name: "Example users", url: `http://${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_all_users`},
-        {name: "Example posts", url: `http://${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_all_posts`}
+        {
+          name: "Example users",
+          urls: [`http://${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_all_users`, // list source GET
+          `http://${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_single_user`] // transform GET
+        },
+        {
+          name: "Example posts",
+          urls: [`http://${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_all_posts`, // list source GET
+          `http://${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}/datasource/get_single_post`] // transform GET
+        }
       ],
-      url: null
+      deepLynxURL: null,
+      transformURL: null
     })
   }
 </script>

@@ -51,6 +51,7 @@ const axios = require('axios');
         this.url = url
       },
       authenticate() {
+        this.unsetPostURL();
         axios.get(`${this.url}/deeplynx/get_token`).then(response => {
             if (response.data.token) {
               this.token = response.data.token;
@@ -66,6 +67,7 @@ const axios = require('axios');
         this.selected_container_id = null;
         this.datasources = [];
         this.selected_datasource_id = null;
+        this.unsetPostURL();
         axios.get(`${this.url}/deeplynx/get_containers/${this.token}`).then(response => {
           this.containers = response.data.containers;
         }).catch(error => {
@@ -74,6 +76,7 @@ const axios = require('axios');
       },
       getDatasources(ident) {
         this.selected_datasource_id = null;
+        this.unsetPostURL();
         axios.get(`${this.url}/deeplynx/get_datasources/${ident}/${this.token}`).then(response => {
           this.datasources = response.data.datasources;
         }).catch(error => {
@@ -82,6 +85,15 @@ const axios = require('axios');
       },
       setDatasource(ident) {
         this.selected_datasource_id = ident;
+        this.setPostURL();
+      },
+      unsetPostURL() {
+        this.post_url = null;
+        this.$emit('clicked', this.post_url);
+      },
+      setPostURL() {
+        this.post_url = `${this.url}/deeplynx/manual_import/${this.selected_container_id}/${this.selected_datasource_id}/${this.token}`;
+        this.$emit('clicked', this.post_url);
       }
     },
     data: () => ({
@@ -92,10 +104,12 @@ const axios = require('axios');
       containers: [],
       datasources: [],
       selected_container_id: null,
-      selected_datasource_id: null
+      selected_datasource_id: null,
+      post_url: null
     }),
     mounted: function() {
       this.setURL(`http://${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}`);
+      this.unsetPostURL();
       axios.get(`${this.url}/deeplynx/health`).then(response => {
           if (response.data=='OK') {
             this.deepLynxOpen = true;
