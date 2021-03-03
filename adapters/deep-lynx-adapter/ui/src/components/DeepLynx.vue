@@ -74,6 +74,7 @@ const axios = require('axios');
         });
       },
       getDatasources(ident) {
+        this.selected_container_id = ident;
         this.selected_datasource_id = null;
         this.unsetPostURL();
         axios.get(`${this.url}/deeplynx/get_datasources/${ident}/${this.token}`).then(response => {
