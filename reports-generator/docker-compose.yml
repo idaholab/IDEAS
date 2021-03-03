@@ -23,7 +23,7 @@ services:
       - '/usr/src/app/webapi/node_modules'
       - './assets:/usr/src/assets'
     depends_on:
-      - 'client'
+      # - 'client'
       - 'postgres'
     environment:
       DATABASE_URL: postgres://reporter@postgres/reports
