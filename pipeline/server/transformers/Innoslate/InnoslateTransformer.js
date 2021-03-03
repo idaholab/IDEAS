@@ -1,11 +1,11 @@
 // Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
 const Project = require('./models/Project');
-const DocumentAdapter = require('./DocumentAdapter');
-const NonDocumentAdapter = require('./NonDocumentAdapter');
+const DocumentTransformer = require('./DocumentTransformer');
+const NonDocumentTransformer = require('./NonDocumentTransformer');
 const axios = require('axios');
 
-class InnoslateAdapter {
+class InnoslateTransformer {
 
     constructor(host, key) {
         this.host = host,
@@ -16,13 +16,13 @@ class InnoslateAdapter {
     }
 
     async extractNonDocument(projId) {
-        let adapter = new NonDocumentAdapter(this.host, this.key);
+        let adapter = new NonDocumentTransformer(this.host, this.key);
         let data = await adapter.extract(projId);
         return data;
     }
 
     async extractDocument(projId) {
-        let adapter = new DocumentAdapter(this.host, this.key);
+        let adapter = new DocumentTransformer(this.host, this.key);
         let data = await adapter.extract(projId);
         return data;
     }
@@ -74,4 +74,4 @@ class InnoslateAdapter {
 
 }
 
-module.exports = InnoslateAdapter;
+module.exports = InnoslateTransformer;

@@ -5,7 +5,7 @@ const Document = require('./models/Document');
 const Entity = require('./models/Entity');
 const axios = require('axios');
 
-class DocumentAdapter {
+class DocumentTransformer {
 
     constructor(host, key) {
         this.host = host,
@@ -227,4 +227,4 @@ class DocumentAdapter {
     }
 }
 
-module.exports = DocumentAdapter;
+module.exports = DocumentTransformer;
