@@ -4,7 +4,7 @@
 const express = require('express');
 const innoslateRouter = express.Router();
 
-// Adapter
+// Transformer
 const InnoslateTransformer = require('../transformers/Innoslate/InnoslateTransformer.js');
 
 // Configuration

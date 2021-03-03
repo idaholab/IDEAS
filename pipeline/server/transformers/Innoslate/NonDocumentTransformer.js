@@ -5,7 +5,7 @@ const Entity = require('./models/Entity');
 const Organization = require('./models/Organization');
 const axios = require('axios');
 
-class NonDocumentAdapter {
+class NonDocumentTransformer {
 
     constructor(host, key) {
         this.host = host,
@@ -145,4 +145,4 @@ class NonDocumentAdapter {
     }
 }
 
-module.exports = NonDocumentAdapter;
+module.exports = NonDocumentTransformer;

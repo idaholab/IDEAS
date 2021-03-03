@@ -41,14 +41,13 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
 <script>
 const axios = require('axios');
-
   export default {
     name: 'DeepLynx',
     components: {
     },
     methods: {
       setURL(url) {
-        this.url = url
+        this.url = url;
       },
       authenticate() {
         this.unsetPostURL();
@@ -70,7 +69,6 @@ const axios = require('axios');
         this.unsetPostURL();
         axios.get(`${this.url}/deeplynx/get_containers/${this.token}`).then(response => {
           this.containers = response.data.containers;
-          console.log(this.containers);
         }).catch(error => {
           this.error_message = error;
         });
