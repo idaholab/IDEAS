@@ -20,8 +20,12 @@ app.get('/health', function(req, res) {
 const deepLynxRouter = require('./routers/DeepLynxRouter');
 app.use('/deeplynx', deepLynxRouter);
 
-// Datasource Router
+// Innoslate Router
 const innoslateRouter = require('./routers/InnoslateRouter');
 app.use('/innoslate', innoslateRouter);
+
+// Vault Router
+const vaultRouter = require('./routers/VaultRouter');
+app.use('/vault', vaultRouter);
 
 module.exports = app;

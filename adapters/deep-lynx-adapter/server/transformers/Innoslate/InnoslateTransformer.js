@@ -33,7 +33,7 @@ class InnoslateTransformer {
 
             If there is only one project, the response.data object is not iterable and must be handled more verbosely.
         */
-        await Promise.all([axios.get(`${this.host}/o/nric/p/`, 
+        await Promise.all([axios.get(`${this.host}/o/nric/p/`,
         {
             headers: {'Authorization': `basic ${this.key}`}
         })
@@ -49,7 +49,7 @@ class InnoslateTransformer {
                             )
                         )
                     });
-                } 
+                }
                 catch (error) {
                     if (error instanceof TypeError) {
                         let id = response.data.id;
@@ -69,7 +69,7 @@ class InnoslateTransformer {
         });
 
         return this.data;
-        
+
     }
 
 }
