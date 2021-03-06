@@ -59,30 +59,4 @@ vaultRouter.get("/get_file_list/:token/:user_id", async function(req, res) {
 });
 
 
-
-
-// datasourceRouter.get('/get_single_user/:id', async function(req, res) {
-//
-//     let transformer = new DatasourceTransformer(host, key);
-//     let user = await transformer.getSingleUser(req.params["id"]);
-//
-//     res.send(user);
-// })
-//
-// datasourceRouter.get('/get_all_posts', async function(req, res) {
-//
-//     let transformer = new DatasourceTransformer(host, key);
-//     let post_list = await transformer.getAllPosts();
-//
-//     res.send(post_list);
-// })
-//
-// datasourceRouter.get('/get_single_post/:id', async function(req, res) {
-//
-//     let transformer = new DatasourceTransformer(host, key);
-//     let post = await transformer.getSinglePost(req.params['id']);
-//
-//     res.send(post);
-// })
-
 module.exports = vaultRouter;
