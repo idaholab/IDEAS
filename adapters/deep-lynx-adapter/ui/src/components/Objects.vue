@@ -36,8 +36,8 @@ export default {
         deepLynxURL: String
     },
     methods: {
-        async push(proj, dlURL) {
-            let data = await axios.get(`${this.transformURL}/${proj}`).then(response => {
+        async push(obj_id, dlURL) {
+            let data = await axios.get(`${this.transformURL}/${obj_id}`).then(response => {
                 return [response.data];
             });
             await axios.post(dlURL, data)

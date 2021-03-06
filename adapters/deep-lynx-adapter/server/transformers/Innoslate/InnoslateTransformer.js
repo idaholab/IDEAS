@@ -11,7 +11,7 @@ class InnoslateTransformer {
         this.host = host,
         this.key = key
         this.data = {
-            projects: []
+            objects: []
         }
     }
 
@@ -41,7 +41,7 @@ class InnoslateTransformer {
             responses.forEach(response => {
                 try {
                     response.data.forEach(project => {
-                        this.data.projects.push(
+                        this.data.objects.push(
                             new Project(
                                 project.id,
                                 project.name,
@@ -55,7 +55,7 @@ class InnoslateTransformer {
                         let id = response.data.id;
                         let name = response.data.name;
                         let description = response.data.description;
-                        this.data.projects.push(new Project(
+                        this.data.objects.push(new Project(
                             id,
                             name,
                             description

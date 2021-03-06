@@ -21,7 +21,42 @@ vaultRouter.get('/authenticate', async function(req, res) {
     let url = await transformer.makeAuthURL(username, password, vault);
     let {token, user_id} = await transformer.getTokenAndUser(url);
     res.send({"token": token, "user_id": user_id});
-})
+});
+
+vaultRouter.get("/get_item_list/:token/:user_id", async function(req, res) {
+    let transformer = new VaultTransformer(host);
+    let token = req.params["token"];
+    let user_id = req.params["user_id"];
+    let items = await transformer.getItems(token, user_id);
+    res.send(items);
+});
+
+vaultRouter.get("/get_single_item_history/:token/:user_id/:item_id", async function(req, res) {
+    let transformer = new VaultTransformer(host);
+    let token = req.params["token"];
+    let user_id = req.params["user_id"];
+    let item_id = req.params["item_id"];
+    let item = await transformer.getSingleItemHistory(token, user_id, item_id);
+    res.send(item);
+});
+
+vaultRouter.get("/get_single_item_latest/:token/:user_id/:item_id", async function(req, res) {
+    let transformer = new VaultTransformer(host);
+    let token = req.params["token"];
+    let user_id = req.params["user_id"];
+    let item_id = req.params["item_id"];
+    let item = await transformer.getSingleItemLatest(token, user_id, item_id);
+    res.send(item);
+});
+
+vaultRouter.get("/get_file_list/:token/:user_id", async function(req, res) {
+    let transformer = new VaultTransformer(host);
+    let token = req.params["token"];
+    let user_id = req.params["user_id"];
+    let items = await transformer.getItems(token, user_id);
+    let files = await transformer.getFiles(token, user_id, items.ids);
+    res.send(files);
+});
 
 
 
