@@ -104,6 +104,20 @@ class DeepLynxTransformer {
         return this.data;
     }
 
+    async postFileImport(container_id, datasource_id, import_data) {
+        this.config.headers["Content-Type"] = 'multipart/form-data; boundary=|||'
+        await axios.post(
+            `${this.host}/containers/${container_id}/import/datasources/${datasource_id}/files`,
+            import_data,
+            this.config
+        ).then(response => {
+            this.data = response.data;
+        }).catch(error => {
+            this.data.error = error;
+        });
+        return this.data;
+    }
+
 }
 
 module.exports = DeepLynxTransformer;

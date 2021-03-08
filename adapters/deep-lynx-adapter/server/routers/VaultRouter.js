@@ -58,5 +58,14 @@ vaultRouter.get("/get_file_list/:token/:user_id", async function(req, res) {
     res.send(files);
 });
 
+vaultRouter.get("/get_single_file/:token/:user_id/:file_id", async function(req, res) {
+    let transformer = new VaultTransformer(host);
+    let token = req.params["token"];
+    let user_id = req.params["user_id"];
+    let file_id = req.params["file_id"];
+    let file = await transformer.getSingleFile(token, user_id, file_id);
+    res.send(file);
+});
+
 
 module.exports = vaultRouter;

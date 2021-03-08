@@ -5,7 +5,7 @@ const axios = require('axios');
 class VaultTransformer {
 
     constructor(host, token="", user_id="0") {
-        this.host = host,
+        this.host = `${host}/soap`,
         this.token = token,
         this.user_id = user_id,
         this.data = {}
@@ -13,10 +13,10 @@ class VaultTransformer {
 
     async makeAuthURL(username, password, vault) {
         let response = await axios.get(
-          `${this.host}/soap/filestore/IdentificationService/GetServerIdentities/NONE/NONE`
+          `${this.host}/filestore/IdentificationService/GetServerIdentities/NONE/NONE`
         );
         let dataserver = response.data.RESULT.GetServerIdentitiesResult.attributes.DataServer;
-        let url = `${this.host}/soap/filestore/AuthService/SignIn/NONE/NONE?dataServer=${dataserver}&userName=${username}&userPassword=${password}&knowledgeVault=${vault}`;
+        let url = `${this.host}/filestore/AuthService/SignIn/NONE/NONE?dataServer=${dataserver}&userName=${username}&userPassword=${password}&knowledgeVault=${vault}`;
         return url;
     }
 
@@ -29,7 +29,7 @@ class VaultTransformer {
 
     async getItems(token, user_id) {
         let response = await axios.post(
-            `${this.host}/soap/standard/ItemService/FindItemRevisionsBySearchConditions/${token}/${user_id}`,
+            `${this.host}/standard/ItemService/FindItemRevisionsBySearchConditions/${token}/${user_id}`,
             {
                 "searchConditions": {
                     "PropDefId": "0",
@@ -52,7 +52,8 @@ class VaultTransformer {
                 {
                     "id": item.attributes.MasterId,
                     "name": item.attributes.Title,
-                    "description": item.attributes.Detail
+                    "description": item.attributes.Detail,
+                    "is_file": false
                 }
             );
             this.data.ids.push(item.attributes.Id);
@@ -63,7 +64,7 @@ class VaultTransformer {
 
     async getSingleItemHistory(token, user_id, item_id) {
         let response = await axios.get(
-            `${this.host}/soap/standard/ItemService/GetItemHistoryByItemMasterId/${token}/${user_id}?itemMasterId=${item_id}&historyTyp=All`
+            `${this.host}/standard/ItemService/GetItemHistoryByItemMasterId/${token}/${user_id}?itemMasterId=${item_id}&historyTyp=All`
         );
         this.data.vault_item_revisions = response.data.RESULT.GetItemHistoryByItemMasterIdResult.Item;
 
@@ -72,7 +73,7 @@ class VaultTransformer {
 
     async getSingleItemLatest(token, user_id, item_id) {
         let response = await axios.get(
-            `${this.host}/soap/standard/ItemService/GetLatestItemByItemMasterId/${token}/${user_id}?itemMasterId=${item_id}`
+            `${this.host}/standard/ItemService/GetLatestItemByItemMasterId/${token}/${user_id}?itemMasterId=${item_id}`
         );
         this.data.vault_item_latest = response.data.RESULT.GetLatestItemByItemMasterIdResult.attributes;
 
@@ -81,7 +82,7 @@ class VaultTransformer {
 
     async getFiles(token, user_id, items) {
         let response = await axios.post(
-            `${this.host}/soap/standard/ItemService/GetAttachmentsByItemIds/${token}/${user_id}`,
+            `${this.host}/standard/ItemService/GetAttachmentsByItemIds/${token}/${user_id}`,
             {"itemIds": {"long": items}}
         );
         let item_entries = response.data.RESULT.GetAttachmentsByItemIdsResult.ItemAttmt;
@@ -96,7 +97,7 @@ class VaultTransformer {
         console.log(file_ids);
 
         let file_response = await axios.post(
-            `${this.host}/soap/standard/DocumentService/GetFilesByIds/${token}/${user_id}`,
+            `${this.host}/standard/DocumentService/GetFilesByIds/${token}/${user_id}`,
             {"fileIds": {"long": file_ids}}
         );
         let file_entries = file_response.data.RESULT.GetFilesByIdsResult.File;
@@ -106,10 +107,20 @@ class VaultTransformer {
                 {
                     "id": file_entry.attributes.Id,
                     "name": file_entry.attributes.Name,
-                    "description": "NONE"
+                    "description": "NONE",
+                    "is_file": true
                 }
             );
         });
+
+        return this.data;
+    }
+
+    async getSingleFile(token, user_id, file_id) {
+        let response = await axios.get(
+            `${this.host}/standard/DocumentService/GetFileById/${token}/${user_id}?fileId=${file_id}`
+        )
+        this.data.file_metadata = response.data.RESULT.GetFileByIdResult.attributes;
 
         return this.data;
     }
