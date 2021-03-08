@@ -16,13 +16,13 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
         </v-select>
       </div>
       <div>
-        <DeepLynx @clicked="setDeepLynxURL"/>
+        <DeepLynx @clicked="setDeepLynxURLs"/>
       </div>
     </v-col>
 
     <v-col>
     <template v-if="objects">
-      <Objects :objects="objects" :transformURL="transformURL" :deepLynxURL="deepLynxURL" class="objects"/>
+      <Objects :objects="objects" :transformURL="transformURL" :deepLynxURLs="deepLynxURLs" class="objects"/>
     </template>
     </v-col>
   </v-row>
@@ -60,8 +60,8 @@ const axios = require('axios');
 
         this.transformURL = transform_url;
       },
-      setDeepLynxURL(url) {
-        this.deepLynxURL = url;
+      setDeepLynxURLs(urls) {
+        this.deepLynxURLs = urls;
       }
     },
     data () {
@@ -101,12 +101,12 @@ const axios = require('axios');
             urls: {
               "auth": `${host}/vault/authenticate`,
               "list": `${host}/vault/get_file_list`, // list source GET
-              "transform": `${host}/vault/get_single_item_latest` // transform GET
+              "transform": `${host}/vault/get_single_file` // transform GET
             }
           }
 
         ],
-        deepLynxURL: null,
+        deepLynxURLs: null,
         transformURL: null
       }
 

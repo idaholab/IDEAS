@@ -14,8 +14,8 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
         </td>
         <td>
           <v-btn
-            v-if="deepLynxURL"
-            v-on:click="push(object.id, deepLynxURL)"
+            v-if="deepLynxURLs"
+            v-on:click="push(object, deepLynxURLs)"
             >Push</v-btn
           >
         </td>
@@ -33,11 +33,17 @@ export default {
     props: {
         objects: Array,
         transformURL: String,
-        deepLynxURL: String
+        deepLynxURLs: Object
     },
     methods: {
-        async push(obj_id, dlURL) {
-            let data = await axios.get(`${this.transformURL}/${obj_id}`).then(response => {
+        async push(obj, dlURLs) {
+            let dlURL = dlURLs["json"];
+            if ('is_file' in obj) {
+                if (obj.is_file) {
+                  dlURL = dlURLs["file"];
+                }
+            }
+            let data = await axios.get(`${this.transformURL}/${obj.id}`).then(response => {
                 return [response.data];
             });
             await axios.post(dlURL, data)

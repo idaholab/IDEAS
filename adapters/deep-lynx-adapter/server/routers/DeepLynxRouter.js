@@ -52,8 +52,20 @@ deepLynxRouter.get('/get_datasources/:container_id/:token', async function (req,
 
 deepLynxRouter.post('/manual_import/:container_id/:datasource_id/:token', async function (req, res) {
     let transformer = new DeepLynxTransformer(host, req.params["token"]);
-    
+
     let import_response = await transformer.postManualImport(
+        req.params["container_id"],
+        req.params["datasource_id"],
+        req.body
+    );
+
+    res.send(import_response);
+})
+
+deepLynxRouter.post('/file_import/:container_id/:datasource_id/:token', async function (req, res) {
+    let transformer = new DeepLynxTransformer(host, req.params["token"]);
+
+    let import_response = await transformer.postFileImport(
         req.params["container_id"],
         req.params["datasource_id"],
         req.body

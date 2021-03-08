@@ -88,12 +88,15 @@ const axios = require('axios');
         this.setPostURL();
       },
       unsetPostURL() {
-        this.post_url = null;
-        this.$emit('clicked', this.post_url);
+        this.post_urls = null;
+        this.$emit('clicked', this.post_urls);
       },
       setPostURL() {
-        this.post_url = `${this.url}/deeplynx/manual_import/${this.selected_container_id}/${this.selected_datasource_id}/${this.token}`;
-        this.$emit('clicked', this.post_url);
+        this.post_urls = {
+          "json": `${this.url}/deeplynx/manual_import/${this.selected_container_id}/${this.selected_datasource_id}/${this.token}`,
+          "file": `${this.url}/deeplynx/file_import/${this.selected_container_id}/${this.selected_datasource_id}/${this.token}`
+        };
+        this.$emit('clicked', this.post_urls);
       }
     },
     data: () => ({
@@ -105,7 +108,7 @@ const axios = require('axios');
       datasources: [],
       selected_container_id: null,
       selected_datasource_id: null,
-      post_url: null
+      post_urls: null
     }),
     mounted: function() {
       this.setURL(`http://${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}`);
