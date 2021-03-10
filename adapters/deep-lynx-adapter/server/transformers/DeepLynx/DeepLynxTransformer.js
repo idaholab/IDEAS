@@ -1,6 +1,7 @@
 // Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
 const axios = require('axios');
+const FormData = require('form-data');
 
 class DeepLynxTransformer {
 
@@ -105,16 +106,37 @@ class DeepLynxTransformer {
     }
 
     async postFileImport(container_id, datasource_id, import_data) {
-        this.config.headers["Content-Type"] = 'multipart/form-data; boundary=|||'
+
+        let form_data = new FormData();
+        let base64file = import_data[0].file;
+
+        // let file = this.b64toBlob(base64file);
+        let file = await Buffer.from(base64file, "base64");
+        form_data.append("file", file)
+        //post_data.file = file;
+
+        //console.log(form_data)
+        this.config.headers["Content-Type"] = 'multipart/form-data;boundary=---|||---;'
+        //this.config.headers["Content-Length"] = file.length;
+        //this.config.headers["User-Agent"] = 'NRICTest/0.1';
+        //this.config.headers["Host"] = this.host
+        //this.config.headers["Accept"] = "*/*";
+        //this.config.headers["Accept-Encoding"] = "gzip, deflate, br";
+        //this.config.headers["Connection"] = "keep-alive";
+
         await axios.post(
             `${this.host}/containers/${container_id}/import/datasources/${datasource_id}/files`,
-            import_data,
+            //form_data,
+            form_data,
+            // fd,
             this.config
         ).then(response => {
             this.data = response.data;
+            console.log(this.data)
         }).catch(error => {
             this.data.error = error;
         });
+
         return this.data;
     }
 
