@@ -63,8 +63,8 @@ vaultRouter.get("/get_single_file/:token/:user_id/:file_id", async function(req,
     let token = req.params["token"];
     let user_id = req.params["user_id"];
     let file_id = req.params["file_id"];
-    let file = await transformer.getSingleFile(token, user_id, file_id);
-    res.send(file);
+    let file_data = await transformer.getSingleFile(token, user_id, file_id);
+    res.send(file_data);
 });
 
 

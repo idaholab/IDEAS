@@ -94,7 +94,6 @@ class VaultTransformer {
         });
 
         file_ids = [...new Set(file_ids)];
-        console.log(file_ids);
 
         let file_response = await axios.post(
             `${this.host}/standard/DocumentService/GetFilesByIds/${token}/${user_id}`,
@@ -117,13 +116,40 @@ class VaultTransformer {
     }
 
     async getSingleFile(token, user_id, file_id) {
+        // file metadata
         let response = await axios.get(
             `${this.host}/standard/DocumentService/GetFileById/${token}/${user_id}?fileId=${file_id}`
         )
-        this.data.file_metadata = response.data.RESULT.GetFileByIdResult.attributes;
+        this.data.metadata = response.data.RESULT.GetFileByIdResult.attributes;
+
+        // file download ticket
+        response = await axios.post(
+            `${this.host}/standard/DocumentService/GetDownloadTicketsByFileIds/${token}/${user_id}`,
+            {
+                "fileIds": {"long": [file_id]}
+            }
+        );
+
+        let download_ticket_array = response.data.RESULT.GetDownloadTicketsByFileIdsResult.ByteArray
+        let download_ticket = download_ticket_array[0]["Bytes"];
+
+        // file_download
+        response = await axios.post(
+            `${this.host}/filestore/FileStoreService/DownloadFilePart/${token}/${user_id}`,
+            {
+                "downloadTicket": download_ticket,
+                "firstByte": 0,
+                "lastByte": 52418559,
+                "allowSync": true
+            }
+        )
+
+        this.data.file = response.data.RESULT.DownloadFilePartResult;
 
         return this.data;
     }
+
+
 
 
 }
