@@ -121,7 +121,6 @@ class VaultTransformer {
             `${this.host}/standard/DocumentService/GetFileById/${token}/${user_id}?fileId=${file_id}`
         )
         this.data.metadata = response.data.RESULT.GetFileByIdResult.attributes;
-        console.log(this.data.metadata)
 
         // file download ticket
         response = await axios.post(
@@ -130,7 +129,6 @@ class VaultTransformer {
                 "fileIds": {"long": [file_id]}
             }
         );
-
         let download_ticket_array = response.data.RESULT.GetDownloadTicketsByFileIdsResult.ByteArray
         let download_ticket = download_ticket_array[0]["Bytes"];
 
