@@ -71,13 +71,11 @@ deepLynxRouter.post('/file_import/:container_id/:datasource_id/:token', async fu
         req.body
     );
 
-    console.log(file_import_receipt)
-
     let metadata_import_receipt = await transformer.postMetadataImport(
         req.params["container_id"],
         req.params["datasource_id"],
         req.body,
-        file_import_receipt
+        file_import_receipt[0]
     );
 
     res.send({"file_import_receipt": file_import_receipt, "metadata_import_receipt": metadata_import_receipt});
