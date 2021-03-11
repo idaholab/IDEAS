@@ -1,6 +1,7 @@
 // Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
 const axios = require('axios');
+const FormData = require('form-data');
 
 class DeepLynxTransformer {
 
@@ -100,6 +101,47 @@ class DeepLynxTransformer {
             this.data = response.data;
         }).catch(error => {
             this.data.error = error;
+        });
+        return this.data;
+    }
+
+    async postFileImport(container_id, datasource_id, import_data) {
+        let metadata = import_data[0].metadata;
+        let base64file = import_data[0].file;
+        let file = await Buffer.from(base64file, "base64");
+
+        let form_data = new FormData();
+        form_data.append("file", file, {filename: metadata.Name});
+
+        let temp_config = {};
+        temp_config.headers = {};
+        temp_config.headers["Authorization"] = this.config.headers["Authorization"];
+        temp_config.headers["Content-Type"] = 'multipart/form-data;boundary=' + form_data["_boundary"];
+
+        await axios.post(
+            `${this.host}/containers/${container_id}/import/datasources/${datasource_id}/files`,
+            form_data,
+            temp_config
+        ).then(response => {
+            this.data = response.data;
+        }).catch(error => {
+            this.data.error = error;
+            console.log(error);
+        });
+        return this.data;
+    }
+
+    async postMetadataImport(container_id, datasource_id, import_data, file_import_receipt) {
+        let metadata = import_data[0].metadata;
+        await axios.post(
+            `${this.host}/containers/${container_id}/import/datasources/${datasource_id}/imports`,
+            [{'metadata': metadata, 'file_import_receipt': file_import_receipt}],
+            this.config
+        ).then(response => {
+            this.data = response.data;
+        }).catch(error => {
+            this.data.error = error;
+            console.log(error);
         });
         return this.data;
     }
