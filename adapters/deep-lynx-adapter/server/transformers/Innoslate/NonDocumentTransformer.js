@@ -1,8 +1,6 @@
 // Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
-const Project = require('./models/Project');
 const Entity = require('./models/Entity');
-const Organization = require('./models/Organization');
 const Schema = require('./models/Schema');
 const axios = require('axios');
 
