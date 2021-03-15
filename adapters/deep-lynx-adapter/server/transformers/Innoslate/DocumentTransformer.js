@@ -16,9 +16,9 @@ class DocumentTransformer {
         }
     }
 
-    async extract(proj) {
-        await this.getProject(proj);
-        await this. getDocuments();
+    async extract(projId) {
+        await this.getProject(projId);
+        await this.getDocuments();
         await this.getEntities();
         
         return this.data;
@@ -26,50 +26,32 @@ class DocumentTransformer {
 
     async getProject(projId) {
     /*
-        Extract projects from the Innoslate API. 
-
-        If there is only one project, the response.data object is not iterable and must be handled more verbosely.
+        GET a project from the Innoslate API. 
     */
-        await Promise.all([axios.get(`${this.host}/o/nric/p/${projId}`, 
+        await axios.get(`${this.host}/o/nric/p/${projId}`, 
         {
             headers: {'Authorization': `basic ${this.key}`}
         })
-        ]).then(responses => {
-            responses.forEach(response => {
-                try {
-                    response.data.forEach(project => {
-                        this.data.projects.push(
-                            new Project(
-                                project.id,
-                                project.name,
-                                project.description
-                            )
-                        )
-                    });
-                } 
-                catch (error) {
-                    if (error instanceof TypeError) {
-                        let id = response.data.id;
-                        let name = response.data.name;
-                        let description = response.data.description;
-                        this.data.projects.push(new Project(
-                            id,
-                            name,
-                            description
-                        ));
-                    }
-                    else {
-                        console.log(error);
-                    }
-                }
-            });
+        .then(response => {
+            try {
+                this.data.projects.push(
+                    new Project(
+                        response.data.id,
+                        response.data.name,
+                        response.data.description
+                    )
+                );
+            } 
+            catch (error) {
+                console.log(error);
+            }
         });
     }
 
     async getDocuments() {
     /*
-        For all projects in the data array, generate an array of promises for its documents.
-        For each project's documents in the response, push the document to that project's documents array.
+        Generate an array of promises for a project's documents.
+        Push the documents to the project's documents array.
 
         If there is only one document, the response.data object is not iterable and must be handled more verbosely.
     */
@@ -85,8 +67,7 @@ class DocumentTransformer {
                 headers: {
                     'Authorization': `basic ${this.key}`
                 }
-            }    
-            );
+            });
         });
 
         await Promise.all(promises).then(responses => {
