@@ -73,11 +73,19 @@ const axios = require('axios');
         user_id: null,
         sources: [
           {
-            name: "Innoslate",
+            name: "Innoslate (Document Data)",
             urls: {
               "auth": null,
               "list": `${host}/innoslate`, // list source GET
               "transform": `${host}/innoslate/document-data` // transform GET
+            }
+          },
+          {
+            name: "Innoslate (Non-Document Data)",
+            urls: {
+              "auth": null,
+              "list": `${host}/innoslate`, // list source GET
+              "transform": `${host}/innoslate/non-document-data` // transform GET
             }
           },
           {
