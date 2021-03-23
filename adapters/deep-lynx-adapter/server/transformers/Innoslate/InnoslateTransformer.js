@@ -33,22 +33,19 @@ class InnoslateTransformer {
 
             If there is only one project, the response.data object is not iterable and must be handled more verbosely.
         */
-        await Promise.all([axios.get(`${this.host}/o/nric/p/`,
+        await axios.get(`${this.host}/o/nric/p/`,
         {
             headers: {'Authorization': `basic ${this.key}`}
-        })
-        ]).then(responses => {
-            responses.forEach(response => {
+        }).then(response => {
+            response.data.forEach(project => {
                 try {
-                    response.data.forEach(project => {
-                        this.data.objects.push(
-                            new Project(
-                                project.id,
-                                project.name,
-                                project.description
-                            )
+                    this.data.objects.push(
+                        new Project(
+                            project.id,
+                            project.name,
+                            project.description
                         )
-                    });
+                    )
                 }
                 catch (error) {
                     if (error instanceof TypeError) {
