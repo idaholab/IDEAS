@@ -5,9 +5,7 @@ class Project {
         this.id = String(id),
         this.name = name,
         this.description = description,
-        this.documents = [],
-        this.entities = [],
-        this.organizations = []
+        this.documents = []
     }
 }
 
