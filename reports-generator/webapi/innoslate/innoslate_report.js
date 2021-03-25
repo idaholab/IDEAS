@@ -7,36 +7,37 @@ const tmp = require('tmp');
 const https = require('https');
 const docx = require('docx');
 const sizeOf = require('image-size');
+const mime = require('mime-types');
 
 
 const adapters_path = process.env.ADAPTERS_PATH;
 const static_assets_path = process.env.STATIC_ASSETS_PATH;
 
 const {
-  Document, 
-  Packer, 
-  Paragraph, 
-  TextRun, 
-  Media, 
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  Media,
   HeadingLevel,
-  HorizontalPositionRelativeFrom, 
+  HorizontalPositionRelativeFrom,
   VerticalPositionRelativeFrom,
-  HorizontalPositionAlign, 
+  HorizontalPositionAlign,
   VerticalPositionAlign,
-  PageOrientation, 
-  Header, 
-  Footer, 
-  AlignmentType, 
-  VerticalAlign, 
+  PageOrientation,
+  Header,
+  Footer,
+  AlignmentType,
+  VerticalAlign,
   PageNumber,
-  Table, 
-  TableRow, 
-  TableCell, 
-  BorderStyle, 
+  Table,
+  TableRow,
+  TableCell,
+  BorderStyle,
   TableOfContents,
   TableAnchorType,
-  WidthType, 
-  TableLayoutType, 
+  WidthType,
+  TableLayoutType,
   OverlapType
 } = docx
 
@@ -112,7 +113,10 @@ class InnoslateReport {
       { headers: this.headers, responseType: "stream"}
     )
 
-    const writer = fs.createWriteStream(locationIn)
+    let content_type = response.headers['content-type']
+    let file_extension = "." + mime.extension(content_type)
+
+    const writer = fs.createWriteStream(locationIn + file_extension)
 
     response.data.pipe(writer)
 
@@ -150,7 +154,9 @@ class InnoslateReport {
           fileName = splitString[0]
         }
         fileName = fileName.replace('/serve', '');
-        let fileLoc = path.join(this.tempDir.name, fileName + ".png")
+
+        //let fileLoc = path.join(this.tempDir.name, fileName + ".png")
+        let fileLoc = path.join(this.tempDir.name, fileName)
         let tempProm = this.downloadImage(address, fileLoc)
         this.imagePromises.push(tempProm)
       }
@@ -356,8 +362,19 @@ class InnoslateReport {
         }
         fileName = fileName.replace('/serve', '');
 
-        let fileLoc = path.join(this.tempDir.name, fileName + ".png")
-        let dimensions = sizeOf(fileLoc)
+        let fileLoc = ""
+
+        let files = fs.readdirSync(this.tempDir.name)
+
+        files.forEach( file => {
+          if (file.includes(fileName)) {
+            fileLoc = file
+          }
+        })
+
+        let fileLocFull = path.join(this.tempDir.name,  fileLoc)
+
+        let dimensions = sizeOf(fileLocFull)
         let width = dimensions.width
         let height = dimensions.height
 
@@ -368,7 +385,7 @@ class InnoslateReport {
         }
 
         let tempImg = Media.addImage(
-          this.doc, fs.readFileSync(fileLoc), width, height,
+          this.doc, fs.readFileSync(fileLocFull), width, height,
         )
 
         textRunsOut.push(tempImg)
@@ -1663,7 +1680,7 @@ class InnoslateReport {
     //  file
 
     axios.all(this.responses['data']).then(axios.spread((...responses) => {
-    
+
       for(var i=0; i<this.responses['keys'].length; i++) {
         responses[0].data.displayName = user;
         this.data[this.responses['keys'][i]] = responses[i].data
