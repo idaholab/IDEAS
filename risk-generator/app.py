@@ -6,7 +6,8 @@ import requests
 from dotenv import load_dotenv
 import os
 load_dotenv()
-host = os.environ.get("INNOSLATE_HOST")
+host=os.environ.get("HOST")
+data_host = os.environ.get("INNOSLATE_HOST")
 key = os.environ.get("INNOSLATE_KEY")
 
 # Helpers
@@ -27,7 +28,7 @@ def risks(projectId):
         Returns the view in /templates/risks.html
     """
     r = requests.get(
-        host+"/o/nric/entities", 
+        data_host+"/o/nric/entities", 
         params={"query": "class:Risk", "projectId": projectId}, 
         headers={
             "Authorization": f'basic {key}',
@@ -62,4 +63,4 @@ def generate():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+    app.run(host=host)
