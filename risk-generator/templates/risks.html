@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NRIC Risk Assessment Viewer</title>
+</head>
+<body>
+    {{data}}
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <p>Risk ID: {{data.id}}</p>
+    <p>Revision: {{data.version}}</p>
+    <p>Last Date Evaluated: {{data.modified}}</p>
+    <p>Status: {{data.attrs['51']}}</p>
+    <p>Schedule ID: </p>
+    <p>Watch List: </p>
+    <p>Risk Owner: {{data.attrs['93']}} </p>
+    <p>Risk Title: {{data.name}} </p>
+    <p>Project: {{data.projectId}}</p>
+    <p>Risk Statement: {{data.attrs['48']}} </p>
+    <p>Risk Assumptions: </p>
+    <p>
+        Type: 
+        <select name="type" id="type">
+            {% for type in data.type  %}
+            <option value={{type}}>{{type}}</option>
+            {% endfor %}
+        </select>
+    
+    </p> 
+    <p>
+        Risk Breakdown Structure (RBS):
+        <select name="risk_breakdown_structure" id="risk_breakdown_structure">
+            {% for rbs in data.risk_breakdown_structure  %}
+            <option value={{rbs}}>{{rbs}}</option>
+            {% endfor %}
+        </select> 
+    </p>
+    <p>
+        Risk Sub-Category: 
+        <select name="Risk Sub-Category" id="risk_sub_category">
+            {% for rsc in data.risk_sub_category %}
+            <option value={{rsc}}>{{rsc}}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <p>Date Risk Identified: </p>
+    <p>Date Risk Opened: {{data.created}}</p>
+    <p>Date Risk Closes: </p>
+    <p>
+        Impacted WBS Element(s): 
+        <select name="Impacted WBS Elements(s)" id="impacted_wbs_elements">
+            {% for wbs in data.impacted_wbs_elements %}
+            <option value={{wbs}}>{{wbs}}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <p>Secondary Risk(s): </p>
+    <p>Initial Risk Probability: {{data.attrs['49']}}</p>
+    <p>Trigger Event: {{data.attrs['90']}}</p>
+    <p>
+        Residual Risk Probability: 
+        <select name="Residual Risk Probability" id="residual_risk_probability">
+            {% for rrp in data.residual_risk_probability %}
+            <option value={{rrp}}>{{rrp}}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <p>
+        Initial Consequence: 
+        <select name="Initial Consequence" id="initial_consequence">
+            {% for ic in data.initial_consequence %}
+            <option value={{ic}}>{{ic}}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <p>Handling Strategy: {{data.attrs['91']}}</p>
+    <p>Residual Consequence: </p>
+    <p>Initial Risk Rating: </p>
+    <p>Handling Strategy Implementation Cost (SK): </p>
+    <p>Residual Risk Rating: </p>
+    <p>Initial Impact ($):  </p>
+    <p>Residual Impact ($): </p>
+    <p>Initial Sched. Impact (Work Days): </p>
+    <p>Residual Sched. Impact (Work Days): </p>
+    <p>Basis of Residual Impact: </p>
+    <p>Handling Actions (Include Due Date): {{data.attrs['92']}}</p>
+    <p>Success Metric for Overall Handling Strategy: </p>
+    <p>Status Comments: </p>
+    <p>Historical Comments and Notes: </p>
+</body>
+</html>
