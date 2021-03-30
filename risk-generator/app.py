@@ -10,6 +10,11 @@ host=os.environ.get("HOST")
 data_host = os.environ.get("INNOSLATE_HOST")
 key = os.environ.get("INNOSLATE_KEY")
 
+# Excel Writer
+import xlsxwriter
+workbook = xlsxwriter.Workbook('risk-assessment-form.xlsx')
+
+
 # Helpers
 from helpers.risks import parse_risks
 from helpers.enumerators import risk_enumerators
@@ -57,7 +62,7 @@ def generate():
 
     risk = parse_risks(data)
 
-    build_xls(risk)
+    build_xls(workbook, risk)
 
     return "OK"
 
