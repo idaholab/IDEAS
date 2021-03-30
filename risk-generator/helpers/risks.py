@@ -9,13 +9,16 @@ def parse_risks(data):
     """
 
     # Time Conversions
+    last_date_evaluated_timestamp = int(data['modified'] / 1000)
+    last_date_evaluated = datetime.fromtimestamp(last_date_evaluated_timestamp)
+
     date_risk_opened_timestamp = int(data['created'] / 1000)
     date_risk_opened = datetime.fromtimestamp(date_risk_opened_timestamp)
 
     risk = {
         'risk_id': data['id'],
         'revision': data['version'],
-        'last_date_evaluated': data['modified'],
+        'last_date_evaluated': last_date_evaluated,
         'status': data['attrs']['51'],
         'schedule_id': "",
         'watch_list': "",
@@ -32,18 +35,18 @@ def parse_risks(data):
         'date_risk_closes': "",
         'impacted_wbs_elements': data['impacted_wbs_elements'],
         'secondary_risks': "",
-        'initial_risk_probability': data['initial_risk_probability'],
+        'initial_risk_likelihood': data['initial_risk_likelihood'],
         'trigger_event': data['attrs']['90'],
-        'residual_risk_probability': data['residual_risk_probability'],
+        'residual_risk_likelihood': data['residual_risk_likelihood'],
         'initial_consequence': data['initial_consequence'],
-        'handling_stragegy': data['attrs']['91'],
+        'handling_strategy': data['attrs']['91'],
         'residual_consequence': "",
         'initial_risk_rating': "",
         'handling_strategy_implementation_cost': "",
         'residual_risk_rating': "",
         'initial_impact': "",
         'residual_impact': "",
-        'intial_schedule_impact': "",
+        'initial_schedule_impact': "",
         'residual_schedule_impact': "",
         'basis_of_residual_impact': "",
         'handling_actions': data['attrs']['92'],
