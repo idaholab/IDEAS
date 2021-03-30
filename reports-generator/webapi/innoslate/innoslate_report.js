@@ -38,7 +38,8 @@ const {
   TableAnchorType,
   WidthType,
   TableLayoutType,
-  OverlapType
+  OverlapType,
+  SectionType
 } = docx
 
 
@@ -84,12 +85,15 @@ class InnoslateReport {
     this.enclosingTags = ["em", "strong", "u", "del", "sup", "sub"]
     this.requirementId = 0
     this.rationaleId = 0
+    this.revisionId = 0
     this.tempDir = ""
     this.imageNames = []
     this.imagePromises = []
     this.finalPromise = null
     this.textRuns = []
     this.imgMaxWidth = (12240 - (this.marginSize * 2)) / 15
+    this.indentSections = true
+    this.revisionNumber = ""
   }
 
   createTempDir() {
@@ -175,8 +179,14 @@ class InnoslateReport {
     })
     rationale_obj = rationale_obj[0]
 
+    let revision_obj = this.data['schema']['properties'].filter(obj => {
+      return obj.name == "Revision Number"
+    })
+    revision_obj = revision_obj[0]
+
     this.requirementId = requirement_obj.id
     this.rationaleId = rationale_obj.id
+    this.revisionId = revision_obj.id
   }
 
   divideAndAnnotate(chunks) {
@@ -617,6 +627,12 @@ class InnoslateReport {
                   "</p>"
               }
             }
+
+            if (this.revisionId.toString() in temp_obj['attrs']) {
+              if (temp_obj['attrs'][this.revisionId.toString()] != "") {
+                this.revisionNumber = temp_obj['attrs'][this.revisionId.toString()]
+              }
+            }
           }
 
           // match heading level styling based on recursion level
@@ -624,7 +640,12 @@ class InnoslateReport {
           let indent = (5 - 1) * 360
           if (recursionCounter < 5) {
             heading = this.headingMap[recursionCounter]
-            indent = (recursionCounter - 1) * 360
+            if (this.indentSections) {
+              indent = (recursionCounter - 1) * 360
+            } else {
+              indent = 0
+            }
+
           }
 
           let pageBreak = false
@@ -765,14 +786,14 @@ class InnoslateReport {
     const hfImage = Media.addImage(this.doc,
       fs.readFileSync(`${static_assets_path}/NRIC/header.jpg`),
       //820.8, 1062.72, {
-      816, 1000, {
+      816, 1056, {
         floating: {
           horizontalPosition: {
             relative: HorizontalPositionRelativeFrom.LEFT_MARGIN,
             offset: 0},
           verticalPosition: {
             relative: VerticalPositionRelativeFrom.TOP_MARGIN,
-            offset: 340800},
+            offset: -225000},
           behindDocument: true
         }
       }
@@ -793,70 +814,13 @@ class InnoslateReport {
             splash
           ]
         }),
-        new Table({ // Floating table for placing document title
-          width: { size: 6000, type: WidthType.DXA },
-          layout: TableLayoutType.FIXED,
-          float: {
-            //verticalAnchor: TableAnchorType.MARGIN,
-            absoluteVerticalPosition: 4400,
-            absoluteHorizontalPosition: 3000,
-            overlap: OverlapType.OVERLAP
-          },
-          rows: [
-            new TableRow({ children: [ new TableCell({
-                  children: [
-                    new Paragraph({
-                      heading: HeadingLevel.TITLE,
-                      children: [ new TextRun({
-                        text: this.title,
-                        size: 40,
-                        color: "006C94"
-                      }) ]
-                    })
-                  ],
-                  borders: {
-                    top: { style: BorderStyle.NIL},
-                    bottom: { style: BorderStyle.NIL},
-                    left: { style: BorderStyle.NIL},
-                    right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }), // end title table
-        new Table({ // Date table
-          width: { size: 6000, type: WidthType.DXA },
-          layout: TableLayoutType.FIXED,
-          float: {
-            verticalAnchor: TableAnchorType.MARGIN,
-            absoluteVerticalPosition: 5600,
-            absoluteHorizontalPosition: 3750,
-            overlap: OverlapType.OVERLAP
-          },
-          rows: [
-            new TableRow({ children: [ new TableCell({
-                  children: [
-                    new Paragraph({
-                      //heading: HeadingLevel.HEADING_1,
-                      children: [
-                        new TextRun({
-                          text: this.date,
-                          size: 26,
-                          color: "FFFFFF",
-                          allCaps: true
-                        })
-                      ]
-                    })
-                  ],
-                  borders: {
-                    top: { style: BorderStyle.NIL},
-                    bottom: { style: BorderStyle.NIL},
-                    left: { style: BorderStyle.NIL},
-                    right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }), // end date table
         new Table({ // Artifact table
-          width: { size: 1000, type: WidthType.DXA },
+          width: { size: 5000, type: WidthType.DXA },
           layout: TableLayoutType.FIXED,
           float: {
             verticalAnchor: TableAnchorType.RIGHT_MARGIN,
-            absoluteVerticalPosition: 1000,
-            absoluteHorizontalPosition: 8000,
+            absoluteVerticalPosition: 300,
+            absoluteHorizontalPosition: 5900,
             overlap: OverlapType.OVERLAP
           },
           rows: [
@@ -864,6 +828,7 @@ class InnoslateReport {
                   children: [
                     new Paragraph({
                       //heading: HeadingLevel.HEADING_1,
+                      alignment: AlignmentType.RIGHT,
                       children: [
                         new TextRun({
                           text: this.artifactId,
@@ -879,7 +844,132 @@ class InnoslateReport {
                     bottom: { style: BorderStyle.NIL},
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
+                  } }) ] }),
+            new TableRow({ children: [ new TableCell({
+                  children: [
+                    new Paragraph({
+                      //heading: HeadingLevel.HEADING_1,
+                      alignment: AlignmentType.RIGHT,
+                      children: [
+                        new TextRun({
+                          text: "Revision: " + this.revisionNumber,
+                          size: 20,
+                          color: "006C94"
+                        })
+                      ]
+                    })
+                  ],
+                  borders: {
+                    top: { style: BorderStyle.NIL},
+                    bottom: { style: BorderStyle.NIL},
+                    left: { style: BorderStyle.NIL},
+                    right: { style: BorderStyle.NIL}
+                  } }) ] }) ] }), // end date table
+        new Table({ // Title table
+          width: { size: 7000, type: WidthType.DXA },
+          layout: TableLayoutType.FIXED,
+          float: {
+            absoluteVerticalPosition: 3600,
+            absoluteHorizontalPosition: 3750,
+            overlap: OverlapType.OVERLAP
+          },
+          rows: [
+            new TableRow({ children: [ new TableCell({
+                  children: [
+                    new Paragraph({
+                      heading: HeadingLevel.TITLE,
+                      //alignment: AlignmentType.LEFT,
+                      children: [ new TextRun({
+                        text: this.title,
+                        size: 72,
+                        color: "006C94"
+                      }) ]
+                    })
+                  ],
+                  borders: {
+                    top: { style: BorderStyle.NIL},
+                    bottom: { style: BorderStyle.NIL},
+                    left: { style: BorderStyle.NIL},
+                    right: { style: BorderStyle.NIL}
+                  } }) ] }) ] }), // end title table
+        new Table({ // Date table
+          width: { size: 5000, type: WidthType.DXA },
+          layout: TableLayoutType.FIXED,
+          float: {
+            verticalAnchor: TableAnchorType.MARGIN,
+            absoluteVerticalPosition: 5600,
+            absoluteHorizontalPosition: 3750,
+            overlap: OverlapType.OVERLAP
+          },
+          rows: [
+            new TableRow({ children: [ new TableCell({
+                  children: [
+                    new Paragraph({
+                      //heading: HeadingLevel.HEADING_1,
+                      children: [
+                        new TextRun({
+                          text: this.date,
+                          size: 24,
+                          color: "FFFFFF",
+                          allCaps: true
+                        })
+                      ]
+                    })
+                  ],
+                  borders: {
+                    top: { style: BorderStyle.NIL},
+                    bottom: { style: BorderStyle.NIL},
+                    left: { style: BorderStyle.NIL},
+                    right: { style: BorderStyle.NIL}
+                  } }) ] }) ] }), // end date table
+        new Table({ // Author table
+          width: { size: 6000, type: WidthType.DXA },
+          layout: TableLayoutType.FIXED,
+          float: {
+            verticalAnchor: TableAnchorType.MARGIN,
+            absoluteVerticalPosition: 6500,
+            absoluteHorizontalPosition: 3750,
+            overlap: OverlapType.OVERLAP
+          },
+          rows: [
+            new TableRow({ children: [ new TableCell({
+                  children: [
+                    new Paragraph({
+                      //heading: HeadingLevel.HEADING_1,
+                      children: [
+                        new TextRun({
+                          text: this.author,
+                          size: 28,
+                          color: "006C94"
+                        })
+                      ]
+                    })
+                  ],
+                  borders: {
+                    top: { style: BorderStyle.NIL},
+                    bottom: { style: BorderStyle.NIL},
+                    left: { style: BorderStyle.NIL},
+                    right: { style: BorderStyle.NIL}
+                  } }) ] }),
+            new TableRow({ children: [ new TableCell({
+                  children: [
+                    new Paragraph({
+                      //heading: HeadingLevel.HEADING_1,
+                      children: [
+                        new TextRun({
+                          text: "Author info",
+                          size: 24,
+                        })
+                      ]
+                    })
+                  ],
+                  borders: {
+                    top: { style: BorderStyle.NIL},
+                    bottom: { style: BorderStyle.NIL},
+                    left: { style: BorderStyle.NIL},
+                    right: { style: BorderStyle.NIL}
                   } }) ] }) ] }) // end date table
+
       ]
     })
 
@@ -900,6 +990,33 @@ class InnoslateReport {
             disclaimer
           ]
         })]
+    })
+
+    // Empty page
+    this.doc.addSection({
+      size: {width: 12180, height: 15075, orientation: PageOrientation.PORTRAIT},
+      // size: {width: 12240, height: 15838, orientation: PageOrientation.PORTRAIT},
+      //type: SectionType.NEXT_PAGE,
+      margins: {
+        top: this.marginSize,
+        right: this.marginSize,
+        bottom: this.marginSize,
+        left: this.marginSize
+      },
+      children: [
+        new Paragraph({
+          //heading: HeadingLevel.HEADING_1,
+          alignment: AlignmentType.CENTER,
+          children: [
+            new TextRun({
+              text: "Page intentionally left blank",
+              italics: true,
+              size: 28,
+              color: "03BAB4"
+            })
+          ]
+        })
+      ]
     })
 
     // Table of Contents
@@ -930,7 +1047,7 @@ class InnoslateReport {
 
     // Subsequent pages
     this.doc.addSection({
-      size: {width: 12240, height: 15838, orientation: PageOrientation.PORTRAIT},
+      size: {width: 12180, height: 15075, orientation: PageOrientation.PORTRAIT},
       margins: {
         top: this.marginSize,
         right: this.marginSize,
@@ -942,11 +1059,11 @@ class InnoslateReport {
           children: [
             new Paragraph(hfImage),
             new Table({
-              width: { size: 12240 - (this.marginSize * 2), type: WidthType.DXA },
+              width: { size: 12180 - (this.marginSize * 2), type: WidthType.DXA },
               layout: TableLayoutType.FIXED,
               float: {
-                verticalAnchor: TableAnchorType.MARGIN,
-                absoluteVerticalPosition: -480,
+                //verticalAnchor: TableAnchorType.TOP_MARGIN,
+                absoluteVerticalPosition: -475,
                 overlap: OverlapType.OVERLAP
               },
               rows: [
@@ -955,7 +1072,9 @@ class InnoslateReport {
                         new Paragraph({
                           children: [
                             new TextRun({
-                              text: this.title
+                              text: this.title,
+                              color: "7F7F7F",
+                              size: 22
                             })
                           ]
                         })
@@ -973,11 +1092,11 @@ class InnoslateReport {
         default: new Footer({
           children: [
             new Table({
-              width: { size: 12240 - (this.marginSize * 2), type: WidthType.DXA},
+              width: { size: 12180 - (this.marginSize * 2), type: WidthType.DXA},
               layout: TableLayoutType.FIXED,
               float: {
                 verticalAnchor: TableAnchorType.MARGIN,
-                absoluteVerticalPosition: 14360,
+                absoluteVerticalPosition: 13900,
                 overlap: OverlapType.OVERLAP
               },
               rows: [
@@ -989,7 +1108,9 @@ class InnoslateReport {
                           alignment: AlignmentType.LEFT,
                           children: [
                             new TextRun({
-                              text: this.author
+                              text: this.artifactId,
+                              color: "FFFFFF",
+                              size: 22
                             })
                           ]
                         })
@@ -1007,7 +1128,9 @@ class InnoslateReport {
                           alignment: AlignmentType.CENTER,
                           children: [
                             new TextRun({
-                              text: this.artifactId
+                              text: "OFFICIAL USE ONLY",
+                              color: "FFFFFF",
+                              size: 22
                             })
                           ]
                         })
@@ -1025,7 +1148,11 @@ class InnoslateReport {
                           alignment: AlignmentType.RIGHT,
                           children: [
                             new TextRun({
-                              children: [ this.date, "\t\t", PageNumber.CURRENT]
+                              children: [
+                                PageNumber.CURRENT
+                              ],
+                              color: "FFFFFF",
+                              size: 22
                             })
                           ]
                         })
@@ -1121,44 +1248,7 @@ class InnoslateReport {
                     bottom: { style: BorderStyle.NIL},
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }), // end title table
-        // new Table({ // Floating table for placing author and document info
-        //   width: { size: 8500, type: WidthType.DXA },
-        //   layout: TableLayoutType.FIXED,
-        //   float: {
-        //     verticalAnchor: TableAnchorType.MARGIN,
-        //     absoluteVerticalPosition: 6500,
-        //     overlap: OverlapType.OVERLAP
-        //   },
-        //   rows: [
-        //     new TableRow({ children: [ new TableCell({
-        //           children: [
-        //             new Paragraph({
-        //               //heading: HeadingLevel.HEADING_1,
-        //               children: [
-        //                 new TextRun({
-        //                   text: this.author,
-        //                   size: 48
-        //                 })
-        //               ],
-        //               spacing: {after: 240},
-        //             }),
-        //             new Paragraph({
-        //               //heading: HeadingLevel.HEADING_3,
-        //               children: [
-        //                 new TextRun({
-        //                   text: "National Reactor Innovation Center | " + this.artifactId + " | " + this.date,
-        //                   size: 36
-        //                 })
-        //               ]
-        //             })
-        //           ],
-        //           borders: {
-        //             top: { style: BorderStyle.NIL},
-        //             bottom: { style: BorderStyle.NIL},
-        //             left: { style: BorderStyle.NIL},
-        //             right: { style: BorderStyle.NIL}
-        //           } }) ] }) ] }) // end author table
+                  } }) ] }) ] }) // end title table
       ]
     })
 
@@ -1751,11 +1841,15 @@ class InnoslateReport {
           this.gatherSchemaIds()
 
           axios.all(this.imagePromises).then(() => {
-            this.recurseCompile(this.reportId, 0)
+
             if (this.reportType=="NRIC") {
+              this.indentSections = false
+              this.recurseCompile(this.reportId, 0)
               this.nricReport()
               this.writeReport()
             } else {
+              this.indentSections = true
+              this.recurseCompile(this.reportId, 0)
               this.mfcReport()
               this.writeReport()
             }

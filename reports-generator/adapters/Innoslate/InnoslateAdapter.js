@@ -27,7 +27,7 @@ class InnoslateAdapter {
     }
 
     async getObjects() {
-        
+
         await Promise.all([axios.get(`${this.host}:${this.port}/o/nric/p/`)]).then(responses => {
             responses.forEach(response => {
                 try {
@@ -40,7 +40,7 @@ class InnoslateAdapter {
                             )
                         )
                     });
-                } 
+                }
                 catch (error) {
                     if (error instanceof TypeError) {
                         let id = response.data.id;
@@ -64,7 +64,7 @@ class InnoslateAdapter {
 
     async getProject(projId) {
     /*
-        Extract projects from the Innoslate API. 
+        Extract projects from the Innoslate API.
 
         If there is only one project, the response.data object is not iterable and must be handled more verbosely.
     */
@@ -80,7 +80,7 @@ class InnoslateAdapter {
                             )
                         )
                     });
-                } 
+                }
                 catch (error) {
                     if (error instanceof TypeError) {
                         let id = response.data.id;
@@ -126,8 +126,9 @@ class InnoslateAdapter {
                                 document.modifiedBy,
                                 document.version
                             ));
+                        console.log(document.version)
                         })
-                    } 
+                    }
                 catch (error) {
                     if (error instanceof TypeError) {
                         let id = response.data.id;
@@ -162,8 +163,8 @@ class InnoslateAdapter {
     /*
         For all projects in the data array, generate a nested array of promises for each of its document's entities.
         For each nested array, return a single promise.
-        When the nested promises resolve, push the results to each project's document's entities array. 
-        
+        When the nested promises resolve, push the results to each project's document's entities array.
+
         If there is only one entity, the response.data object is not iterable and must be handled more verbosely.
     */
 
@@ -200,7 +201,7 @@ class InnoslateAdapter {
                                 )
                             );
                         })
-                    } 
+                    }
                     catch (error) {
                         if (error instanceof TypeError) {
                             let id = response.data.id;
@@ -216,8 +217,8 @@ class InnoslateAdapter {
                             let rationale = response.data.rationale;
                             let rels = response.data.rels;
                             let version = response.data.version;
-        
-        
+
+
                             this.data.projects[project].documents[document].entities.push(
                                 new Entity(
                                     id,
@@ -237,7 +238,7 @@ class InnoslateAdapter {
                         } else {
                             console.log(error);
                         }
-                    } 
+                    }
                 });
             });
         });
