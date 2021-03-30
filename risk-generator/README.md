@@ -17,5 +17,6 @@ If you don't have `virtualenv` you will need to `pip install virtualenv`.
 1. `cd risk-generator` then `docker-compose build` and `docker-compose up`.
 2. Navigate to localhost:5000/entities/`projID` to view an Innoslate project's risk data collected and built from the API. 
 
-Currently only projects with risk entities will return data.
-`risk-assessment-form.xlsx` is generated in the working directory.
+## .xlsx
+Currently only projects with risk entities will return data. Development project is #49.
+The risk assessment form is named `risk-assessment-form.xlsx` and generated in the working directory.
