@@ -70,7 +70,8 @@ class InnoslateReport {
     this.title = "None"
     this.artifactId = "None"
     this.author = "Anonymous"
-    this.date = "00/00/0000"
+    this.int_date = "00/00/0000"
+    this.string_date = "Month Year"
     this.data = {}
     this.children = []
     this.recursionLimit = 25
@@ -688,14 +689,17 @@ class InnoslateReport {
 
             //set date
 
-            const monthNames = ["January", "February", "March", "April", "May", "June",
+            const month_names = ["January", "February", "March", "April", "May", "June",
               "July", "August", "September", "October", "November", "December"
             ];
             var d = new Date()
-            let month = monthNames[d.getMonth()]
-            //let day = d.getDate()
+
+            let month = d.getMonth() + 1
+            let month_name = month_names[d.getMonth()]
+            let day = d.getDate()
             let year = d.getFullYear()
-            this.date = month + " " + year
+            this.int_date = month + "/" + day + "/" + year
+            this.string_date = month + " " + year
           }
 
 
@@ -908,7 +912,7 @@ class InnoslateReport {
                       //heading: HeadingLevel.HEADING_1,
                       children: [
                         new TextRun({
-                          text: this.date,
+                          text: this.string_date,
                           size: 24,
                           color: "FFFFFF",
                           allCaps: true
@@ -1202,10 +1206,7 @@ class InnoslateReport {
             logo
           ]
         }),
-        new Paragraph({
-          children: []
-        }),
-        new Table({ // Floating table for placing document title
+        new Table({ // Document ID, Revision, Date
           width: { size: 4000, type: WidthType.DXA },
           layout: TableLayoutType.FIXED,
           float: {
@@ -1220,7 +1221,7 @@ class InnoslateReport {
                   children: [
                     new Paragraph({
                       children: [ new TextRun({
-                        text: "Document ID: FOR-XXXX ",
+                        text: "Document ID: " + this.artifactId,
                         font: "Calibri",
                         size: 20
                       }) ],
@@ -1228,7 +1229,7 @@ class InnoslateReport {
                     }),
                     new Paragraph({
                       children: [ new TextRun({
-                        text: "Revision ID: X (DRAFT)",
+                        text: "Revision ID: " + this.revisionNumber,
                         font: "Calibri",
                         size: 20
                       }) ],
@@ -1236,7 +1237,7 @@ class InnoslateReport {
                     }),
                     new Paragraph({
                       children: [ new TextRun({
-                        children: ["Effective Date: ", this.date],
+                        children: ["Effective Date: ", this.int_date],
                         font: "Arial",
                         size: 20
                       }) ],
@@ -1248,7 +1249,34 @@ class InnoslateReport {
                     bottom: { style: BorderStyle.NIL},
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }) // end title table
+                  } }) ] }) ] }), // end doc id table
+        new Table({ // Cover heading
+          width: { size: 7500, type: WidthType.DXA },
+          layout: TableLayoutType.FIXED,
+          float: {
+            //horizontalAnchor: TableAnchorType.PAGE,
+            absoluteHorizontalPosition: 0,
+            //verticalAnchor: TableAnchorType.PAGE,
+            absoluteVerticalPosition: 4000,
+            overlap: OverlapType.OVERLAP
+          },
+          rows: [
+            new TableRow({ children: [ new TableCell({
+                  children: [
+                    new Paragraph({
+                      children: [ new TextRun({
+                        text: "Functional and Operational Requirements",
+                        font: "Arial",
+                        size: 40
+                      }) ]
+                    })
+                  ],
+                  borders: {
+                    top: { style: BorderStyle.NIL},
+                    bottom: { style: BorderStyle.NIL},
+                    left: { style: BorderStyle.NIL},
+                    right: { style: BorderStyle.NIL}
+                  } }) ] }) ] }), // end cover heading table
       ]
     })
 
@@ -1455,7 +1483,7 @@ class InnoslateReport {
                                     new Paragraph({
                                       children: [
                                         new TextRun({
-                                          text: this.date,
+                                          text: this.int_date,
                                           size: 22
                                         })
                                       ]
