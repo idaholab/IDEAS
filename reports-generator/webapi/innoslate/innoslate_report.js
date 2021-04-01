@@ -95,6 +95,8 @@ class InnoslateReport {
     this.imgMaxWidth = (12240 - (this.marginSize * 2)) / 15
     this.indentSections = true
     this.revisionNumber = ""
+    this.ouo_statement = ""
+    this.ouo_footer_tag = ""
   }
 
   createTempDir() {
@@ -1277,6 +1279,60 @@ class InnoslateReport {
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
                   } }) ] }) ] }), // end cover heading table
+        new Table({ // Cover title
+          width: { size: 7500, type: WidthType.DXA },
+          layout: TableLayoutType.FIXED,
+          float: {
+            //horizontalAnchor: TableAnchorType.PAGE,
+            absoluteHorizontalPosition: 0,
+            //verticalAnchor: TableAnchorType.PAGE,
+            absoluteVerticalPosition: 6500,
+            overlap: OverlapType.OVERLAP
+          },
+          rows: [
+            new TableRow({ children: [ new TableCell({
+                  children: [
+                    new Paragraph({
+                      children: [ new TextRun({
+                        text: this.title,
+                        font: "Arial",
+                        size: 60
+                      }) ]
+                    })
+                  ],
+                  borders: {
+                    top: { style: BorderStyle.NIL},
+                    bottom: { style: BorderStyle.NIL},
+                    left: { style: BorderStyle.NIL},
+                    right: { style: BorderStyle.NIL}
+                  } }) ] }) ] }), // end cover title table
+        new Table({ // Cover OUO
+          width: { size: 7500, type: WidthType.DXA },
+          layout: TableLayoutType.FIXED,
+          float: {
+            //horizontalAnchor: TableAnchorType.PAGE,
+            absoluteHorizontalPosition: 0,
+            //verticalAnchor: TableAnchorType.PAGE,
+            absoluteVerticalPosition: 9500,
+            overlap: OverlapType.OVERLAP
+          },
+          rows: [
+            new TableRow({ children: [ new TableCell({
+                  children: [
+                    new Paragraph({
+                      children: [ new TextRun({
+                        text: this.ouo_statement,
+                        font: "Arial",
+                        size: 24
+                      }) ]
+                    })
+                  ],
+                  borders: {
+                    top: { style: BorderStyle.NIL},
+                    bottom: { style: BorderStyle.NIL},
+                    left: { style: BorderStyle.NIL},
+                    right: { style: BorderStyle.NIL}
+                  } }) ] }) ] }), // end cover OUO table
       ]
     })
 
