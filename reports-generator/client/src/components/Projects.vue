@@ -8,10 +8,10 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
                 <td><v-btn v-on:click="getDocuments(project.id)" text small color="#2BA8E0">Get Documents</v-btn></td>
             </tr>
             <template v-if="project.documents.length"><Documents v-bind:documents="documents" v-bind:nameString="nameString" :key="'document'+project.id"/></template>
-            
+
         </template>
-        
-        
+
+
     </table>
 </template>
 

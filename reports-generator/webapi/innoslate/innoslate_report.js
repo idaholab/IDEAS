@@ -70,6 +70,7 @@ class InnoslateReport {
     this.title = "None"
     this.artifactId = "None"
     this.author = "Anonymous"
+    this.authors = []
     this.int_date = "00/00/0000"
     this.string_date = "Month Year"
     this.data = {}
@@ -95,8 +96,9 @@ class InnoslateReport {
     this.imgMaxWidth = (12240 - (this.marginSize * 2)) / 15
     this.indentSections = true
     this.revisionNumber = ""
-    this.ouo_statement = ""
+    this.doe_statement = ""
     this.ouo_footer_tag = ""
+    this.eCRNumber = "0"
   }
 
   createTempDir() {
@@ -686,8 +688,13 @@ class InnoslateReport {
             this.title = tmp_name
             this.artifactId = tmp_number
 
-            //set author
+            //set authors
             this.author = this.data['user'].displayName.name
+            if (this.author.includes("|")) {
+              this.authors = this.author.split("|")
+            } else {
+              this.authors = [this.author]
+            }
 
             //set date
 
@@ -701,7 +708,7 @@ class InnoslateReport {
             let day = d.getDate()
             let year = d.getFullYear()
             this.int_date = month + "/" + day + "/" + year
-            this.string_date = month + " " + year
+            this.string_date = month_name + " " + year
           }
 
 
@@ -805,6 +812,53 @@ class InnoslateReport {
       }
     )
 
+    const authorRows = []
+
+    this.authors.forEach( author => {
+      authorRows.push(
+        new TableRow({ children: [ new TableCell({
+          children: [
+            new Paragraph({
+              //heading: HeadingLevel.HEADING_1,
+              children: [
+                new TextRun({
+                  text: author,
+                  size: 28,
+                  color: "006C94"
+                })
+              ]
+            })
+          ],
+          borders: {
+            top: { style: BorderStyle.NIL},
+            bottom: { style: BorderStyle.NIL},
+            left: { style: BorderStyle.NIL},
+            right: { style: BorderStyle.NIL}
+          } }) ] }),
+      );
+      authorRows.push(
+        new TableRow({ children: [ new TableCell({
+          children: [
+            new Paragraph({
+              //heading: HeadingLevel.HEADING_1,
+              children: [
+                new TextRun({
+                  text: "Author info",
+                  size: 24,
+                })
+              ]
+            })
+          ],
+          borders: {
+            top: { style: BorderStyle.NIL},
+            bottom: { style: BorderStyle.NIL},
+            left: { style: BorderStyle.NIL},
+            right: { style: BorderStyle.NIL}
+          } }) ] })
+      );
+
+    })
+
     // Cover page
     this.doc.addSection({
       size: {width: 12180, height: 15075, orientation: PageOrientation.PORTRAIT},
@@ -870,7 +924,7 @@ class InnoslateReport {
                     bottom: { style: BorderStyle.NIL},
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }), // end date table
+        } }) ] }) ] }), // end artifact table
         new Table({ // Title table
           width: { size: 7000, type: WidthType.DXA },
           layout: TableLayoutType.FIXED,
@@ -897,7 +951,7 @@ class InnoslateReport {
                     bottom: { style: BorderStyle.NIL},
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }), // end title table
+        } }) ] }) ] }), // end title table
         new Table({ // Date table
           width: { size: 5000, type: WidthType.DXA },
           layout: TableLayoutType.FIXED,
@@ -927,7 +981,7 @@ class InnoslateReport {
                     bottom: { style: BorderStyle.NIL},
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }), // end date table
+        } }) ] }) ] }), // end date table
         new Table({ // Author table
           width: { size: 6000, type: WidthType.DXA },
           layout: TableLayoutType.FIXED,
@@ -937,6 +991,17 @@ class InnoslateReport {
             absoluteHorizontalPosition: 3750,
             overlap: OverlapType.OVERLAP
           },
+          rows: authorRows
+        }), // end author table
+        new Table({ // DOE table
+          width: { size: 5000, type: WidthType.DXA },
+          layout: TableLayoutType.FIXED,
+          float: {
+            verticalAnchor: TableAnchorType.MARGIN,
+            absoluteVerticalPosition: 13200,
+            absoluteHorizontalPosition: 3500,
+            overlap: OverlapType.OVERLAP
+          },
           rows: [
             new TableRow({ children: [ new TableCell({
                   children: [
@@ -944,9 +1009,8 @@ class InnoslateReport {
                       //heading: HeadingLevel.HEADING_1,
                       children: [
                         new TextRun({
-                          text: this.author,
-                          size: 28,
-                          color: "006C94"
+                          text: this.doe_statement,
+                          size: 20
                         })
                       ]
                     })
@@ -956,25 +1020,7 @@ class InnoslateReport {
                     bottom: { style: BorderStyle.NIL},
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
-                  } }) ] }),
-            new TableRow({ children: [ new TableCell({
-                  children: [
-                    new Paragraph({
-                      //heading: HeadingLevel.HEADING_1,
-                      children: [
-                        new TextRun({
-                          text: "Author info",
-                          size: 24,
-                        })
-                      ]
-                    })
-                  ],
-                  borders: {
-                    top: { style: BorderStyle.NIL},
-                    bottom: { style: BorderStyle.NIL},
-                    left: { style: BorderStyle.NIL},
-                    right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }) // end date table
+        } }) ] }) ] }), // end DOE table
 
       ]
     })
@@ -1198,6 +1244,49 @@ class InnoslateReport {
       }
     )
 
+    const authorRows = [];
+
+    this.authors.forEach( author => {
+      authorRows.push(
+        new TableRow({ children: [ new TableCell({
+          children: [
+            new Paragraph({
+              //heading: HeadingLevel.HEADING_1,
+              children: [
+                new TextRun({
+                  text: author,
+                  size: 32
+                })
+              ]
+            })
+          ],
+          borders: {
+            top: { style: BorderStyle.NIL},
+            bottom: { style: BorderStyle.NIL},
+            left: { style: BorderStyle.NIL},
+            right: { style: BorderStyle.NIL}
+          } }) ] }),
+      );
+      authorRows.push(
+        new TableRow({ children: [ new TableCell({
+          children: [
+            new Paragraph({
+              //heading: HeadingLevel.HEADING_1,
+              children: [
+                new TextRun({
+                  text: "Author info"
+                })
+              ]
+            })
+          ],
+          borders: {
+            top: { style: BorderStyle.NIL},
+            bottom: { style: BorderStyle.NIL},
+            left: { style: BorderStyle.NIL},
+            right: { style: BorderStyle.NIL}
+          } }) ] }))
+    });
+
     // Cover page
     this.doc.addSection({
       size: {width: 12240, height: 15838, orientation: PageOrientation.PORTRAIT},
@@ -1251,9 +1340,10 @@ class InnoslateReport {
                     bottom: { style: BorderStyle.NIL},
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }), // end doc id table
+            } }) ] }) ]
+        }), // end doc id table
         new Table({ // Cover heading
-          width: { size: 7500, type: WidthType.DXA },
+          width: { size: 7000, type: WidthType.DXA },
           layout: TableLayoutType.FIXED,
           float: {
             //horizontalAnchor: TableAnchorType.PAGE,
@@ -1278,9 +1368,9 @@ class InnoslateReport {
                     bottom: { style: BorderStyle.NIL},
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }), // end cover heading table
+        } }) ] }) ] }), // end cover heading table
         new Table({ // Cover title
-          width: { size: 7500, type: WidthType.DXA },
+          width: { size: 7000, type: WidthType.DXA },
           layout: TableLayoutType.FIXED,
           float: {
             //horizontalAnchor: TableAnchorType.PAGE,
@@ -1305,9 +1395,9 @@ class InnoslateReport {
                     bottom: { style: BorderStyle.NIL},
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }), // end cover title table
-        new Table({ // Cover OUO
-          width: { size: 7500, type: WidthType.DXA },
+        } }) ] }) ] }), // end cover title table
+        new Table({ // Cover authors
+          width: { size: 7000, type: WidthType.DXA },
           layout: TableLayoutType.FIXED,
           float: {
             //horizontalAnchor: TableAnchorType.PAGE,
@@ -1316,14 +1406,26 @@ class InnoslateReport {
             absoluteVerticalPosition: 9500,
             overlap: OverlapType.OVERLAP
           },
+          rows: authorRows
+        }), // end cover author table
+        new Table({ // Cover DOE
+          width: { size: 3000, type: WidthType.DXA },
+          layout: TableLayoutType.FIXED,
+          float: {
+            //horizontalAnchor: TableAnchorType.PAGE,
+            absoluteHorizontalPosition: 0,
+            //verticalAnchor: TableAnchorType.PAGE,
+            absoluteVerticalPosition: 11500,
+            overlap: OverlapType.OVERLAP
+          },
           rows: [
             new TableRow({ children: [ new TableCell({
                   children: [
                     new Paragraph({
                       children: [ new TextRun({
-                        text: this.ouo_statement,
+                        text: this.doe_statement,
                         font: "Arial",
-                        size: 24
+                        size: 20
                       }) ]
                     })
                   ],
@@ -1332,7 +1434,429 @@ class InnoslateReport {
                     bottom: { style: BorderStyle.NIL},
                     left: { style: BorderStyle.NIL},
                     right: { style: BorderStyle.NIL}
-                  } }) ] }) ] }), // end cover OUO table
+        } }) ] }) ]}), // end cover DOE table
+      ]
+    })
+
+    // Blank page
+    this.doc.addSection({
+      size: {width: 12240, height: 15838, orientation: PageOrientation.PORTRAIT},
+      margins: {
+        top: this.marginSize,
+        right: this.marginSize,
+        bottom: this.marginSize,
+        left: this.marginSize
+      },
+      headers: {
+        default: new Header({
+          children: [
+            new Table({
+              width: { size: 12240 - (this.marginSize * 2), type: WidthType.DXA },
+              layout: TableLayoutType.FIXED,
+              float: {
+                verticalAnchor: TableAnchorType.MARGIN,
+                absoluteVerticalPosition: -240,
+                overlap: OverlapType.OVERLAP
+              },
+              rows: [
+                new TableRow({ children: [ new TableCell({
+                      children: [
+                        new Paragraph({
+                          children: [
+                            new TextRun({
+                              text: " Idaho National Laboratory",
+                              size: 20,
+                              bold: true
+                            })
+                          ]
+                        })
+                      ],
+                      borders: {
+                        top: { style: BorderStyle.NIL},
+                        bottom: { style: BorderStyle.NIL},
+                        left: { style: BorderStyle.NIL},
+                        right: { style: BorderStyle.NIL}
+                      },
+                      columnSpan: 2
+                    }) ] }),
+                new TableRow({
+                  children: [
+                    new TableCell({
+                      width: { size: (12240 - (this.marginSize * 2)) / 2, type: WidthType.DXA },
+                      children: [
+                        new Paragraph({
+                          children: [
+                            new TextRun({
+                              text: this.title,
+                              bold: true,
+                              allCaps: true
+                            })
+                          ],
+                          alignment: AlignmentType.CENTER
+                        })
+                      ],
+                      verticalAlign: VerticalAlign.CENTER
+                    }),
+                    new TableCell({
+                      width: { size: (12240 - (this.marginSize * 2)) / 2, type: WidthType.DXA },
+                      children: [
+                        new Table({
+                          width: { size: (12240 - (this.marginSize * 2)) / 2, type: WidthType.DXA },
+                          rows: [
+                            new TableRow({
+                              children: [
+                                new TableCell({
+                                  children: [
+                                    new Paragraph({
+                                      children: [
+                                        new TextRun({
+                                          text: "Identifier: ",
+                                          size: 22
+                                        })
+                                      ]
+                                    })
+                                  ],
+                                  borders: {
+                                    top: { style: BorderStyle.NIL},
+                                    bottom: { style: BorderStyle.NIL},
+                                    left: { style: BorderStyle.NIL},
+                                    right: { style: BorderStyle.NIL}
+                                  },
+                                  margins: {
+                                    top: 30,
+                                    right: 50,
+                                    bottom: 30,
+                                    left: 50
+                                  }
+                                }),
+                                new TableCell({
+                                  children: [
+                                    new Paragraph({
+                                      children: [
+                                        new TextRun({
+                                          text: this.artifactId,
+                                          size: 22
+                                        })
+                                      ]
+                                    })
+                                  ],
+                                  borders: {
+                                    top: { style: BorderStyle.NIL},
+                                    bottom: { style: BorderStyle.NIL},
+                                    left: { style: BorderStyle.NIL},
+                                    right: { style: BorderStyle.NIL}
+                                  },
+                                  columnSpan: 2,
+                                  margins: {
+                                    top: 30,
+                                    right: 50,
+                                    bottom: 30,
+                                    left: 50
+                                  }
+                                })
+                              ]
+                            }),
+                            new TableRow({
+                              children: [
+                                new TableCell({
+                                  children: [
+                                    new Paragraph({
+                                      children: [
+                                        new TextRun({
+                                          text: "Revision: ",
+                                          size: 22
+                                        })
+                                      ]
+                                    })
+                                  ],
+                                  borders: {
+                                    top: { style: BorderStyle.NIL},
+                                    bottom: { style: BorderStyle.NIL},
+                                    left: { style: BorderStyle.NIL},
+                                    right: { style: BorderStyle.NIL}
+                                  },
+                                  margins: {
+                                    top: 10,
+                                    right: 50,
+                                    bottom: 10,
+                                    left: 50
+                                  }
+                                }),
+                                new TableCell({
+                                  children: [
+                                    new Paragraph({
+                                      children: [
+                                        new TextRun({
+                                          text: "X (DRAFT)",
+                                          size: 22
+                                        })
+                                      ]
+                                    })
+                                  ],
+                                  borders: {
+                                    top: { style: BorderStyle.NIL},
+                                    bottom: { style: BorderStyle.NIL},
+                                    left: { style: BorderStyle.NIL},
+                                    right: { style: BorderStyle.NIL}
+                                  },
+                                  columnSpan: 2,
+                                  margins: {
+                                    top: 10,
+                                    right: 50,
+                                    bottom: 10,
+                                    left: 50
+                                  }
+                                })
+                              ]
+                            }),
+                            new TableRow({
+                              children: [
+                                new TableCell({
+                                  children: [
+                                    new Paragraph({
+                                      children: [
+                                        new TextRun({
+                                          text: "Effective Date: ",
+                                          size: 22
+                                        })
+                                      ]
+
+                                    })
+                                  ],
+                                  borders: {
+                                    top: { style: BorderStyle.NIL},
+                                    bottom: { style: BorderStyle.NIL},
+                                    left: { style: BorderStyle.NIL},
+                                    right: { style: BorderStyle.NIL}
+                                  },
+                                  margins: {
+                                    top: 30,
+                                    right: 50,
+                                    bottom: 30,
+                                    left: 50
+                                  }
+                                }),
+                                new TableCell({
+                                  children: [
+                                    new Paragraph({
+                                      children: [
+                                        new TextRun({
+                                          text: this.int_date,
+                                          size: 22
+                                        })
+                                      ]
+                                    })
+                                  ],
+                                  borders: {
+                                    top: { style: BorderStyle.NIL},
+                                    bottom: { style: BorderStyle.NIL},
+                                    left: { style: BorderStyle.NIL},
+                                    right: { style: BorderStyle.NIL}
+                                  },
+                                  margins: {
+                                    top: 30,
+                                    right: 50,
+                                    bottom: 30,
+                                    left: 50
+                                  }
+                                }),
+                                new TableCell({
+                                  children: [
+                                    new Paragraph({
+                                      alignment: AlignmentType.RIGHT,
+                                      children: [
+                                        new TextRun({
+                                          children: [
+                                            "Page: ",
+                                            PageNumber.CURRENT,
+                                            " of "
+                                          ],
+                                          size: 22
+                                        }),
+                                        new TextRun({
+                                          children: [
+                                            PageNumber.TOTAL_PAGES
+                                          ],
+                                          size: 22,
+                                          bold: true
+                                        }),
+                                      ]
+                                    })
+                                  ],
+                                  borders: {
+                                    top: { style: BorderStyle.NIL},
+                                    bottom: { style: BorderStyle.NIL},
+                                    left: { style: BorderStyle.NIL},
+                                    right: { style: BorderStyle.NIL}
+                                  },
+                                  margins: {
+                                    top: 30,
+                                    right: 50,
+                                    bottom: 30,
+                                    left: 50
+                                  }
+                                }),
+                              ]
+                            })
+                          ]
+                        })
+                      ],
+                    })
+                  ] }) ] }), // end title table
+           // new Table({
+           //   width: { size: 12240 - (this.marginSize * 2), type: WidthType.DXA },
+           //   layout: TableLayoutType.FIXED,
+           //   float: {
+           //     verticalAnchor: TableAnchorType.MARGIN,
+           //     absoluteVerticalPosition: -230,
+           //     overlap: OverlapType.NEVER
+           //   },
+           //   rows: [
+           //     new TableRow({ children: [ new TableCell({
+           //       children: [
+           //         new Paragraph({
+           //           children: [
+           //             new TextRun({
+           //               text: "",
+           //               size: 20,
+           //               bold: true
+           //             })
+           //           ]
+           //         })
+           //       ],
+           //       borders: {
+           //         top: { style: BorderStyle.NIL},
+           //         bottom: { style: BorderStyle.NIL},
+           //         left: { style: BorderStyle.NIL},
+           //         right: { style: BorderStyle.NIL}
+           //       },
+           //       columnSpan: 3
+           //     }) ] }),
+           //     new TableRow({
+           //       children: [
+           //         new TableCell({
+           //           width: { size: ((12240 - (this.marginSize * 2)) / 3) - 500, type: WidthType.DXA },
+           //           children: [
+           //             new Paragraph({
+           //               children: [
+           //                 new TextRun({
+           //                   text: "Materials and Fuels Complex",
+           //                   size: 20
+           //                 })
+           //               ],
+           //               alignment: AlignmentType.LEFT
+           //             })
+           //           ],
+           //           verticalAlign: VerticalAlign.CENTER
+           //         }),
+           //         new TableCell({
+           //           width: { size: ((12240 - (this.marginSize * 2)) / 3) + 500, type: WidthType.DXA },
+           //           children: [
+           //             new Paragraph({
+           //               children: [
+           //                 new TextRun({
+           //                   text: "Functional and Operational Requirements",
+           //                   size: 20
+           //                 })
+           //               ],
+           //               alignment: AlignmentType.LEFT
+           //             })
+           //           ],
+           //           verticalAlign: VerticalAlign.CENTER
+           //         }),
+           //         new TableCell({
+           //           width: { size: (12240 - (this.marginSize * 2)) / 3, type: WidthType.DXA },
+           //           children: [
+           //             new Paragraph({
+           //               children: [
+           //                 new TextRun({
+           //                   text: `eCR Number: ${this.eCRNumber}`,
+           //                   size: 20
+           //                 })
+           //               ],
+           //               alignment: AlignmentType.LEFT
+           //             })
+           //           ],
+           //           verticalAlign: VerticalAlign.CENTER
+           //         })
+           //       ]
+           //     }),
+           //     new TableRow({ children: [ new TableCell({
+           //       children: [
+           //         new Paragraph({
+           //           children: [
+           //             new TextRun({
+           //               text: "Manual: Stand Alone",
+           //               size: 20
+           //             })
+           //           ]
+           //         })
+           //       ],
+           //       borders: {
+           //         top: { style: BorderStyle.NIL},
+           //         bottom: { style: BorderStyle.NIL},
+           //         left: { style: BorderStyle.NIL},
+           //         right: { style: BorderStyle.NIL}
+           //       },
+           //       columnSpan: 3
+           //     }) ] }),
+           //     new TableRow({ children: [ new TableCell({
+           //       children: [
+           //         new Paragraph({
+           //           children: [
+           //             new TextRun({
+           //               text: "",
+           //               size: 20
+           //             })
+           //           ]
+           //         })
+           //       ],
+           //       borders: {
+           //         top: { style: BorderStyle.NIL},
+           //         bottom: { style: BorderStyle.NIL},
+           //         left: { style: BorderStyle.NIL},
+           //         right: { style: BorderStyle.NIL}
+           //       },
+           //       columnSpan: 3
+           //     }) ] }),
+           //
+           //  ] }) // end title table
+          ] // end header children
+        }) // end header
+      }, // end headers list
+      children: [
+
+        new Table({
+          width: { size: 12240, type: WidthType.DXA },
+          layout: TableLayoutType.FIXED,
+          float: {
+            horizontalAnchor: TableAnchorType.PAGE,
+            absoluteHorizontalPosition: 0,
+            verticalAnchor: TableAnchorType.PAGE,
+            absoluteVerticalPosition: 7500,
+            overlap: OverlapType.OVERLAP
+          },
+          rows: [
+            new TableRow({ children: [ new TableCell({
+                  children: [
+                    new Paragraph({
+                      children: [ new TextRun({
+                        text: "Intentionally blank",
+                        size: 24,
+                        allCaps: true
+                      }) ],
+                      alignment: AlignmentType.CENTER
+                    })
+
+                  ],
+                  borders: {
+                    top: { style: BorderStyle.NIL},
+                    bottom: { style: BorderStyle.NIL},
+                    left: { style: BorderStyle.NIL},
+                    right: { style: BorderStyle.NIL}
+            } }) ] }) ]
+        })
+
       ]
     })
 
@@ -1600,11 +2124,247 @@ class InnoslateReport {
                         })
                       ],
                     })
-                   ] }) ] }) // end title table
+                  ] }) ] }), // end title table
+           // new Table({
+           //   width: { size: 12240 - (this.marginSize * 2), type: WidthType.DXA },
+           //   layout: TableLayoutType.FIXED,
+           //   float: {
+           //     verticalAnchor: TableAnchorType.MARGIN,
+           //     absoluteVerticalPosition: -230,
+           //     overlap: OverlapType.NEVER
+           //   },
+           //   rows: [
+           //     new TableRow({ children: [ new TableCell({
+           //       children: [
+           //         new Paragraph({
+           //           children: [
+           //             new TextRun({
+           //               text: "",
+           //               size: 20,
+           //               bold: true
+           //             })
+           //           ]
+           //         })
+           //       ],
+           //       borders: {
+           //         top: { style: BorderStyle.NIL},
+           //         bottom: { style: BorderStyle.NIL},
+           //         left: { style: BorderStyle.NIL},
+           //         right: { style: BorderStyle.NIL}
+           //       },
+           //       columnSpan: 3
+           //     }) ] }),
+           //     new TableRow({
+           //       children: [
+           //         new TableCell({
+           //           width: { size: ((12240 - (this.marginSize * 2)) / 3) - 500, type: WidthType.DXA },
+           //           children: [
+           //             new Paragraph({
+           //               children: [
+           //                 new TextRun({
+           //                   text: "Materials and Fuels Complex",
+           //                   size: 20
+           //                 })
+           //               ],
+           //               alignment: AlignmentType.LEFT
+           //             })
+           //           ],
+           //           verticalAlign: VerticalAlign.CENTER
+           //         }),
+           //         new TableCell({
+           //           width: { size: ((12240 - (this.marginSize * 2)) / 3) + 500, type: WidthType.DXA },
+           //           children: [
+           //             new Paragraph({
+           //               children: [
+           //                 new TextRun({
+           //                   text: "Functional and Operational Requirements",
+           //                   size: 20
+           //                 })
+           //               ],
+           //               alignment: AlignmentType.LEFT
+           //             })
+           //           ],
+           //           verticalAlign: VerticalAlign.CENTER
+           //         }),
+           //         new TableCell({
+           //           width: { size: (12240 - (this.marginSize * 2)) / 3, type: WidthType.DXA },
+           //           children: [
+           //             new Paragraph({
+           //               children: [
+           //                 new TextRun({
+           //                   text: `eCR Number: ${this.eCRNumber}`,
+           //                   size: 20
+           //                 })
+           //               ],
+           //               alignment: AlignmentType.LEFT
+           //             })
+           //           ],
+           //           verticalAlign: VerticalAlign.CENTER
+           //         })
+           //       ]
+           //     }),
+           //     new TableRow({ children: [ new TableCell({
+           //       children: [
+           //         new Paragraph({
+           //           children: [
+           //             new TextRun({
+           //               text: "Manual: Stand Alone",
+           //               size: 20
+           //             })
+           //           ]
+           //         })
+           //       ],
+           //       borders: {
+           //         top: { style: BorderStyle.NIL},
+           //         bottom: { style: BorderStyle.NIL},
+           //         left: { style: BorderStyle.NIL},
+           //         right: { style: BorderStyle.NIL}
+           //       },
+           //       columnSpan: 3
+           //     }) ] }),
+           //     new TableRow({ children: [ new TableCell({
+           //       children: [
+           //         new Paragraph({
+           //           children: [
+           //             new TextRun({
+           //               text: "",
+           //               size: 20
+           //             })
+           //           ]
+           //         })
+           //       ],
+           //       borders: {
+           //         top: { style: BorderStyle.NIL},
+           //         bottom: { style: BorderStyle.NIL},
+           //         left: { style: BorderStyle.NIL},
+           //         right: { style: BorderStyle.NIL}
+           //       },
+           //       columnSpan: 3
+           //     }) ] }),
+           //
+           //  ] }) // end title table
           ] // end header children
         }) // end header
       }, // end headers list
       children: [
+        new Table({
+          width: { size: 12240 - (this.marginSize * 2), type: WidthType.DXA },
+          layout: TableLayoutType.FIXED,
+          float: {
+            verticalAnchor: TableAnchorType.MARGIN,
+            absoluteVerticalPosition: -230,
+            overlap: OverlapType.NEVER
+          },
+          rows: [
+            new TableRow({ children: [ new TableCell({
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: "",
+                      size: 20,
+                      bold: true
+                    })
+                  ]
+                })
+              ],
+              borders: {
+                top: { style: BorderStyle.NIL},
+                bottom: { style: BorderStyle.NIL},
+                left: { style: BorderStyle.NIL},
+                right: { style: BorderStyle.NIL}
+              },
+              columnSpan: 3
+            }) ] }),
+            new TableRow({
+              children: [
+                new TableCell({
+                  width: { size: ((12240 - (this.marginSize * 2)) / 3) - 500, type: WidthType.DXA },
+                  children: [
+                    new Paragraph({
+                      children: [
+                        new TextRun({
+                          text: "Materials and Fuels Complex",
+                          size: 20
+                        })
+                      ],
+                      alignment: AlignmentType.LEFT
+                    })
+                  ],
+                  verticalAlign: VerticalAlign.CENTER
+                }),
+                new TableCell({
+                  width: { size: ((12240 - (this.marginSize * 2)) / 3) + 500, type: WidthType.DXA },
+                  children: [
+                    new Paragraph({
+                      children: [
+                        new TextRun({
+                          text: "Functional and Operational Requirements",
+                          size: 20
+                        })
+                      ],
+                      alignment: AlignmentType.LEFT
+                    })
+                  ],
+                  verticalAlign: VerticalAlign.CENTER
+                }),
+                new TableCell({
+                  width: { size: (12240 - (this.marginSize * 2)) / 3, type: WidthType.DXA },
+                  children: [
+                    new Paragraph({
+                      children: [
+                        new TextRun({
+                          text: `eCR Number: ${this.eCRNumber}`,
+                          size: 20
+                        })
+                      ],
+                      alignment: AlignmentType.LEFT
+                    })
+                  ],
+                  verticalAlign: VerticalAlign.CENTER
+                })
+              ]
+            }),
+            new TableRow({ children: [ new TableCell({
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: "Manual: Stand Alone",
+                      size: 20
+                    })
+                  ]
+                })
+              ],
+              borders: {
+                top: { style: BorderStyle.NIL},
+                bottom: { style: BorderStyle.NIL},
+                left: { style: BorderStyle.NIL},
+                right: { style: BorderStyle.NIL}
+              },
+              columnSpan: 3
+            }) ] }),
+            new TableRow({ children: [ new TableCell({
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: "",
+                      size: 20
+                    })
+                  ]
+                })
+              ],
+              borders: {
+                top: { style: BorderStyle.NIL},
+                bottom: { style: BorderStyle.NIL},
+                left: { style: BorderStyle.NIL},
+                right: { style: BorderStyle.NIL}
+              },
+              columnSpan: 3
+            }) ] }),
+
+         ] }), // end title table
         new Paragraph({
           alignment: AlignmentType.CENTER,
           children: [
@@ -1915,6 +2675,7 @@ class InnoslateReport {
         this.data[this.responses['keys'][i]] = responses[i].data
       }
 
+      this.doe_statement = `The INL is a U.S. Department of Energy National Laboratory operated by Battelle Energy Alliance.`
 
       try {
         if (this.reportType=="JSON") {
@@ -1933,6 +2694,7 @@ class InnoslateReport {
               this.writeReport()
             } else {
               this.indentSections = true
+
               this.recurseCompile(this.reportId, 0)
               this.mfcReport()
               this.writeReport()

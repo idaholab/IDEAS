@@ -3,7 +3,7 @@
 import axios from "axios";
 
 // Axios Config
-const host = process.env.HOST; // Localhost is used for Docker Compose 
+const host = process.env.HOST; // Localhost is used for Docker Compose
 const port = process.env.EXPRESS_PORT;
 
 export async function getProjects() {

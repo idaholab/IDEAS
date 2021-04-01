@@ -92,7 +92,7 @@ app.get("/o/:org/report_data/:n", function(req, res) {
 app.get("/o/:o/report/:reportType/:n/", function(req, res) {
   innoslate_report(res, req, req.params['n'],
     { //these are the endpoints Innoslate hits to collect data for the report
-      'user': 'user', 
+      'user': 'user',
       'schema': "o/" + req.params['o'] + '/schema',
       'entities':
         "o/" + req.params['o'] + '/entities/' + req.params['n'] + '?&levels=25&includeRelations=source%20of,decomposed%20by'
