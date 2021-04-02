@@ -22,5 +22,4 @@ venv.bak/
 # Data
 *.xls*
 *.bin
-helpers/enumerators.py
 runner.py
