@@ -20,4 +20,7 @@ env.bak/
 venv.bak/
 
 # Data
-*.xlsx
+*.xls*
+*.bin
+helpers/enumerators.py
+runner.py

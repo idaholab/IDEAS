@@ -1,5 +1,5 @@
 def build_xls(workbook, risk):
-    
+
     """
         Accepts a risk object and parses it into the desired NRIC format in a .xlsx file.
     """
@@ -13,19 +13,16 @@ def build_xls(workbook, risk):
     merge = workbook.add_format({'text_wrap': True, 'align': 'center'})
     red = workbook.add_format({'font_color': 'red'})
     date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
-
+    # Set column widths for better readability
     worksheet.set_column('A:A', 25)
+    worksheet.set_column('B:B', 15)
     worksheet.set_column('D:D', 30)
-    worksheet.set_column('H:H', 20)
-    worksheet.set_column('J:J', 20)
+    worksheet.set_column('F:F', 15)
+    worksheet.set_column('H:H', 15)
+    worksheet.set_column('J:J', 15)
 
-    
-
-    print(risk)
-
-    
-
-    worksheet.merge_range('D1:G1', "RISK ASSESSMENT FORM")
+    # Title
+    worksheet.merge_range('D1:G1', "RISK ASSESSMENT FORM", title)
 
     # Risk ID
     worksheet.write_string('A3', "Risk ID:", title)
@@ -76,7 +73,7 @@ def build_xls(workbook, risk):
     worksheet.write('A8', "Type: (Threat or Opportunity)", title)
     type_dropdown = worksheet.data_validation('B8', {'validate': 'list', 'source': risk['type']})
     worksheet.merge_range('B8:C8', type_dropdown)
-    
+
     # Risk Breakdown Structure (RBS)
     worksheet.merge_range('D8:E8', "Risk Breakdown Structure (RBS):", title)
     rbs_dropdown = worksheet.data_validation('F8', {'validate': 'list', 'source': risk['risk_breakdown_structure']})
@@ -84,7 +81,13 @@ def build_xls(workbook, risk):
 
     # Risk Sub-Category
     worksheet.merge_range('H8:I8', "Risk Sub-Category:", title)
-    rsc_dropdown = worksheet.data_validation('J8', {'validate': 'list', 'source': risk['risk_sub_category']})
+    rsc_dropdown = worksheet.data_validation('J8', 
+        {'validate': 'list', 
+        # This complicated function is how dependent dropdowns are accomplished in Excel.
+        # Match the value in F8 with the header in the range E3:H3, and return the corresponding column in the table defined by E4:H11
+        'source': '=INDEX(Reference_Data!$E$4:$H$11, 0, MATCH(F8, Reference_Data!$E$3:$H$3, 0))'
+        }
+    )
     worksheet.merge_range('J8:K8', rsc_dropdown)
 
     # Date Risk Identified
@@ -101,8 +104,7 @@ def build_xls(workbook, risk):
 
     # Impacted WBS Elements
     worksheet.write('A10', "Impacted WBS Element(s):", title)
-    # TODO: Get Impacted WBS Elements options from NRIC
-    wbs_dropdown = worksheet.data_validation('B10', {'validate': 'list', 'source': risk['impacted_wbs_elements']})
+    wbs_dropdown = worksheet.data_validation('B10', {'validate': 'list', 'source': '=Reference_Data!$J$2:$J$41'})
     worksheet.merge_range('B10:G10', wbs_dropdown, merge)
 
     # Secondary Risks
@@ -117,7 +119,7 @@ def build_xls(workbook, risk):
     # Trigger Event
     worksheet.merge_range('D11:E11', "Trigger Event:", title)
     worksheet.merge_range('F11:G11', risk['trigger_event'], merge)
-    
+
     # Residual Risk Likelihood
     worksheet.merge_range('H11:I11', "Residual Risk Likelihood:", title)
     rrl_dropdown = worksheet.data_validation('J11', {'validate': 'list', 'source': risk['residual_risk_likelihood']})
@@ -140,7 +142,36 @@ def build_xls(workbook, risk):
 
     # Initial Risk Rating
     worksheet.write('A13', "Initial Risk Rating:", title)
-    worksheet.merge_range('B13:C13', risk['initial_risk_rating'], merge)
+    worksheet.merge_range('B13:C13', None, merge)
+    worksheet.write_formula('B13', 
+    # This complicated function is how matrix lookups are accomplished in Excel
+    # Match the value in B11 with the row defined by A14:A18, and the value in B12 with the column defined by B13:F13, and return the result from the table defined by B14:F18
+    # If there is an error (no selection), suppress the warning
+    '=IFERROR(INDEX(Reference_Data!$B$14:$F$18,MATCH(B11,Reference_Data!$A$14:$A$18,0),MATCH(B12,Reference_Data!$B$13:$F$13,0)), "")'
+    )
+    # Conditional Formatting "Low" - green, "Moderate" - yellow, "High" - red
+    worksheet.conditional_format('B13', 
+    {
+        'type': 'cell',
+        'criteria': 'equal to',
+        'value': '"Low"',
+        'format': workbook.add_format({'bg_color': 'green'})
+    })
+    worksheet.conditional_format('B13', 
+    {
+        'type': 'cell',
+        'criteria': 'equal to',
+        'value': '"Moderate"',
+        'format': workbook.add_format({'bg_color': 'yellow'})
+    })
+    worksheet.conditional_format('B13', 
+    {
+        'type': 'cell',
+        'criteria': 'equal to',
+        'value': '"High"',
+        'format': workbook.add_format({'bg_color': 'red'})
+    })
+    
 
     # Handling Strategy Implementation Cost ($K)
     worksheet.merge_range('D13:E13', "Handling Strategy Implementation Cost ($K):", title)
@@ -148,8 +179,36 @@ def build_xls(workbook, risk):
 
     # Residual Risk Rating
     worksheet.merge_range('H13:I13', "Residual Risk Rating:", title)
-    worksheet.merge_range('J13:K13', risk['residual_risk_rating'], merge)
-
+    worksheet.merge_range('J13:K13', None, merge)
+    worksheet.write_formula('J13', 
+    # This complicated function is how matrix lookups are accomplished in Excel
+    # Match the value in J11 with the row defined by A14:A18, and the value in J12 with the column defined by B13:F13, and return the result from the table defined by B14:F18
+    # If there is an error (no selection), suppress the warning
+    '=IFERROR(INDEX(Reference_Data!$B$14:$F$18,MATCH(J11,Reference_Data!$A$14:$A$18,0),MATCH(J12,Reference_Data!$B$13:$F$13,0)), "")'
+    )
+    # Conditional Formatting "Low" - green, "Moderate" - yellow, "High" - red
+    worksheet.conditional_format('J13', 
+    {
+        'type': 'cell',
+        'criteria': 'equal to',
+        'value': '"Low"',
+        'format': workbook.add_format({'bg_color': 'green'})
+    })
+    worksheet.conditional_format('J13', 
+    {
+        'type': 'cell',
+        'criteria': 'equal to',
+        'value': '"Moderate"',
+        'format': workbook.add_format({'bg_color': 'yellow'})
+    })
+    worksheet.conditional_format('J13', 
+    {
+        'type': 'cell',
+        'criteria': 'equal to',
+        'value': '"High"',
+        'format': workbook.add_format({'bg_color': 'red'})
+    })
+    
     # Initial Impact ($)
     worksheet.write('A14', "Initial Impact ($):", title)
     worksheet.merge_range('B14:E14', risk['initial_impact'], merge)
@@ -185,6 +244,3 @@ def build_xls(workbook, risk):
     # Historical Comments and Notes
     worksheet.merge_range('A20:B20', "Historical Comments and Notes:", title)
     worksheet.merge_range('C20:K20', risk['historical_comments'], merge)
-
-    print("Saving Workbook")
-    workbook.close()
