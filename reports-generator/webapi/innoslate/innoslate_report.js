@@ -88,6 +88,7 @@ class InnoslateReport {
     this.requirementId = 0
     this.rationaleId = 0
     this.revisionId = 0
+    this.ecrId = 0
     this.tempDir = ""
     this.imageNames = []
     this.imagePromises = []
@@ -98,7 +99,11 @@ class InnoslateReport {
     this.revisionNumber = ""
     this.doe_statement = ""
     this.ouo_footer_tag = ""
-    this.eCRNumber = "0"
+    this.eCRNumber = ""
+    this.requirement_prepend = false
+    this.heading1_page_break = true
+    this.heading1_all_caps = false
+    this.heading4_abbreviate = false
   }
 
   createTempDir() {
@@ -189,9 +194,15 @@ class InnoslateReport {
     })
     revision_obj = revision_obj[0]
 
+    let ecr_obj = this.data['schema']['properties'].filter(obj => {
+      return obj.name == "eCR Number"
+    })
+    ecr_obj = ecr_obj[0]
+
     this.requirementId = requirement_obj.id
     this.rationaleId = rationale_obj.id
     this.revisionId = revision_obj.id
+    this.ecrId = ecr_obj.id
   }
 
   divideAndAnnotate(chunks) {
@@ -616,7 +627,7 @@ class InnoslateReport {
 
           if (temp_obj['description']) { // if description exists, replace
             desc = temp_obj["description"]
-            if (temp_obj['classId'] == this.requirementId) {
+            if (temp_obj['classId'] == this.requirementId && this.requirement_prepend) {
               if (desc.includes("<p>")) {
                 desc = desc.replace('<p>', '<p><strong>Requirement</strong>: ')
               } else {
@@ -626,7 +637,7 @@ class InnoslateReport {
           }
           if ('attrs' in temp_obj) {
             if (this.rationaleId.toString() in temp_obj['attrs']) {
-              if (temp_obj['attrs'][this.rationaleId.toString()] != "") {
+              if (temp_obj['attrs'][this.rationaleId.toString()] != "" && this.requirement_prepend) {
                 desc += "<p><strong>Rationale</strong>: " +
                   temp_obj['attrs'][this.rationaleId.toString()] +
                   "</p>"
@@ -636,6 +647,12 @@ class InnoslateReport {
             if (this.revisionId.toString() in temp_obj['attrs']) {
               if (temp_obj['attrs'][this.revisionId.toString()] != "") {
                 this.revisionNumber = temp_obj['attrs'][this.revisionId.toString()]
+              }
+            }
+
+            if (this.ecrId.toString() in temp_obj['attrs']) {
+              if (temp_obj['attrs'][this.ecrId.toString()] != "") {
+                this.eCRNumber = temp_obj['attrs'][this.ecrId.toString()]
               }
             }
           }
@@ -650,28 +667,32 @@ class InnoslateReport {
             } else {
               indent = 0
             }
-
           }
 
           let pageBreak = false
           let padding = 120
+          let allCaps = false
           if (recursionCounter == 1) {
-            pageBreak = true
+            pageBreak = this.heading1_page_break
             padding = 240
+            allCaps = this.heading1_all_caps
           } else if (recursionCounter == 2) {
             padding=240
+          } else if (recursionCounter == 4 && this.heading4_abbreviate) {
+            tmp_number = tmp_number.substr(tmp_number.lastIndexOf(".") + 1)
           }
 
           tmp_description_list = this.parseHTML(desc, indent)
-
-
 
           // create heading from entity number and name
           if (ident != this.reportId) { // normal entities are printed as heading and paragraphs
             this.children.push(
               new Paragraph ({
                 heading: heading,
-                children: [ new TextRun({text: tmp_number + " " + tmp_name})],
+                children: [ new TextRun({
+                  text: tmp_number + "    " + tmp_name,
+                  allCaps: allCaps
+                })],
                 spacing: {before: padding, after: padding},
                 pageBreakBefore: pageBreak,
                 indent: {left: indent}
@@ -1267,24 +1288,6 @@ class InnoslateReport {
             right: { style: BorderStyle.NIL}
           } }) ] }),
       );
-      authorRows.push(
-        new TableRow({ children: [ new TableCell({
-          children: [
-            new Paragraph({
-              //heading: HeadingLevel.HEADING_1,
-              children: [
-                new TextRun({
-                  text: "Author info"
-                })
-              ]
-            })
-          ],
-          borders: {
-            top: { style: BorderStyle.NIL},
-            bottom: { style: BorderStyle.NIL},
-            left: { style: BorderStyle.NIL},
-            right: { style: BorderStyle.NIL}
-          } }) ] }))
     });
 
     // Cover page
@@ -1825,7 +1828,6 @@ class InnoslateReport {
         }) // end header
       }, // end headers list
       children: [
-
         new Table({
           width: { size: 12240, type: WidthType.DXA },
           layout: TableLayoutType.FIXED,
@@ -2124,125 +2126,7 @@ class InnoslateReport {
                         })
                       ],
                     })
-                  ] }) ] }), // end title table
-           // new Table({
-           //   width: { size: 12240 - (this.marginSize * 2), type: WidthType.DXA },
-           //   layout: TableLayoutType.FIXED,
-           //   float: {
-           //     verticalAnchor: TableAnchorType.MARGIN,
-           //     absoluteVerticalPosition: -230,
-           //     overlap: OverlapType.NEVER
-           //   },
-           //   rows: [
-           //     new TableRow({ children: [ new TableCell({
-           //       children: [
-           //         new Paragraph({
-           //           children: [
-           //             new TextRun({
-           //               text: "",
-           //               size: 20,
-           //               bold: true
-           //             })
-           //           ]
-           //         })
-           //       ],
-           //       borders: {
-           //         top: { style: BorderStyle.NIL},
-           //         bottom: { style: BorderStyle.NIL},
-           //         left: { style: BorderStyle.NIL},
-           //         right: { style: BorderStyle.NIL}
-           //       },
-           //       columnSpan: 3
-           //     }) ] }),
-           //     new TableRow({
-           //       children: [
-           //         new TableCell({
-           //           width: { size: ((12240 - (this.marginSize * 2)) / 3) - 500, type: WidthType.DXA },
-           //           children: [
-           //             new Paragraph({
-           //               children: [
-           //                 new TextRun({
-           //                   text: "Materials and Fuels Complex",
-           //                   size: 20
-           //                 })
-           //               ],
-           //               alignment: AlignmentType.LEFT
-           //             })
-           //           ],
-           //           verticalAlign: VerticalAlign.CENTER
-           //         }),
-           //         new TableCell({
-           //           width: { size: ((12240 - (this.marginSize * 2)) / 3) + 500, type: WidthType.DXA },
-           //           children: [
-           //             new Paragraph({
-           //               children: [
-           //                 new TextRun({
-           //                   text: "Functional and Operational Requirements",
-           //                   size: 20
-           //                 })
-           //               ],
-           //               alignment: AlignmentType.LEFT
-           //             })
-           //           ],
-           //           verticalAlign: VerticalAlign.CENTER
-           //         }),
-           //         new TableCell({
-           //           width: { size: (12240 - (this.marginSize * 2)) / 3, type: WidthType.DXA },
-           //           children: [
-           //             new Paragraph({
-           //               children: [
-           //                 new TextRun({
-           //                   text: `eCR Number: ${this.eCRNumber}`,
-           //                   size: 20
-           //                 })
-           //               ],
-           //               alignment: AlignmentType.LEFT
-           //             })
-           //           ],
-           //           verticalAlign: VerticalAlign.CENTER
-           //         })
-           //       ]
-           //     }),
-           //     new TableRow({ children: [ new TableCell({
-           //       children: [
-           //         new Paragraph({
-           //           children: [
-           //             new TextRun({
-           //               text: "Manual: Stand Alone",
-           //               size: 20
-           //             })
-           //           ]
-           //         })
-           //       ],
-           //       borders: {
-           //         top: { style: BorderStyle.NIL},
-           //         bottom: { style: BorderStyle.NIL},
-           //         left: { style: BorderStyle.NIL},
-           //         right: { style: BorderStyle.NIL}
-           //       },
-           //       columnSpan: 3
-           //     }) ] }),
-           //     new TableRow({ children: [ new TableCell({
-           //       children: [
-           //         new Paragraph({
-           //           children: [
-           //             new TextRun({
-           //               text: "",
-           //               size: 20
-           //             })
-           //           ]
-           //         })
-           //       ],
-           //       borders: {
-           //         top: { style: BorderStyle.NIL},
-           //         bottom: { style: BorderStyle.NIL},
-           //         left: { style: BorderStyle.NIL},
-           //         right: { style: BorderStyle.NIL}
-           //       },
-           //       columnSpan: 3
-           //     }) ] }),
-           //
-           //  ] }) // end title table
+            ] }) ] }), // end title table
           ] // end header children
         }) // end header
       }, // end headers list
@@ -2645,7 +2529,48 @@ class InnoslateReport {
                         })
                       ],
                     })
-                   ] }) ] }) // end title table
+                  ] }),
+                new TableRow({ children: [ new TableCell({
+                      children: [
+                        new Paragraph({
+                          children: [
+                            new TextRun({
+                              text: " ",
+                              size: 120,
+                              bold: true
+                            })
+                          ]
+                        })
+                      ],
+                      borders: {
+                        top: { style: BorderStyle.NIL},
+                        bottom: { style: BorderStyle.NIL},
+                        left: { style: BorderStyle.NIL},
+                        right: { style: BorderStyle.NIL}
+                      },
+                      columnSpan: 2
+                    }) ] }),
+                new TableRow({ children: [ new TableCell({
+                      children: [
+                        new Paragraph({
+                          children: [
+                            new TextRun({
+                              text: " ",
+                              size: 120,
+                              bold: true
+                            })
+                          ]
+                        })
+                      ],
+                      borders: {
+                        top: { style: BorderStyle.NIL},
+                        bottom: { style: BorderStyle.NIL},
+                        left: { style: BorderStyle.NIL},
+                        right: { style: BorderStyle.NIL}
+                      },
+                      columnSpan: 2
+                    }) ] })
+              ] }) // end title table
           ] // end header children
         }) // end header
       }, // end headers list
@@ -2689,12 +2614,19 @@ class InnoslateReport {
 
             if (this.reportType=="NRIC") {
               this.indentSections = false
+              this.requirement_prepend = true
+              this.heading1_page_break = true
+              this.heading1_all_caps = false
+              this.heading4_abbreviate = false
               this.recurseCompile(this.reportId, 0)
               this.nricReport()
               this.writeReport()
             } else {
               this.indentSections = true
-
+              this.requirement_prepend = false
+              this.heading1_page_break = false
+              this.heading1_all_caps = true
+              this.heading4_abbreviate = true
               this.recurseCompile(this.reportId, 0)
               this.mfcReport()
               this.writeReport()
