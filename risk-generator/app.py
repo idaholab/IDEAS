@@ -12,17 +12,19 @@ key = os.environ.get("INNOSLATE_KEY")
 
 # Excel Writer
 import xlsxwriter
-workbook = xlsxwriter.Workbook('risk-assessment-form.xlsx')
-
+workbook = xlsxwriter.Workbook('risk-assessment-form.xls')
 
 # Helpers
 from helpers.risks import parse_risks
 from helpers.enumerators import risk_enumerators
 from helpers.xls import build_xls
+from helpers.reference_data import reference
 
 # Flask
 app = Flask(__name__)
 app.debug = True
+from flask_cors import CORS
+cors = CORS(app, resources={r"/entities/*": {"origins": "*"}})
 
 
 # Routes
@@ -32,6 +34,8 @@ def risks(projectId):
         Development view, use project 49 only
         Returns the view in /templates/risks.html
     """
+
+    
     r = requests.get(
         data_host+"/o/nric/entities", 
         params={"query": "class:Risk", "projectId": projectId}, 
@@ -63,6 +67,8 @@ def generate():
     risk = parse_risks(data)
 
     build_xls(workbook, risk)
+    reference(workbook)
+    workbook.close()
 
     return "OK"
 
