@@ -4,6 +4,9 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
     <tr>
         <td colspan="2">
             <table>
+                <tr>
+                  <th>Documents</th><th colspan="2">Formats</th>
+                </tr>
                 <tr v-for="document in documents" :key="document.id">
                     <td>
                         {{document.name}}
