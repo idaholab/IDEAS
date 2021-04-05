@@ -104,6 +104,7 @@ class InnoslateReport {
     this.heading1_page_break = true
     this.heading1_all_caps = false
     this.heading4_abbreviate = false
+    this.center_appendix = false
   }
 
   createTempDir() {
@@ -672,10 +673,19 @@ class InnoslateReport {
           let pageBreak = false
           let padding = 120
           let allCaps = false
+          let heading_alignment = null
+
           if (recursionCounter == 1) {
             pageBreak = this.heading1_page_break
             padding = 240
             allCaps = this.heading1_all_caps
+            if (tmp_name.substring(0, 8) == "Appendix") {
+              tmp_number = ''
+              if (this.center_appendix) {
+                heading_alignment = AlignmentType.CENTER
+                pageBreak = true
+              }
+            }
           } else if (recursionCounter == 2) {
             padding=240
           } else if (recursionCounter == 4 && this.heading4_abbreviate) {
@@ -686,6 +696,7 @@ class InnoslateReport {
 
           // create heading from entity number and name
           if (ident != this.reportId) { // normal entities are printed as heading and paragraphs
+
             this.children.push(
               new Paragraph ({
                 heading: heading,
@@ -695,9 +706,11 @@ class InnoslateReport {
                 })],
                 spacing: {before: padding, after: padding},
                 pageBreakBefore: pageBreak,
-                indent: {left: indent}
+                indent: {left: indent},
+                alignment: heading_alignment
               })
             )
+
             // add paragraphs and tables from description
             for (var i=0; i < tmp_description_list.length; i++) {
               this.children.push(
@@ -2618,6 +2631,7 @@ class InnoslateReport {
               this.heading1_page_break = true
               this.heading1_all_caps = false
               this.heading4_abbreviate = false
+              this.center_appendix = false
               this.recurseCompile(this.reportId, 0)
               this.nricReport()
               this.writeReport()
@@ -2627,6 +2641,7 @@ class InnoslateReport {
               this.heading1_page_break = false
               this.heading1_all_caps = true
               this.heading4_abbreviate = true
+              this.center_appendix = true
               this.recurseCompile(this.reportId, 0)
               this.mfcReport()
               this.writeReport()
