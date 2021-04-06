@@ -92,13 +92,13 @@ app.get("/o/:org/report_data/:n", function(req, res) {
 app.get("/o/:o/report/:reportType/:n/", function(req, res) {
   innoslate_report(res, req, req.params['n'],
     { //these are the endpoints Innoslate hits to collect data for the report
-      'user': 'user', 
+      'user': 'user',
       'schema': "o/" + req.params['o'] + '/schema',
       'entities':
         "o/" + req.params['o'] + '/entities/' + req.params['n'] + '?&levels=25&includeRelations=source%20of,decomposed%20by'
     },
     req.params['reportType'], //this parameter is the button selected on the UI, e.g. "NRIC" or "MFC"
-    {name: `${req.query.name}`} //name entered in the UI
+    {name: `${req.query.name}`, isOUO: `${req.query.isOUO}`} //name and isOUO entered in the UI
   );
 })
 
