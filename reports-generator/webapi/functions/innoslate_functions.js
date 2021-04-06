@@ -27,12 +27,12 @@ function innoslate_request(res, req, string, abbreviated=false) {
 }
 
 // Generate an Innoslate report from Innoslate data
-function innoslate_report(res, req, primaryEntId, addresses, reportType, name) {
+function innoslate_report(res, req, primaryEntId, addresses, reportType, name, isOUO) {
 
   inno_request.retrieve_multiple(addresses).then(data => {
     let inno_report = new InnoslateReport(primaryEntId, data, reportType, api, headers)
     inno_report.createTempDir()
-    inno_report.makeReport(name).then(report => {
+    inno_report.makeReport(name, isOUO).then(report => {
       let filePath = path.join(inno_report.getTempDir(), 'report.docx')
       const watcher = chokidar.watch(filePath, {persistent: false})
       watcher.on('add', (event, path) => {

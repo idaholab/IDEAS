@@ -28,7 +28,7 @@ Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
           </div>
 
           <template v-if="documents.length">
-            <Documents v-bind:documents="documents" v-bind:nameString="nameString" :key="key"/>
+            <Documents v-bind:documents="documents" v-bind:nameString="nameString" v-bind:isOUO="isOUO" :key="key"/>
           </template>
     </v-container>
 </template>
@@ -59,7 +59,8 @@ export default {
     },
     props: {
         projects: Array,
-        nameString: String
+        nameString: String,
+        isOUO: Boolean
     },
     data: function() {
         return {

@@ -50,11 +50,11 @@ export function getTemplates() {
     return templates;
 }
 
-export async function makeReport(docId, docName, docType, nameString) {
+export async function makeReport(docId, docName, docType, nameString, isOUO) {
 
     axios({
         url: `${host}:${port}/o/nric/report/${docType}/${docId}`,
-        params: {name: nameString},
+        params: {name: nameString, isOUO: isOUO},
         method: 'GET',
         responseType: 'blob'
         })

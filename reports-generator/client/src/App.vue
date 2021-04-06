@@ -1,52 +1,43 @@
 Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
-<!-- <template>
-    <UI />
-</template>
-
-<script>
-import UI from './components/UI';
-
-
-export default {
-    name: "App",
-    components: {
-        UI
-    },
-    data() {
-        return {
-            nameString: this.nameString
-        };
-    }
-}
-</script> -->
-
 <template>
     <v-app>
         <v-main>
             <v-container>
+                <v-spacer>
+                    <br />
+                    <br />
+                </v-spacer>
+                
                 <h2>Innoslate Reports</h2>
 
                 <v-spacer>
                     <br />
+                    <br />
                 </v-spacer>
 
                 <input type="text" id="nameString" v-model="nameString" placeholder="Author(s)">
-                <v-btn @click="addName"><span class="material-icons">
-person_add_alt
-</span></v-btn>
+                <v-btn @click="addName"><span class="material-icons">person_add_alt</span></v-btn>
                 <ul>
                     <li v-for="name in nameArray">{{ name }}</li>
                 </ul>
 
                 <v-spacer>
                     <br />
+                    <br />
+                </v-spacer>
+
+                Official Use Only <input type="checkbox" id="isOUO" v-model="isOUO" />
+
+                <v-spacer>
+                    <br />
+                    <br />
                 </v-spacer>
 
                 <v-btn large v-if="!this.projects.length" v-on:click="getProjects" text small color="#07519E">Get NRIC Projects</v-btn>
 
                 <template v-if="this.projects.length">
-                    <Projects v-bind:projects="projects" v-bind:nameString="nameConcat"/>
+                    <Projects v-bind:projects="projects" v-bind:nameString="nameConcat" v-bind:isOUO="isOUO"/>
                 </template>
             </v-container>
         </v-main>
@@ -83,7 +74,8 @@ export default {
             templates: [],
             nameString: '',
             nameConcat: '',
-            nameArray: []
+            nameArray: [],
+            isOUO: false
         }
     },
     mounted: function() {
