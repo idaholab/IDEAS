@@ -466,8 +466,12 @@ class InnoslateReport {
   makeTable(stringIn, indent) {
     // create .docx table from HTML table
     let tempString = stringIn
-    let table = stringIn.replace('<table>', '')
+    let tables = stringIn.match(/<table[\s\S]*?>/g);
+    let tableString = tables[0]
+    let table = stringIn.replace(tableString, '')
     table = table.replace('</table>', '')
+    table = table.replace('<thead>', '')
+    table = table.replace('</thead>', '')
     table = table.replace('<tbody>', '')
     table = table.replace('</tbody>', '')
     let rows = table.match(/<tr>[\s\S]*?<\/tr>/g)
@@ -477,6 +481,9 @@ class InnoslateReport {
         let tempRow = rows[i].replace('<tr>', '')
         tempRow = tempRow.replace('</tr>', '')
         let cells = tempRow.match(/<td>[\s\S]*?<\/td>/g)
+        if (tempRow.includes('<th>')) {
+          cells = tempRow.match(/<th>[\s\S]*?<\/th>/g)
+        }
         let cellList = []
         if (indent > 0) {
           cellList.push(
@@ -495,6 +502,8 @@ class InnoslateReport {
         for (var j=0; j < cells.length; j++) {
           let tempCell = cells[j].replace('<td>', '')
           tempCell = tempCell.replace('</td>', '')
+          tempCell = tempCell.replace('<th>', '')
+          tempCell = tempCell.replace('</th>', '')
           cellList.push(new TableCell({
             children: this.makeParagraphs(tempCell),
             margins: {top: 50, bottom: 50, left: 50, right: 50},
@@ -547,7 +556,7 @@ class InnoslateReport {
     initialString = initialString.replace(/<\/inno>/g, "")
 
     // handle tables
-    let tables = initialString.match(/<table>[\s\S]*?<\/table>/g); //find tables
+    let tables = initialString.match(/<table[\s\S]*?<\/table>/g); //find tables
 
     let tempChildren = []
     if (tables) { // if search != null
