@@ -12,13 +12,13 @@ key = os.environ.get("INNOSLATE_KEY")
 
 # Excel Writer
 import xlsxwriter
-workbook = xlsxwriter.Workbook('risk-assessment-form.xls')
+workbook = xlsxwriter.Workbook('risk-assessment-form.xlsx')
 
 # Helpers
-from helpers.risks import parse_risks
-from helpers.enumerators import risk_enumerators
-from helpers.xls import build_xls
-from helpers.reference_data import reference
+from helpers.risk_enumerators import risk_enumerators # Adds drop-down fields to the risk dictionary
+from helpers.parse_risk import parse_risks # Transforms the risk dictionary into NRIC format
+from helpers.reference_data import reference_data # Creates the reference data sheet
+from helpers.build_xls import build_xls # Writes data to the .xlsx
 
 # Flask
 app = Flask(__name__)
@@ -35,7 +35,6 @@ def risks(projectId):
         Returns the view in /templates/risks.html
     """
 
-    
     r = requests.get(
         data_host+"/o/nric/entities", 
         params={"query": "class:Risk", "projectId": projectId}, 
@@ -45,32 +44,28 @@ def risks(projectId):
             }
         )
 
-    data = r.json()[0] # Development only, for projects with only one risk entity (#49)
-    data.update(risk_enumerators)
-    response = make_response(render_template("risks.html", data=data))
+    data = r.json()
 
-    requests.post("http://localhost:5000/generate", json=data, headers={'Content-Type': 'application/json'})
+    try:   
+        # Build a single reference data sheet
+        reference_data(workbook)
+        # For each risk, generate a new risk assessment form in the workbook
+        for risk_data in data:
+            generate(risk_data)
+        #workbook.close()
+    except xlsxwriter.exceptions.DuplicateWorksheetName:
+        error = "You have to reload the Flask server to overwrite the same .xlsx. This is a temporary development restriction."
+        print(error)
+        return error, 500
+
+    response = make_response(render_template("risks.html", data=data))
 
     return response
 
-
-@app.route('/generate', methods=['POST'])
-def generate():
-
-    """
-        Accepts Innoslate data, parses it into a risk object, and sends it to a .xls builder
-    """
-
-    data = request.get_json()
-    
-
-    risk = parse_risks(data)
-
-    build_xls(workbook, risk)
-    reference(workbook)
-    workbook.close()
-
-    return "OK"
+def generate(risk_data):
+    risk_data.update(risk_enumerators)
+    risk_object = parse_risks(risk_data)
+    build_xls(workbook, risk_object)
 
 
 if __name__ == '__main__':
