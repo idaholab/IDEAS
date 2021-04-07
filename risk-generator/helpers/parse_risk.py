@@ -39,7 +39,7 @@ def parse_risks(data):
         'trigger_event': data['attrs']['90'],
         'residual_risk_likelihood': data['residual_risk_likelihood'],
         'initial_consequence': data['initial_consequence'],
-        'handling_strategy': data['attrs']['91'],
+        'handling_strategy': data['handling_strategy'],
         'residual_consequence': data['residual_consequence'],
         'initial_risk_rating': "",
         'handling_strategy_implementation_cost': "",

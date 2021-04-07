@@ -1,6 +1,10 @@
-from helpers.enumerators import risk_enumerators
+from helpers.risk_enumerators import risk_enumerators
 
-def reference(workbook):
+def reference_data(workbook):
+
+    """
+        Build a reference data worksheet used for logic in the other risk sheets.
+    """
 
     # Reference Worksheet
     worksheet = workbook.add_worksheet('Reference_Data')

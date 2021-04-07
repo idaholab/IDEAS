@@ -1,3 +1,5 @@
+# Data that we 
+
 risk_enumerators = {
     'type': ['Threat', "Opportunity"],
     'risk_breakdown_structure': ['Project', 'Technical', 'Safety', 'Reaction'],
@@ -55,6 +57,7 @@ risk_enumerators = {
         'C.C.05.52.10.60.80  BEA Construction Follow - General',
         'C.C.05.52.10.60.90  BEA Construction Follow - Commissioning Agent']
     ), 
+    'handling_strategy': ['Avoid', 'Mitigate', 'Transfer', 'Accept', 'Exploit', 'Share', 'Enhance'],
     'initial_risk_likelihood': ['Very Unlikely', 'Unlikely', '50/50', 'Likely', 'Very Likely'],
     'residual_risk_likelihood': ['Very Unlikely', 'Unlikely', '50/50', 'Likely', 'Very Likely'],
     'initial_consequence': ['Negligible', 'Marginal', 'Significant', 'Critical/Exceptional', 'Crisis/Outstanding'],

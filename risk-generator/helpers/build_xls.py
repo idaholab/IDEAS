@@ -8,6 +8,7 @@ def build_xls(workbook, risk):
     worksheet = workbook.add_worksheet(risk['risk_title'])
 
 
+
     # Formatting
     title = workbook.add_format({'bold': True, 'text_wrap': True})
     merge = workbook.add_format({'text_wrap': True, 'align': 'center'})
@@ -34,7 +35,6 @@ def build_xls(workbook, risk):
 
     # Last Evaluated Date
     worksheet.merge_range('F3:G3', "Last Date Evaluated:", title)
-    print(risk['last_date_evaluated'])
     worksheet.write_datetime('H3', risk['last_date_evaluated'], date_format)
 
     # Status
@@ -234,7 +234,7 @@ def build_xls(workbook, risk):
     worksheet.merge_range('C17:K17', risk['handling_actions'], merge)
 
     # Success Metric for Overall Handling Strategy
-    worksheet.merge_range('A18:B18', "Success Metric fr Overall Handling Strategy:", title)
+    worksheet.merge_range('A18:B18', "Success Metric for Overall Handling Strategy:", title)
     worksheet.merge_range('C18:K18', risk['success_metric'], merge)
 
     # Status Comments
