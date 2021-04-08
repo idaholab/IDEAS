@@ -1,3 +1,10 @@
+# Node Environment
 *.env
 node_modules
 dist
+
+# Python Environment
+Lib 
+Scripts
+*.cfg
+*.vscode
