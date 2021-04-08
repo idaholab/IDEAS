@@ -45,6 +45,7 @@ def risks(projectId):
         )
 
     data = r.json()
+    print(data)
 
     try:   
         # Build a single reference data sheet
@@ -52,9 +53,10 @@ def risks(projectId):
         # For each risk, generate a new risk assessment form in the workbook
         for risk_data in data:
             generate(risk_data)
-        #workbook.close()
+        
+        workbook.close()
     except xlsxwriter.exceptions.DuplicateWorksheetName:
-        error = "You have to reload the Flask server to overwrite the same .xlsx. This is a temporary development restriction."
+        error = "You have to reload the Flask server to overwrite the same .xlsx. This is a temporary Development restriction"
         print(error)
         return error, 500
 
