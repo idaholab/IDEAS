@@ -26,7 +26,7 @@ innoslateRouter.get('/document-data/:projId', async function(req, res, next) {
     let adapter = new InnoslateTransformer(host, key);
     let data = await adapter.extractDocument(req.params['projId']);
 
-    res.send({"document_entities": data.flatEntities});
+    res.send({"documents": data.documents});
 })
 
 // GET Non-Document Data

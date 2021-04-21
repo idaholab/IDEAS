@@ -3,6 +3,7 @@
 const Project = require('./models/Project');
 const Document = require('./models/Document');
 const Entity = require('./models/Entity');
+const FlatDocument = require('./models/FlatDocument')
 const FlatEntity = require('./models/FlatEntity')
 const axios = require('axios');
 
@@ -13,6 +14,7 @@ class DocumentTransformer {
         this.key = key,
         this.data = {
             projects: [],
+            documents: [],
             flatEntities: [],
             // We can add more properties here!
         }
@@ -87,6 +89,18 @@ class DocumentTransformer {
                                 document.modifiedBy,
                                 document.version
                             ));
+                        this.data.documents.push(
+                            // {
+                            //     "id": String(document.id),
+                            //     "name": document.name,
+                            //     "description": document.description
+                            // }
+                            new FlatDocument(
+                                document.id,
+                                document.name,
+                                document.description
+                            )
+                        );
                         })
                     }
                 catch (error) {
@@ -111,6 +125,18 @@ class DocumentTransformer {
                                 modifiedBy,
                                 version
                             ));
+                        this.data.documents.push(
+                            // {
+                            //     "id": String(id),
+                            //     "name": name,
+                            //     "description": description
+                            // }
+                            new FlatDocument(
+                                id,
+                                name,
+                                description
+                            )
+                        );
                     } else {
                         console.log(error);
                     }
@@ -135,7 +161,7 @@ class DocumentTransformer {
             promises[document] = project.documents.map(document => {
                 return axios.get(`${this.host}/o/nric/entities/${document.id}`,
                 {
-                    params: {levels: '25', includeRelations: 'source of, decomposed by'},
+                    params: {levels: '25', includeRelations: 'source of,decomposed by'},
                     headers: {'Authorization': `basic ${this.key}`}
                 })
             });
@@ -147,6 +173,7 @@ class DocumentTransformer {
             promises.forEach((responses, project) => {
                 responses.forEach((response, document) => {
                     try {
+                        //console.log(response.data)
                         response.data.forEach(entity => {
                             this.data.projects[project].documents[document].entities.push(
                                 new Entity (
@@ -165,15 +192,21 @@ class DocumentTransformer {
                                     entity.version
                                 )
                             );
-                            console.log(entity.rels)
+                            this.data.documents[document].entities.push(
+                                new FlatEntity (
+                                    entity.id,
+                                    entity.number,
+                                    entity.sortNumber,
+                                    entity.classId,
+                                    entity.name,
+                                    entity.description,
+                                    entity.is_requirement,
+                                    entity.rationale,
+                                    entity.rels
+                                )
+                            )
                             this.data.flatEntities.push(
                                 new FlatEntity (
-                                    this.data.projects[project].id,
-                                    this.data.projects[project].name,
-                                    this.data.projects[project].description,
-                                    this.data.projects[project].documents[document].id,
-                                    this.data.projects[project].documents[document].name,
-                                    this.data.projects[project].documents[document].description,
                                     entity.id,
                                     entity.number,
                                     entity.sortNumber,
@@ -192,7 +225,7 @@ class DocumentTransformer {
                             let id = response.data.id;
                             let number = response.data.number;
                             let sortNumber = response.data.sortNumber;
-                            let classId = response.data.classId;
+                            let class_id = response.data.classId;
                             let name = response.data.name;
                             let description = response.data.description;
                             let created = response.data.created;
@@ -203,7 +236,6 @@ class DocumentTransformer {
                             let rationale = response.data.rationale;
                             let rels = response.data.rels;
                             let version = response.data.version;
-
 
                             this.data.projects[project].documents[document].entities.push(
                                 new Entity(
@@ -222,18 +254,26 @@ class DocumentTransformer {
                                     version
                                 ));
 
-                            this.data.flatEntities.push(
+                            this.data.documents[document].entities.push(
                                 new FlatEntity (
-                                    this.data.projects[project].id,
-                                    this.data.projects[project].name,
-                                    this.data.projects[project].description,
-                                    this.data.projects[project].documents[document].id,
-                                    this.data.projects[project].documents[document].name,
-                                    this.data.projects[project].documents[document].description,
                                     id,
                                     number,
                                     sortNumber,
                                     classId,
+                                    name,
+                                    description,
+                                    is_requirement,
+                                    rationale,
+                                    rels
+                                )
+                            )
+
+                            this.data.flatEntities.push(
+                                new FlatEntity (
+                                    id,
+                                    number,
+                                    sortNumber,
+                                    class_id,
                                     name,
                                     description,
                                     is_requirement,

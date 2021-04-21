@@ -2,37 +2,25 @@
 
 class FlatEntity {
     constructor(
-        project_id,
-        project_name,
-        project_description,
-        document_id,
-        document_name,
-        document_description,
-        entity_id,
+        id,
         number,
         sortNumber,
-        classId,
+        class_id,
         name,
         description,
         is_requirement,
         rationale,
         rels
     ) {
-        this.project_id = String(project_id),
-        this.project_name = project_name,
-        this.project_description = project_description,
-        this.document_id = String(document_id),
-        this.document_name = document_name,
-        this.document_description = document_description,
-        this.entity_id = String(entity_id),
-        this.number = number,
-        this.sortNumber = sortNumber,
-        this.classId = String(classId),
+        this.id = String(id),
+        //this.number = number,
+        //this.sortNumber = sortNumber,
+        //this.class_id = String(class_id),
         this.name = name,
-        this.description = description,
-        this.is_requirement = is_requirement,
-        this.rationale = rationale,
-        this.rels = rels
+        this.description = description
+        //this.is_requirement = is_requirement,
+        //this.rationale = rationale,
+        //this.rels = rels
     }
 }
 
