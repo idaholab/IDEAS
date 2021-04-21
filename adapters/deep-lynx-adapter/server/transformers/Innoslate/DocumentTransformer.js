@@ -3,6 +3,8 @@
 const Project = require('./models/Project');
 const Document = require('./models/Document');
 const Entity = require('./models/Entity');
+const FlatDocument = require('./models/FlatDocument')
+const FlatEntity = require('./models/FlatEntity')
 const axios = require('axios');
 
 class DocumentTransformer {
@@ -12,6 +14,8 @@ class DocumentTransformer {
         this.key = key,
         this.data = {
             projects: [],
+            documents: [],
+            flatEntities: [],
             // We can add more properties here!
         }
     }
@@ -20,15 +24,15 @@ class DocumentTransformer {
         await this.getProject(projId);
         await this.getDocuments();
         await this.getEntities();
-        
+
         return this.data;
     }
 
     async getProject(projId) {
     /*
-        GET a project from the Innoslate API. 
+        GET a project from the Innoslate API.
     */
-        await axios.get(`${this.host}/o/nric/p/${projId}`, 
+        await axios.get(`${this.host}/o/nric/p/${projId}`,
         {
             headers: {'Authorization': `basic ${this.key}`}
         })
@@ -41,7 +45,7 @@ class DocumentTransformer {
                         response.data.description
                     )
                 );
-            } 
+            }
             catch (error) {
                 console.log(error);
             }
@@ -63,7 +67,7 @@ class DocumentTransformer {
                     projectId: project.id,
                     limit: 16,
                     offset: 0
-                }, 
+                },
                 headers: {
                     'Authorization': `basic ${this.key}`
                 }
@@ -85,8 +89,20 @@ class DocumentTransformer {
                                 document.modifiedBy,
                                 document.version
                             ));
+                        this.data.documents.push(
+                            // {
+                            //     "id": String(document.id),
+                            //     "name": document.name,
+                            //     "description": document.description
+                            // }
+                            new FlatDocument(
+                                document.id,
+                                document.name,
+                                document.description
+                            )
+                        );
                         })
-                    } 
+                    }
                 catch (error) {
                     if (error instanceof TypeError) {
                         let id = response.data.id;
@@ -109,21 +125,33 @@ class DocumentTransformer {
                                 modifiedBy,
                                 version
                             ));
+                        this.data.documents.push(
+                            // {
+                            //     "id": String(id),
+                            //     "name": name,
+                            //     "description": description
+                            // }
+                            new FlatDocument(
+                                id,
+                                name,
+                                description
+                            )
+                        );
                     } else {
                         console.log(error);
                     }
                 }
             })
         });
-        
+
     }
 
     async getEntities() {
     /*
         For all projects in the data array, generate a nested array of promises for each of its document's entities.
         For each nested array, return a single promise.
-        When the nested promises resolve, push the results to each project's document's entities array. 
-        
+        When the nested promises resolve, push the results to each project's document's entities array.
+
         If there is only one entity, the response.data object is not iterable and must be handled more verbosely.
     */
 
@@ -131,9 +159,9 @@ class DocumentTransformer {
 
         this.data.projects.forEach((project, document) => {
             promises[document] = project.documents.map(document => {
-                return axios.get(`${this.host}/o/nric/entities/${document.id}`, 
+                return axios.get(`${this.host}/o/nric/entities/${document.id}`,
                 {
-                    params: {levels: '25', includeRelations: 'source of, decomposed by'}, 
+                    params: {levels: '25', includeRelations: 'source of,decomposed by'},
                     headers: {'Authorization': `basic ${this.key}`}
                 })
             });
@@ -145,6 +173,7 @@ class DocumentTransformer {
             promises.forEach((responses, project) => {
                 responses.forEach((response, document) => {
                     try {
+                        //console.log(response.data)
                         response.data.forEach(entity => {
                             this.data.projects[project].documents[document].entities.push(
                                 new Entity (
@@ -163,13 +192,40 @@ class DocumentTransformer {
                                     entity.version
                                 )
                             );
+                            this.data.documents[document].entities.push(
+                                new FlatEntity (
+                                    entity.id,
+                                    entity.number,
+                                    entity.sortNumber,
+                                    entity.classId,
+                                    entity.name,
+                                    entity.description,
+                                    entity.is_requirement,
+                                    entity.rationale,
+                                    entity.rels
+                                )
+                            )
+                            this.data.flatEntities.push(
+                                new FlatEntity (
+                                    entity.id,
+                                    entity.number,
+                                    entity.sortNumber,
+                                    entity.classId,
+                                    entity.name,
+                                    entity.description,
+                                    entity.is_requirement,
+                                    entity.rationale,
+                                    entity.rels
+                                )
+                            )
                         })
-                    } 
+                    }
                     catch (error) {
                         if (error instanceof TypeError) {
                             let id = response.data.id;
                             let number = response.data.number;
                             let sortNumber = response.data.sortNumber;
+                            let class_id = response.data.classId;
                             let name = response.data.name;
                             let description = response.data.description;
                             let created = response.data.created;
@@ -180,8 +236,7 @@ class DocumentTransformer {
                             let rationale = response.data.rationale;
                             let rels = response.data.rels;
                             let version = response.data.version;
-        
-        
+
                             this.data.projects[project].documents[document].entities.push(
                                 new Entity(
                                     id,
@@ -198,10 +253,38 @@ class DocumentTransformer {
                                     rels,
                                     version
                                 ));
+
+                            this.data.documents[document].entities.push(
+                                new FlatEntity (
+                                    id,
+                                    number,
+                                    sortNumber,
+                                    classId,
+                                    name,
+                                    description,
+                                    is_requirement,
+                                    rationale,
+                                    rels
+                                )
+                            )
+
+                            this.data.flatEntities.push(
+                                new FlatEntity (
+                                    id,
+                                    number,
+                                    sortNumber,
+                                    class_id,
+                                    name,
+                                    description,
+                                    is_requirement,
+                                    rationale,
+                                    rels
+                                )
+                            )
                         } else {
                             console.log(error);
                         }
-                    } 
+                    }
                 });
             });
         });
