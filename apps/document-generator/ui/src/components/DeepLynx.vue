@@ -91,14 +91,13 @@ const axios = require('axios');
     mounted: async function() {
       this.setURL(`${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}`);
       await axios.get(`${this.url}/deeplynx/health`).then(response => {
-          if (response.data=='OK') {
+          if (response.status==200) {
             this.deepLynxOpen = true;
-          } else {
-            this.error_message = "Cannot connect to Deep Lynx service";
           }
-      }).catch(error => {
-        this.error_message = error;
+      }).catch(() => {
+        console.log("Deep Lynx is not open on provided port");
       });
+
     }
   }
 </script>

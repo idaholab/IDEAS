@@ -17,7 +17,15 @@ const deepLynxTokenExpiry = process.env.DEEP_LYNX_TOKEN_EXPIRY;
 
 
 deepLynxRouter.get('/health', async function(req, res) {
-    res.send("OK")
+    let health = await axios.get(
+            `${process.env.DEEP_LYNX_ADDRESS}/health`
+        ).then(() => {
+            res.status(200).send();
+        }).catch(() => {
+            res.status(500).send();
+        });
+
+    res.send(health);
 })
 
 deepLynxRouter.get('/token', async function(req, res) {
