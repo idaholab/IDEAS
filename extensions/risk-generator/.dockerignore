@@ -1,6 +1,5 @@
 # Local Config
 Lib
-Scripts
 *.cfg
 .env
 .vscode
