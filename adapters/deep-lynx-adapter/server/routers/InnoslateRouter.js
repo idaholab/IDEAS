@@ -14,7 +14,7 @@ const key = process.env.INNOSLATE_KEY;
 
 // Routes
 innoslateRouter.get('/', async function(req, res, next) {
-
+    
     let adapter = new InnoslateTransformer(host, key);
     let data = await adapter.getObjects();
 
@@ -26,7 +26,7 @@ innoslateRouter.get('/document-data/:projId', async function(req, res, next) {
     let adapter = new InnoslateTransformer(host, key);
     let data = await adapter.extractDocument(req.params['projId']);
 
-    res.send({"documents": data.documents});
+    res.send(data);
 })
 
 // GET Non-Document Data
