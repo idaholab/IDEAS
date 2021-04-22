@@ -1,3 +1,5 @@
+from helpers.heatmap import heatmap
+
 def build_xls(workbook, risk):
 
     """
@@ -5,12 +7,10 @@ def build_xls(workbook, risk):
     """
 
     # Risk Worksheet
-    worksheet = workbook.add_worksheet(risk['risk_title'])
-
-
+    worksheet = workbook.add_worksheet(risk['risk_number'])
 
     # Formatting
-    title = workbook.add_format({'bold': True, 'text_wrap': True})
+    title = workbook.add_format({'bold': True, 'text_wrap': True, 'align': 'center'})
     merge = workbook.add_format({'text_wrap': True, 'align': 'center'})
     red = workbook.add_format({'font_color': 'red'})
     date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
@@ -71,41 +71,31 @@ def build_xls(workbook, risk):
 
     # Type
     worksheet.write('A8', "Type: (Threat or Opportunity)", title)
-    type_dropdown = worksheet.data_validation('B8', {'validate': 'list', 'source': risk['type']})
-    worksheet.merge_range('B8:C8', type_dropdown)
+    worksheet.merge_range('B8:C8', risk['type'])
 
     # Risk Breakdown Structure (RBS)
     worksheet.merge_range('D8:E8', "Risk Breakdown Structure (RBS):", title)
-    rbs_dropdown = worksheet.data_validation('F8', {'validate': 'list', 'source': risk['risk_breakdown_structure']})
-    worksheet.merge_range('F8:G8', rbs_dropdown)
+    worksheet.merge_range('F8:G8', risk['risk_breakdown_structure'], merge)
 
     # Risk Sub-Category
     worksheet.merge_range('H8:I8', "Risk Sub-Category:", title)
-    rsc_dropdown = worksheet.data_validation('J8', 
-        {'validate': 'list', 
-        # This complicated function is how dependent dropdowns are accomplished in Excel.
-        # Match the value in F8 with the header in the range E3:H3, and return the corresponding column in the table defined by E4:H11
-        'source': '=INDEX(Reference_Data!$E$4:$H$11, 0, MATCH(F8, Reference_Data!$E$3:$H$3, 0))'
-        }
-    )
-    worksheet.merge_range('J8:K8', rsc_dropdown)
+    worksheet.merge_range('J8:K8', risk['risk_sub_category'], merge)
 
     # Date Risk Identified
     worksheet.write('A9', "Date Risk Identified:", title)
-    worksheet.merge_range('B9:C9', risk['date_risk_identified'], merge)
+    worksheet.merge_range('B9:C9', risk['date_risk_identified'], date_format)
 
     # Date Risk Opened
     worksheet.merge_range('D9:E9', "Date Risk Opened:", title)
-    worksheet.write_datetime('F9:G9', risk['date_risk_opened'], date_format)
+    worksheet.merge_range('F9:G9', risk['date_risk_opened'], date_format)
 
     # Date Risk Closes
     worksheet.merge_range('H9:I9', "Date Risk Closes:", title)
-    worksheet.write_blank('F9:G9', risk['date_risk_closes'])
+    worksheet.merge_range('J9:K9', risk['date_risk_closes'], date_format)
 
     # Impacted WBS Elements
     worksheet.write('A10', "Impacted WBS Element(s):", title)
-    wbs_dropdown = worksheet.data_validation('B10', {'validate': 'list', 'source': '=Reference_Data!$J$2:$J$41'})
-    worksheet.merge_range('B10:G10', wbs_dropdown, merge)
+    worksheet.merge_range('B10:G10', risk['impacted_wbs_elements'], merge)
 
     # Secondary Risks
     worksheet.merge_range('H10:I10', "Secondary Risk(s):", title)
@@ -113,8 +103,7 @@ def build_xls(workbook, risk):
 
     # Initial Likelihood Risk
     worksheet.write('A11', "Initial Likelihood Risk:", title)
-    ilr_dropdown = worksheet.data_validation('B11', {'validate': 'list', 'source': risk['initial_risk_likelihood']})
-    worksheet.merge_range('B11:C11', ilr_dropdown)
+    worksheet.merge_range('B11:C11', risk['initial_risk_likelihood'], merge)
 
     # Trigger Event
     worksheet.merge_range('D11:E11', "Trigger Event:", title)
@@ -122,33 +111,23 @@ def build_xls(workbook, risk):
 
     # Residual Risk Likelihood
     worksheet.merge_range('H11:I11', "Residual Risk Likelihood:", title)
-    rrl_dropdown = worksheet.data_validation('J11', {'validate': 'list', 'source': risk['residual_risk_likelihood']})
-    worksheet.merge_range('J11:K11', rrl_dropdown)
+    worksheet.merge_range('J11:K11', risk['residual_risk_likelihood'], merge)
 
     # Initial Consequence
     worksheet.write('A12', "Initial Consequence:", title)
-    ic_dropdown = worksheet.data_validation('B12', {'validate': 'list', 'source': risk['initial_consequence']})
-    worksheet.merge_range('B12:C12', ic_dropdown)
+    worksheet.merge_range('B12:C12', risk['initial_consequence'], merge)
 
     # Handling Strategy
     worksheet.merge_range('D12:E12', "Handling Strategy:", title)
-    hs_dropdown = worksheet.data_validation('F12', {'validate': 'list', 'source': risk['handling_strategy']})
-    worksheet.merge_range('F12:G12', hs_dropdown)
+    worksheet.merge_range('F12:G12', risk['handling_strategy'], merge)
 
     # Residual Consequence
     worksheet.merge_range('H12:I12', "Residual Consequence:", title)
-    rc_dropdown = worksheet.data_validation('J12', {'validate': 'list', 'source': risk['residual_consequence']})
-    worksheet.merge_range('J12:K12', rc_dropdown)
+    worksheet.merge_range('J12:K12', risk['residual_consequence'], merge)
 
     # Initial Risk Rating
     worksheet.write('A13', "Initial Risk Rating:", title)
-    worksheet.merge_range('B13:C13', None, merge)
-    worksheet.write_formula('B13', 
-    # This complicated function is how matrix lookups are accomplished in Excel
-    # Match the value in B11 with the row defined by A14:A18, and the value in B12 with the column defined by B13:F13, and return the result from the table defined by B14:F18
-    # If there is an error (no selection), suppress the warning
-    '=IFERROR(INDEX(Reference_Data!$B$14:$F$18,MATCH(B11,Reference_Data!$A$14:$A$18,0),MATCH(B12,Reference_Data!$B$13:$F$13,0)), "")'
-    )
+    worksheet.merge_range('B13:C13', heatmap[f'{risk["initial_risk_likelihood"]}'][f'{risk["initial_consequence"]}'], merge)
     # Conditional Formatting "Low" - green, "Moderate" - yellow, "High" - red
     worksheet.conditional_format('B13', 
     {
@@ -179,13 +158,7 @@ def build_xls(workbook, risk):
 
     # Residual Risk Rating
     worksheet.merge_range('H13:I13', "Residual Risk Rating:", title)
-    worksheet.merge_range('J13:K13', None, merge)
-    worksheet.write_formula('J13', 
-    # This complicated function is how matrix lookups are accomplished in Excel
-    # Match the value in J11 with the row defined by A14:A18, and the value in J12 with the column defined by B13:F13, and return the result from the table defined by B14:F18
-    # If there is an error (no selection), suppress the warning
-    '=IFERROR(INDEX(Reference_Data!$B$14:$F$18,MATCH(J11,Reference_Data!$A$14:$A$18,0),MATCH(J12,Reference_Data!$B$13:$F$13,0)), "")'
-    )
+    worksheet.merge_range('J13:K13', heatmap[f'{risk["residual_risk_likelihood"]}'][f'{risk["residual_consequence"]}'], merge)
     # Conditional Formatting "Low" - green, "Moderate" - yellow, "High" - red
     worksheet.conditional_format('J13', 
     {

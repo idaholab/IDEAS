@@ -640,9 +640,9 @@ class InnoslateReport {
             desc = temp_obj["description"]
             if (temp_obj['classId'] == this.requirementId && this.requirement_prepend) {
               if (desc.includes("<p>")) {
-                desc = desc.replace('<p>', '<p><strong>Requirement</strong>: ')
+                desc = desc.replace('<p>', '<p><strong>[REQ ID# ' + temp_obj['id'] + ']</strong>    ')
               } else {
-                desc = "<strong>Requirement</strong>: " + desc
+                desc = "<strong>[REQ ID# " + temp_obj['id'] + "]</strong>    " + desc
               }
             }
           }

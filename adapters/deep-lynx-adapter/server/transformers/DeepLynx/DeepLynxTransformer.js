@@ -28,6 +28,7 @@ class DeepLynxTransformer {
             }
         }).catch(error => {
             this.data.error = error;
+            console.log(error);
         });
         return this.data;
     }
@@ -49,6 +50,7 @@ class DeepLynxTransformer {
             }
         }).catch(error => {
             this.data.error = error;
+            console.log(error);
         });
         return this.data;
     }
@@ -59,6 +61,7 @@ class DeepLynxTransformer {
           this.config
         ).then(response => {
             this.data.containers = [];
+            console.log(response.data)
             response.data.value.forEach(container => {
                 this.data.containers.push({
                     'name': container.name,
@@ -68,6 +71,7 @@ class DeepLynxTransformer {
             });
         }).catch(error => {
             this.data.error = error;
+            console.log(error);
         });
         return this.data;
     }
@@ -88,6 +92,7 @@ class DeepLynxTransformer {
             });
         }).catch(error => {
             this.data.error = error;
+            console.log(error);
         });
         return this.data;
     }
@@ -101,6 +106,7 @@ class DeepLynxTransformer {
             this.data = response.data;
         }).catch(error => {
             this.data.error = error;
+            console.log(error);
         });
         return this.data;
     }
