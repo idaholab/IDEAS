@@ -14,15 +14,15 @@
           <span><h3>{{project.name}}</h3></span>
           <span v-html="project.description">{{project.description}}</span>
 
-
-
           <template>
             <v-text-field 
             ref="input"
             type="text" 
             v-model="fileName" 
             placeholder="Filename" 
-            :rules="[rules.validate]"></v-text-field>
+            :rules="[rules.validate]"
+            @keyup.enter="generate"
+            :loading="loading"></v-text-field>
             <span v-if="error" style="color:red;">{{error}}</span>
             <br />
             <v-btn v-on:click="generate">Generate</v-btn>
@@ -34,6 +34,7 @@
 <script>
 import axios from 'axios';
 import FileSaver from 'file-saver';
+import _ from 'lodash';
 
   export default {
     name: 'Generator',
@@ -41,7 +42,9 @@ import FileSaver from 'file-saver';
       data: [],
       project: null,
       fileName: "",
+
       error: null,
+      loading: false,
       rules: {
         validate: (fileName) => {
           let regex = new RegExp(/[',.?":{}|<>/\\/]/g);
@@ -53,7 +56,7 @@ import FileSaver from 'file-saver';
     methods: {
       async getProjects() {
         this.data = await axios.get('http://localhost:5000/innoslate/projects').then(response => {
-          return response.data;
+          return _.map(_.sortBy(response.data, 'name'))
         })
       },
       async select(project) {
@@ -66,6 +69,7 @@ import FileSaver from 'file-saver';
             return
         }
         if (this.$refs.input.validate()) {
+          this.loading = true;
           await axios.post(`http://localhost:5000/entities/${this.project.id}`, {fileName: this.fileName}, {responseType: 'blob'} ).then(response => {
             
             FileSaver.saveAs(response.data, this.fileName);
@@ -77,7 +81,7 @@ import FileSaver from 'file-saver';
             } else {
               console.log(error)
             }
-          })
+          }).finally(this.loading=false);
         }
       }
     },
