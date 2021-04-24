@@ -14,26 +14,38 @@
                 item-text="name"
                 item-value="id"
                 label="Deep Lynx Container"
-                v-on:change="getNodes"
+                v-on:change="getMetatypes"
                 placeholder="Deep Lynx Container"
                 class="select">
                 </v-select>
             </div>
             
-            <div v-if="nodes" class="selector">
+            <div v-if="metatypes" class="selector">
                 <v-select
-                return-object
-                :items="nodes"
-                item-text="properties.name"
+                :items="metatypes"
+                item-text="name"
                 item-value="id"
-                label="Deep Lynx Nodes"
-                v-on:change="setNode"
-                placeholder="Deep Lynx Datasource"
+                label="Deep Lynx Metatypes"
+                v-on:change="getNodes"
+                placeholder="Deep Lynx Metatypes"
                 class="select">
                 </v-select>
             </div> 
+
+            <div v-if="nodes" class="selector">
+              <v-select
+              return-object
+              :items="nodes"
+              item-text="properties.name"
+              item-value="propreties.primary_text"
+              label="Deep Lynx Nodes"
+              v-on:change="setNode"
+              placeholder="Deep Lynx Metatypes"
+              class="select">
+              </v-select>
+            </div> 
            
-            {{selected_node}}
+            {{this.node}}
         </div>
     </v-container>
 </template>
@@ -50,9 +62,10 @@ const axios = require('axios');
         deepLynxOpen: false,
         token: null,
         containers: [],
+        metatypes: null,
         selected_container_id: null,
         nodes: null,
-        selected_node: null
+        node: null
     }),
     methods: {
       setURL(url) {
@@ -67,26 +80,34 @@ const axios = require('axios');
               this.error_message = "Token not retrieved from Deep Lynx";
             }
         }).catch(error => {
-          this.error_message = error;
+          console.log(error);
         });
       },
       async getContainers() {
         this.selected_container_id = null;
-        await axios.get(`${this.url}/deeplynx/containers/`, {token: this.token}).then(response => {
+        await axios.post(`${this.url}/deeplynx/containers`, {token: this.token}).then(response => {
           this.containers = response.data;
         }).catch(error => {
-          this.error_message = error;
+          console.log(error)
         });
       },
-      async getNodes(id) {
+      async getMetatypes(id) {
         this.selected_container_id = id;
-        this.nodes = await axios.post(`${this.url}/deeplynx/nodes`, {token: this.token, container_id: this.selected_container_id}).then(response => {
-            return response.data;
+        this.metatypes = await axios.post(`${this.url}/deeplynx/metatype`, {token: this.token, container_id: this.selected_container_id}).then(response => {
+          return response.data;
+        }).catch(error => {
+          console.log(error);
         })
       },
-      setNode(node) {
-        this.selected_node = node;
+      async getNodes(metatype) {
+        this.nodes = await axios.post(`${this.url}/deeplynx/nodes`, {token: this.token, container_id: this.selected_container_id, metatype_id: metatype}).then(response => {
+            return response.data;
+        })
+        console.log(this.nodes);
       },
+      async setNode(node) {
+        this.node = node;
+      }
     },
     mounted: async function() {
       this.setURL(`${process.env.VUE_APP_UI_HOST}:${process.env.VUE_APP_SERVER_PORT}`);
