@@ -139,9 +139,13 @@ class DeepLynxTransformer {
 
     async postMetadataImport(container_id, datasource_id, import_data, file_import_receipt) {
         let metadata = import_data[0].metadata;
+
+        delete file_import_receipt.value.metadata;
+        file_import_receipt.value.isError = file_import_receipt.isError;
+
         await axios.post(
             `${this.host}/containers/${container_id}/import/datasources/${datasource_id}/imports`,
-            [{'metadata': metadata, 'file_import_receipt': file_import_receipt}],
+            [{'metadata': metadata, 'file_import_receipt': file_import_receipt.value}],
             this.config
         ).then(response => {
             this.data = response.data;
