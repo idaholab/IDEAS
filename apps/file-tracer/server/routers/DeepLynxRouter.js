@@ -50,4 +50,11 @@ deepLynxRouter.get('/get_files/:container_id/:token', async function (req, res) 
     res.send(files);
 });
 
+deepLynxRouter.get('/get_links/:container_id/:token', async function (req, res) {
+    let transformer = new DeepLynxTransformer(host, req.params["token"]);
+    let links = await transformer.getNodes(req.params["container_id"], "Link");
+
+    res.send(links);
+});
+
 module.exports = deepLynxRouter;

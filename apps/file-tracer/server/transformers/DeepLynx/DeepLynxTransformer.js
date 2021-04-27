@@ -102,6 +102,20 @@ class DeepLynxTransformer {
         return this.data;
     }
 
+    async getNodes(container_id, node_name) {
+        this.config.headers['content-type'] = 'text/plain'
+        await axios.post(
+          `${this.host}/containers/${container_id}/query`,
+          `{nodes (where: {AND: [{metatype_name: "like ${node_name}"}]}){id metatype{id name} properties{key value type}}}`,
+          this.config
+        ).then(response => {
+            this.data = response.data;
+        }).catch(error => {
+            this.data.error = error;
+        });
+        return this.data;
+    }
+
 }
 
 module.exports = DeepLynxTransformer;
