@@ -20,6 +20,7 @@ env.bak/
 venv.bak/
 
 # Data
+reports/*
 *.xls*
 *.bin
 runner.py
