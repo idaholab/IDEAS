@@ -57,4 +57,11 @@ deepLynxRouter.get('/get_links/:container_id/:token', async function (req, res) 
     res.send(links);
 });
 
+deepLynxRouter.get('/get_assets/:container_id/:token', async function (req, res) {
+    let transformer = new DeepLynxTransformer(host, req.params["token"]);
+    let assets = await transformer.getNodes(req.params["container_id"], "Asset");
+
+    res.send(assets);
+});
+
 module.exports = deepLynxRouter;
