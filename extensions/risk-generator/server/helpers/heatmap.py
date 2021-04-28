@@ -1,4 +1,4 @@
-import pandas as pd 
+import pandas as pd
 
 likelihood = ['None', 'Very Unlikely', 'Unlikely', '50/50', 'Likely', 'Very Likely']
 impact = ['None', 'Negligible', 'Marginal', 'Significant', 'Critical/Exceptional', 'Crisis/Outstanding']
