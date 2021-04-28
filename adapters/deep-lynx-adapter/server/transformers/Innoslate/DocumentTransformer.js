@@ -98,6 +98,7 @@ class DocumentTransformer {
                             new FlatDocument(
                                 document.id,
                                 document.name,
+                                document.number,
                                 document.description
                             )
                         );
@@ -107,6 +108,7 @@ class DocumentTransformer {
                     if (error instanceof TypeError) {
                         let id = response.data.id;
                         let name = response.data.name;
+                        let number = response.data.number;
                         let description = response.data.description;
                         let created = response.data.created;
                         let modified = response.data.modified;
@@ -134,6 +136,7 @@ class DocumentTransformer {
                             new FlatDocument(
                                 id,
                                 name,
+                                number,
                                 description
                             )
                         );

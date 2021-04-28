@@ -4,7 +4,8 @@ class FlatDocument {
     constructor(
         id,
         name,
-        description
+        number,
+        description,
         // created,
         // modified,
         // createdBy,
@@ -13,7 +14,8 @@ class FlatDocument {
         ) {
             this.id = String(id),
             this.name = name,
-            this.description = description,
+            this.number = String(number),
+            this.description = description
             //this.created = String(created),
             //this.modified = String(modified),
             //this.createdBy = createdBy,

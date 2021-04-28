@@ -17,6 +17,7 @@ class FlatEntity {
         //this.sortNumber = sortNumber,
         //this.class_id = String(class_id),
         this.name = name,
+        this.number = number,
         this.description = description
         //this.is_requirement = is_requirement,
         //this.rationale = rationale,
