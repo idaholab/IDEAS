@@ -150,28 +150,28 @@ def build_xls(workbook, risk):
     '=IFERROR(INDEX(Reference_Data!$B$14:$F$18,MATCH(B11,Reference_Data!$A$14:$A$18,0),MATCH(B12,Reference_Data!$B$13:$F$13,0)), "")'
     )
     # Conditional Formatting "Low" - green, "Moderate" - yellow, "High" - red
-    worksheet.conditional_format('B13',
+    worksheet.conditional_format('B13', 
     {
         'type': 'cell',
         'criteria': 'equal to',
         'value': '"Low"',
         'format': workbook.add_format({'bg_color': 'green'})
     })
-    worksheet.conditional_format('B13',
+    worksheet.conditional_format('B13', 
     {
         'type': 'cell',
         'criteria': 'equal to',
         'value': '"Moderate"',
         'format': workbook.add_format({'bg_color': 'yellow'})
     })
-    worksheet.conditional_format('B13',
+    worksheet.conditional_format('B13', 
     {
         'type': 'cell',
         'criteria': 'equal to',
         'value': '"High"',
         'format': workbook.add_format({'bg_color': 'red'})
     })
-
+    
 
     # Handling Strategy Implementation Cost ($K)
     worksheet.merge_range('D13:E13', "Handling Strategy Implementation Cost ($K):", title)
@@ -187,28 +187,28 @@ def build_xls(workbook, risk):
     '=IFERROR(INDEX(Reference_Data!$B$14:$F$18,MATCH(J11,Reference_Data!$A$14:$A$18,0),MATCH(J12,Reference_Data!$B$13:$F$13,0)), "")'
     )
     # Conditional Formatting "Low" - green, "Moderate" - yellow, "High" - red
-    worksheet.conditional_format('J13',
+    worksheet.conditional_format('J13', 
     {
         'type': 'cell',
         'criteria': 'equal to',
         'value': '"Low"',
         'format': workbook.add_format({'bg_color': 'green'})
     })
-    worksheet.conditional_format('J13',
+    worksheet.conditional_format('J13', 
     {
         'type': 'cell',
         'criteria': 'equal to',
         'value': '"Moderate"',
         'format': workbook.add_format({'bg_color': 'yellow'})
     })
-    worksheet.conditional_format('J13',
+    worksheet.conditional_format('J13', 
     {
         'type': 'cell',
         'criteria': 'equal to',
         'value': '"High"',
         'format': workbook.add_format({'bg_color': 'red'})
     })
-
+    
     # Initial Impact ($)
     worksheet.write('A14', "Initial Impact ($):", title)
     worksheet.merge_range('B14:E14', risk['initial_impact'], merge)
@@ -244,4 +244,3 @@ def build_xls(workbook, risk):
     # Historical Comments and Notes
     worksheet.merge_range('A20:B20', "Historical Comments and Notes:", title)
     worksheet.merge_range('C20:K20', risk['historical_comments'], merge)
-    
