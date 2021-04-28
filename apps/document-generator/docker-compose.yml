@@ -18,5 +18,6 @@ services:
     volumes:
       - './server:/usr/src/app/server'
       - '/usr/src/app/server/node_modules'
+      - './server/assets:/usr/src/app/server/assets'
     env_file: 
       - '.env'

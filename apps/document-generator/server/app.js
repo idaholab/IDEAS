@@ -17,6 +17,7 @@ app.get('/healthcheck', (req, res) => {
 const deepLynxRouter = require('./deeplynx/router');
 app.use('/deeplynx', deepLynxRouter);
 
-
+// Static Assets (Temporary Development)
+app.use('/assets', express.static(__dirname + '/assets'))
 
 module.exports = app;

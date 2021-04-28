@@ -17,15 +17,20 @@
         <v-icon>mdi-home</v-icon>
         <v-list-item-content>Home</v-list-item-content>
       </v-list-item>
-      <v-list-item v-on:click="deep_lynx()">
+      <v-list-item v-on:click="make_documents()">
         <v-icon>mdi-database</v-icon>
-        <v-list-item-content>Deep Lynx</v-list-item-content>
+        <v-list-item-content>Documents</v-list-item-content>
+      </v-list-item>
+      <v-list-item v-on:click="make_templates()">
+        <v-icon>mdi-clipboard-edit</v-icon>
+        <v-list-item-content>Templates</v-list-item-content>
       </v-list-item>
     </v-navigation-drawer>
 
     <v-main>
       <Home v-if="home"/>
-      <DeepLynx v-if="deepLynx"/>
+      <DeepLynx v-if="documents"/>
+      <Templates v-if="templates"/>
     </v-main>
   </v-app>
 </template>
@@ -33,28 +38,38 @@
 <script>
 import Home from './components/Home';
 import DeepLynx from './components/DeepLynx';
+import Templates from './components/Templates';
 
 export default {
   name: 'App',
   components: {
     Home,
-    DeepLynx
+    DeepLynx,
+    Templates
   },
   props: {
     //
   },
   data: () => ({
     home: true,
-    deepLynx: false,
+    documents: false,
+    templates: false
   }),
   methods: {
     go_home() {
       this.home = true;
-      this.deepLynx = false;
+      this.documents = false;
+      this.templates = false;
     },
-    deep_lynx() {
+    make_documents() {
       this.home = false;
-      this.deepLynx = true;
+      this.documents = true;
+      this.templates = false;
+    },
+    make_templates() {
+      this.home = false;
+      this.documents = false;
+      this.templates = true;
     }
   }
 };
