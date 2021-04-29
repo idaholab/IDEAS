@@ -1,7 +1,6 @@
 // Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
 const axios = require('axios');
-const FormData = require('form-data');
 
 class DeepLynxTransformer {
 

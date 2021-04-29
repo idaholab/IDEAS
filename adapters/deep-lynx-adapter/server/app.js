@@ -3,6 +3,7 @@
 // Express
 const express = require('express');
 const app = express();
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0 // TODO: resolve Vault certificate error and remove this line
 
 // Middleware
 const cors = require('cors');
