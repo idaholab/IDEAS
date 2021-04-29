@@ -42,7 +42,7 @@ deepLynxRouter.get('/token', async function(req, res) {
     res.send(token);
 });
 
-deepLynxRouter.get('/containers', async function(req, res) {
+deepLynxRouter.post('/containers', async function(req, res) {
     let token = req.body.token;
 
     let containers = await axios.get(`${host}/containers?offset=0&limit=100`, {
@@ -60,18 +60,83 @@ deepLynxRouter.get('/containers', async function(req, res) {
 deepLynxRouter.post('/nodes', async function(req, res) {
     let token = req.body.token;
     let container_id = req.body.container_id;
+    let metatype_id = req.body.metatype_id;
 
     let nodes = await axios.get(
-        `${host}/containers/${container_id}/graphs/nodes`, {
+        `${host}/containers/${container_id}/graphs/nodes/metatype/${metatype_id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         }
     ).then(response => {
         return response.data.value;
+    }).catch(() => {
+        res.status(500).send();
     });
 
     res.send(nodes);
+})
+
+deepLynxRouter.post('/graph', async function(req, res) {
+    let graph = [];
+    let token = req.body.token;
+    let container_id = req.body.container_id;
+    let origin_node = req.body.node;
+
+    graph.push(origin_node);
+
+    let edges = await axios.get(
+        `${host}/containers/${container_id}/graphs/edges`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    ).then(response => {
+        return response.data.value;
+    }).catch(() => {
+        res.status(500).send();
+    })
+
+    for(edge of edges) {
+        if(edge.origin_node_id == origin_node.id) {
+            await axios.get(
+                `${host}/containers/${container_id}/graphs/nodes/${edge.destination_node_id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            ).then(response => {
+                graph.push(response.data.value);
+            }).catch(() => {
+                res.status(500).send();
+            });
+        }
+    }
+
+    res.send(graph);
+
+})
+
+deepLynxRouter.post('/metatype', async function(req, res) {
+    let token = req.body.token;
+    let container_id = req.body.container_id;
+
+    let metaypes = await axios.get(
+        `${host}/containers/${container_id}/metatypes/`, {
+            params: {
+                name: 'Document'
+            },
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    ).then(response => {
+        return response.data.value
+    }).catch(() => {
+        res.status(500).send();
+    })
+
+    res.send(metaypes)
 })
 
 module.exports = deepLynxRouter;

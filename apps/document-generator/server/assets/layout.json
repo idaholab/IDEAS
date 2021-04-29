@@ -1,0 +1,132 @@
+{
+  "fonts": [
+    {
+      "name": "Calibri",
+      "file": "/assets/static/fonts/Calibri.TTF",
+      "default": "true"
+    },
+    {
+      "name": "Montserrat",
+      "file": "/assets/static/fonts/Montserrat.TTF",
+      "default": "false"
+    }
+  ],
+  "text_styles": [
+    {
+      "name": "Title",
+      "font": "Montserrat",
+      "size": 24,
+      "align": "center",
+      "color": "#000000"
+    },
+    {
+      "name": "Body",
+      "font": "Calibri",
+      "size": 12,
+      "align": "left",
+      "color": "#000000"
+    }
+  ],
+  "global_properties": {
+    "table_border": {
+      "color": "#000000",
+      "weight": 1
+    }
+  },
+  "images": [
+    {
+      "name": "logo",
+      "file": "/assets/static/images/logo.jpg"
+    },
+    {
+      "name": "header",
+      "file": "/assets/static/images/header.png"
+    },
+    {
+      "name": "footer",
+      "file": "/assets/static/images/footer.png"
+    }
+  ],
+  "pages": [
+    {
+      "name": "cover",
+      "width": 216,
+      "height": 280,
+      "padding": {
+        "top": 25,
+        "right": 25,
+        "bottom": 25,
+        "left": 25
+      },
+      "static_content": {
+        "text_box": {
+          "text": "VAR|title",
+          "style": "Title",
+          "padding": {
+            "top": 70,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      },
+      "header": {
+        "height": 25,
+        "static_content": {
+          "text_box": {
+            "text": "VAR|title",
+            "style": "Body",
+            "padding": {
+              "top": 5,
+              "right": 25,
+              "bottom": 5,
+              "left": 25
+            }
+          }
+        }
+      },
+      "footer": {
+        "height": 25,
+        "static_content": {
+          "table": {
+            "cell_padding": {
+              "top": 5,
+              "right": 25,
+              "bottom": 5,
+              "left": 25
+            },
+            "rows": [
+              {
+                "cells": [
+                  {
+                    "text": "VAR|author",
+                    "align": "left"
+                  },
+                  {
+                    "text": "VAR|title",
+                    "align": "center"
+                  },
+                  {
+                    "text": "ITER|page_number",
+                    "align": "right"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "disclaimer",
+      "width": 216,
+      "height": 280
+    },
+    {
+      "name": "body",
+      "width": 216,
+      "height": 280,
+      "static_content": "VAR|body_content"
+    }
+  ]
+}
