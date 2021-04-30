@@ -19,10 +19,12 @@ const AppDatabaseTransformer = require('../transformers/AppDatabase/AppDatabaseT
 
 // Routes
 appDatabaseRouter.get('/health', async function(req, res) {
-    let transformer = new DeepLynxTransformer(host);
-    let message = await transformer.getHealth();
-
-    res.send(message);
+    let transformer = new AppDatabaseTransformer();
+    if (await transformer.connectionIsOpen()) {
+        res.status(200).send("OK")
+    } else {
+        res.status(500).send("FAIL")
+    }
 });
 
 module.exports = appDatabaseRouter;

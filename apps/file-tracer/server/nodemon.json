@@ -1,3 +1,10 @@
 {
-    "watch": ["app.js", "server.js", "./transformers/", "./routers/"]
+    "watch": [
+        "app.js",
+        "server.js",
+        "./transformers/",
+        "./routers/",
+        "./models/",
+        "./config"
+      ]
 }

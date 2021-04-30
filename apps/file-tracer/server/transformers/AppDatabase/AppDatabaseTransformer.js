@@ -1,39 +1,23 @@
 // Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
 const axios = require('axios');
-const { Client } = require('pg');
-const pgClient = new Client({
-    
-});
+const db = require('../../models/index.js')
 
 class AppDatabaseTransformer {
 
-    constructor(host, token="NONE") {
-        this.host = host,
-        this.config = {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        },
+    constructor() {
         this.data = {}
     }
 
-    async getHealth() {
-        await axios.get(
-            `${this.host}/health`
-        ).then(response => {
-            try {
-                this.data = response.data;
-            }
-            catch (error) {
-                this.data.error = error;
-                console.log(error);
-            }
-        }).catch(error => {
-            this.data.error = error;
-            console.log(error)
-        });
-        return this.data;
+    async connectionIsOpen() {
+        let connection = false;
+        try {
+            await db.sequelize.authenticate();
+            connection = true;
+        } catch (error) {
+            console.log("DB NOT AUTHENTICATED: " + error);
+        }
+        return connection;
     }
 
 }
