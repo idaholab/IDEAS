@@ -2,7 +2,7 @@
 
 version: '3'
 services:
-  postgres:
+  appdatabase:
     image: postgres:12.3-alpine
     ports:
       - '${POSTGRES_PORT}:5432'
@@ -19,7 +19,7 @@ services:
     ports:
       - '${VUE_APP_SERVER_PORT}:${VUE_APP_SERVER_PORT}'
     depends_on:
-      - 'postgres'
+      - 'appdatabase'
     volumes:
       - './server:/usr/src/app/server'
       - '/usr/src/app/server/node_modules'

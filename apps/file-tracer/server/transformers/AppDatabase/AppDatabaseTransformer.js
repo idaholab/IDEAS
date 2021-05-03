@@ -1,7 +1,7 @@
 // Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
 const axios = require('axios');
-const db = require('../../models/index.js')
+const db = require('../../database/models/index.js')
 
 class AppDatabaseTransformer {
 
