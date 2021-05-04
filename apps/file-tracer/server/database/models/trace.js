@@ -14,10 +14,18 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Trace.init({
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    assetId: DataTypes.INTEGER,
+    fileId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Trace',
   });
+
+  Trace.associate = models => {
+    Trace.hasOne(models.Asset);
+    Trace.hasOne(models.File);
+  };
+
   return Trace;
 };

@@ -27,4 +27,32 @@ appDatabaseRouter.get('/health', async function(req, res) {
     }
 });
 
+appDatabaseRouter.get('/get_assets', async function(req, res) {
+    let transformer = new AppDatabaseTransformer();
+    let assets = await transformer.getAssets();
+
+    res.send(assets);
+});
+
+appDatabaseRouter.get('/get_files', async function(req, res) {
+    let transformer = new AppDatabaseTransformer();
+    let files = await transformer.getFiles();
+
+    res.send(files);
+});
+
+appDatabaseRouter.get('/get_traces', async function(req, res) {
+    let transformer = new AppDatabaseTransformer();
+    let traces = await transformer.getTraces();
+
+    res.send(traces);
+});
+
+appDatabaseRouter.get('/add_asset/:name/:dlID', async function(req, res) {
+    let transformer = new AppDatabaseTransformer();
+    await transformer.addAsset(req.params["name"], req.params["dlID"])
+
+    res.send("Asset added")
+});
+
 module.exports = appDatabaseRouter;

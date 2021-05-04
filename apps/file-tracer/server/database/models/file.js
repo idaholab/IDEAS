@@ -11,6 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      File.belongsToMany(models.Asset, {
+        through: 'Traces',
+        foreignKey: 'fileId',
+        constraints: false
+      })
     }
   };
   File.init({
@@ -20,5 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'File',
   });
+
   return File;
 };
