@@ -20,4 +20,8 @@ app.get('/health', function(req, res) {
 const deepLynxRouter = require('./routers/DeepLynxRouter');
 app.use('/deeplynx', deepLynxRouter);
 
+// App Database Router
+const appDatabaseRouter = require('./routers/AppDatabaseRouter');
+app.use('/appdatabase', appDatabaseRouter);
+
 module.exports = app;

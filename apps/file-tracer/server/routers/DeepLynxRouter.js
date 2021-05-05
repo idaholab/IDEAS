@@ -20,9 +20,9 @@ const deepLynxTokenExpiry = process.env.DEEP_LYNX_TOKEN_EXPIRY;
 // Routes
 deepLynxRouter.get('/health', async function(req, res) {
     let transformer = new DeepLynxTransformer(host);
-    let data = await transformer.getHealth();
+    let message = await transformer.getHealth();
 
-    res.send(data);
+    res.send(message);
 });
 
 deepLynxRouter.get('/get_token', async function(req, res) {
@@ -41,6 +41,27 @@ deepLynxRouter.get('/get_containers/:token', async function (req, res) {
     let containers = await transformer.getContainers();
 
     res.send(containers);
+});
+
+deepLynxRouter.get('/get_files/:container_id/:token', async function (req, res) {
+    let transformer = new DeepLynxTransformer(host, req.params["token"]);
+    let files = await transformer.getFiles(req.params["container_id"]);
+
+    res.send(files);
+});
+
+deepLynxRouter.get('/get_links/:container_id/:token', async function (req, res) {
+    let transformer = new DeepLynxTransformer(host, req.params["token"]);
+    let links = await transformer.getNodes(req.params["container_id"], "Link");
+
+    res.send(links);
+});
+
+deepLynxRouter.get('/get_assets/:container_id/:token', async function (req, res) {
+    let transformer = new DeepLynxTransformer(host, req.params["token"]);
+    let assets = await transformer.getNodes(req.params["container_id"], "Asset");
+
+    res.send(assets);
 });
 
 module.exports = deepLynxRouter;

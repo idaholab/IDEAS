@@ -1,7 +1,6 @@
 // Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
 const axios = require('axios');
-const FormData = require('form-data');
 
 class DeepLynxTransformer {
 
@@ -28,6 +27,7 @@ class DeepLynxTransformer {
             }
         }).catch(error => {
             this.data.error = error;
+            console.log(error)
         });
         return this.data;
     }
@@ -66,6 +66,49 @@ class DeepLynxTransformer {
                     'id': container.id
                 });
             });
+        }).catch(error => {
+            this.data.error = error;
+        });
+        return this.data;
+    }
+
+    async getFiles(container_id) {
+        let file_list = {};
+        this.config.headers['content-type'] = 'text/plain'
+        await axios.post(
+          `${this.host}/containers/${container_id}/query`,
+          '{ files {id, file_name, created_at}}',
+          this.config
+        ).then(response => {
+            this.data.files = response.data.data.files;
+            this.data.files.forEach(f => {
+                if (f.file_name in file_list) {
+                    file_list[f.file_name].push({
+                        "id": f.id,
+                        "created_at": f.created_at
+                    })
+                } else {
+                    file_list[f.file_name] = [{
+                        "id": f.id,
+                        "created_at": f.created_at
+                    }]
+                }
+            });
+            this.data.file_list = file_list;
+        }).catch(error => {
+            this.data.error = error;
+        });
+        return this.data;
+    }
+
+    async getNodes(container_id, node_name) {
+        this.config.headers['content-type'] = 'text/plain'
+        await axios.post(
+          `${this.host}/containers/${container_id}/query`,
+          `{nodes (where: {AND: [{metatype_name: "like ${node_name}"}]}){id metatype{id name} properties{key value type}}}`,
+          this.config
+        ).then(response => {
+            this.data = response.data;
         }).catch(error => {
             this.data.error = error;
         });
