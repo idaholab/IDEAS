@@ -12,11 +12,9 @@ class VaultTransformer {
     }
 
     async makeAuthURL(username, password, vault) {
-        console.log("HIT")
         let response = await axios.get(
           `${this.host}/filestore/IdentificationService/GetServerIdentities/NONE/NONE`
         );
-        console.log("HIT2")
         let dataserver = response.data.RESULT.GetServerIdentitiesResult.attributes.DataServer;
         let url = `${this.host}/filestore/AuthService/SignIn/NONE/NONE?dataServer=${dataserver}&userName=${username}&userPassword=${password}&knowledgeVault=${vault}`;
         return url;
