@@ -43,37 +43,55 @@ class AppDatabaseTransformer {
 
     async addAsset(name, dlID) {
       await db.sequelize.sync();
-      const new_asset = await db.Asset.create({
+      await db.Asset.create({
         name: name,
         deepLynxID: dlID
+      }).then(asset => {
+        this.data["asset"] = asset;
+        this.data["is_error"] = false;
+        this.data["message"] = `${asset.name} successfully added`
+      }).catch(error => {
+        this.data["asset"] = null;
+        this.data["is_error"] = true;
+        this.data["message"] = `${name} NOT added`
       });
-
-      this.data["asset_added"] = new_asset.toJSON();
 
       return this.data;
     }
 
     async addFile(name, dlID) {
       await db.sequelize.sync();
-      const new_file = await db.File.create({
+      await db.File.create({
         name: name,
         deepLynxID: dlID
+      }).then(file => {
+        this.data["file"] = file;
+        this.data["is_error"] = false;
+        this.data["message"] = `${file.name} successfully added`
+      }).catch(error => {
+        this.data["file"] = null;
+        this.data["is_error"] = true;
+        this.data["message"] = `${name} NOT added`
       });
-
-      this.data["file_added"] = new_file.toJSON();
 
       return this.data;
     }
 
     async addTrace(name, assetId, fileId) {
       await db.sequelize.sync();
-      const new_trace = await db.Trace.create({
+      await db.Trace.create({
         name: name,
         assetId: assetId,
         fileId: fileId
+      }).then(trace => {
+        this.data["trace"] = trace;
+        this.data["is_error"] = false;
+        this.data["message"] = `${trace.name} successfully added`
+      }).catch(error => {
+        this.data["trace"] = null;
+        this.data["is_error"] = true;
+        this.data["message"] = `${name} NOT added`
       });
-
-      this.data["trace_added"] = new_trace.toJSON();
 
       return this.data;
     }
