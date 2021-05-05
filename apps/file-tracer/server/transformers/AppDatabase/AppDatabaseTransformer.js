@@ -47,7 +47,35 @@ class AppDatabaseTransformer {
         name: name,
         deepLynxID: dlID
       });
-      console.log(new_asset.toJSON());
+
+      this.data["asset_added"] = new_asset.toJSON();
+
+      return this.data;
+    }
+
+    async addFile(name, dlID) {
+      await db.sequelize.sync();
+      const new_file = await db.File.create({
+        name: name,
+        deepLynxID: dlID
+      });
+
+      this.data["file_added"] = new_file.toJSON();
+
+      return this.data;
+    }
+
+    async addTrace(name, assetId, fileId) {
+      await db.sequelize.sync();
+      const new_trace = await db.Trace.create({
+        name: name,
+        assetId: assetId,
+        fileId: fileId
+      });
+
+      this.data["trace_added"] = new_trace.toJSON();
+
+      return this.data;
     }
 
 }

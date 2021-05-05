@@ -50,9 +50,27 @@ appDatabaseRouter.get('/get_traces', async function(req, res) {
 
 appDatabaseRouter.get('/add_asset/:name/:dlID', async function(req, res) {
     let transformer = new AppDatabaseTransformer();
-    await transformer.addAsset(req.params["name"], req.params["dlID"])
+    let asset = await transformer.addAsset(req.params["name"], req.params["dlID"]);
 
-    res.send("Asset added")
+    res.send(asset);
+});
+
+appDatabaseRouter.get('/add_file/:name/:dlID', async function(req, res) {
+    let transformer = new AppDatabaseTransformer();
+    let file = await transformer.addFile(req.params["name"], req.params["dlID"]);
+
+    res.send(file);
+});
+
+appDatabaseRouter.get('/add_trace/:name/:assetId/:fileId', async function(req, res) {
+    let transformer = new AppDatabaseTransformer();
+    let trace = await transformer.addTrace(
+        req.params["name"],
+        req.params["assetId"],
+        req.params["fileId"]
+    );
+
+    res.send(trace);
 });
 
 module.exports = appDatabaseRouter;
