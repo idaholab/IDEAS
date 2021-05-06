@@ -1,0 +1,39 @@
+# Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
+
+version: '3'
+services:
+  appdatabase:
+    image: postgres:12.3-alpine
+    ports:
+      - '${POSTGRES_PORT}:5432'
+    environment:
+      POSTGRES_DB: '${POSTGRES_DB_NAME}'
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    env_file:
+      - '.env'
+  server:
+    build: ./server
+    command: 'npm run serve'
+    ports:
+      - '${VUE_APP_SERVER_PORT}:${VUE_APP_SERVER_PORT}'
+    depends_on:
+      - 'appdatabase'
+    volumes:
+      - './server:/usr/src/app/server'
+      - '/usr/src/app/server/node_modules'
+    env_file:
+      - '.env'
+  ui:
+    build: ./ui
+    command: 'npm run serve'
+    ports:
+      - '${VUE_APP_UI_PORT}:${VUE_APP_UI_PORT}'
+    depends_on:
+      - 'server'
+    volumes:
+      - './ui:/usr/src/app/ui'
+      - '/usr/src/app/ui/node_modules'
+    env_file:
+      - '.env'

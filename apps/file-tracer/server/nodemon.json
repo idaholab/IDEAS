@@ -1,0 +1,9 @@
+{
+    "watch": [
+        "app.js",
+        "server.js",
+        "./transformers/",
+        "./routers/",
+        "./database/"
+      ]
+}
