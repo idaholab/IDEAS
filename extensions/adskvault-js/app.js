@@ -5,7 +5,7 @@ const soap    = require('soap')
 const port    = 8002
 
 const app     = express()
-
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 // Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
 // include JSON library from express to allow object data rendering
