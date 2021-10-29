@@ -1,21 +1,21 @@
-version: '3'
+version: "3"
 services:
   ui:
     build: ./ui
-    command: 'npm run serve'
+    command: "npm run serve"
     ports:
-      - '${VUE_APP_UI_PORT}:${VUE_APP_UI_PORT}'
+      - "${VUE_APP_UI_PORT}:${VUE_APP_UI_PORT}"
     volumes:
-      - './ui:/usr/src/app/ui'
-      - './ui/node_modules'
+      - "./ui:/usr/src/app/ui"
+      - "/usr/src/app/ui/node_modules"
     env_file:
-      - '.env'
+      - ".env"
   server:
     build: ./server
-    command: 'python app.py'
+    command: "python app.py"
     ports:
-      - '5000:5000'
+      - "5000:5000"
     volumes:
-      - './server:/usr/src/app/server'
-    env_file: 
-      - '.env'
+      - "./server:/usr/src/app/server"
+    env_file:
+      - ".env"

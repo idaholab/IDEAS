@@ -2,9 +2,7 @@
 *.env
 node_modules
 dist
+apps/file-tracer/server/libredwg
 
-# Python Environment
-Lib 
-Scripts
+# Python Environment 
 *.cfg
-*.vscode

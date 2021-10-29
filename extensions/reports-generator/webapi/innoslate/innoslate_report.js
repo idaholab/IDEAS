@@ -1789,7 +1789,7 @@ class InnoslateReport {
                                     new Paragraph({
                                       children: [
                                         new TextRun({
-                                          text: "X (DRAFT)",
+                                          text: this.revisionNumber,
                                           size: 22
                                         })
                                       ]
@@ -2092,7 +2092,7 @@ class InnoslateReport {
                                     new Paragraph({
                                       children: [
                                         new TextRun({
-                                          text: "X (DRAFT)",
+                                          text: this.revisionNumber,
                                           size: 22
                                         })
                                       ]
@@ -2495,7 +2495,7 @@ class InnoslateReport {
                                     new Paragraph({
                                       children: [
                                         new TextRun({
-                                          text: "X (DRAFT)",
+                                          text: this.revisionNumber,
                                           size: 22
                                         })
                                       ]
@@ -2549,7 +2549,7 @@ class InnoslateReport {
                                     new Paragraph({
                                       children: [
                                         new TextRun({
-                                          text: "XX/XX/XX",
+                                          text: this.int_date,
                                           size: 22
                                         })
                                       ]

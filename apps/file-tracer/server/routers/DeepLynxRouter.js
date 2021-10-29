@@ -4,11 +4,15 @@
 const express = require('express');
 const deepLynxRouter = express.Router();
 const bodyParser = require('body-parser');
+const tmp = require('tmp');
+const fs = require('fs');
+const path = require('path');
 deepLynxRouter.use(bodyParser.urlencoded({ extended: true }));
 deepLynxRouter.use(express.json());
 
-// Transformer
+// Transformers
 const DeepLynxTransformer = require('../transformers/DeepLynx/DeepLynxTransformer.js');
+const LibreDWGTransformer = require('../transformers/LibreDWG/LibreDWGTransformer.js');
 
 // Configuration
 require('dotenv').config();
@@ -63,5 +67,20 @@ deepLynxRouter.get('/get_assets/:container_id/:token', async function (req, res)
 
     res.send(assets);
 });
+
+deepLynxRouter.get('/download_file/:container_id/:file_id/:token', async function (req, res) {
+  // let tmpDir = tmp.dirSync({unsafeCleanup: true})
+  // let output_path = path.join(tmpDir.name, 'temp.dwg');
+  //
+  // let dl_transformer = new DeepLynxTransformer(host, req.params["token"]);
+  let dwg_transformer = new LibreDWGTransformer();
+  //
+  // let file_message = await dl_transformer.downloadFile(req.params["container_id"], req.params["file_id"], output_path)
+  let response = dwg_transformer.stream('transformers/LibreDWG/test.dwg');
+
+  response.stdout.pipe(res);
+
+});
+
 
 module.exports = deepLynxRouter;

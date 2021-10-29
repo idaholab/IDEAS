@@ -1,0 +1,9 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: npm run serve
+    ports:
+      - "5151:5151"
+    env_file:
+      - .env

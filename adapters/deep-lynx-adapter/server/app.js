@@ -3,6 +3,7 @@
 // Express
 const express = require('express');
 const app = express();
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
 // Middleware
 const cors = require('cors');

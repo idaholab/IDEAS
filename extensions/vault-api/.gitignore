@@ -1,0 +1,4 @@
+*.env
+api-env-configmap.yaml
+node_modules
+dist

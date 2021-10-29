@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  adapter:
+    build:
+      target: production
+    env_file:
+      - '.env'
+    command: node build/index.js

@@ -1,7 +1,14 @@
 <template>
-  <v-container>
+  <v-container fill-height>
+    <v-row justify="center" align="center">
+      <v-col cols="12">
+      <h2>Generate a Risk Document</h2>
+      <br />
+      <p>Select a risk and name the file to generate a compliant .xlsx document.</p>
+<br />
+<br />
         <v-select
-        return-object
+          return-object
           :items="data"
           item-text="name"
           item-value="id"
@@ -9,25 +16,27 @@
           placeholder="Project"
           v-on:change="select">
         </v-select>
-
+        <br />
         <template v-if="project">
           <span><h3>{{project.name}}</h3></span>
           <span v-html="project.description">{{project.description}}</span>
-
-          <template>
-            <v-text-field 
-            ref="input"
-            type="text" 
-            v-model="fileName" 
-            placeholder="Filename" 
-            :rules="[rules.validate]"
-            @keyup.enter="generate"
-            :loading="loading"></v-text-field>
-            <span v-if="error" style="color:red;">{{error}}</span>
-            <br />
-            <v-btn v-on:click="generate">Generate</v-btn>
-          </template>
         </template>
+        <br />
+        <v-text-field
+        ref="input"
+        type="text"
+        v-model="fileName"
+        placeholder="Filename"
+        :rules="[rules.validate]"
+        @keyup.enter="generate"
+        :loading="loading"></v-text-field>
+        <span v-if="error" style="color:red;">{{error}}</span>
+        <br />
+        <v-btn v-on:click="generate">Generate</v-btn>
+      </v-col>
+
+
+    </v-row>
   </v-container>
 </template>
 
@@ -51,7 +60,7 @@ import _ from 'lodash';
           return regex.test(fileName) ? "No special characters or file extensions" : true
         }
       }
-          
+
     }),
     methods: {
       async getProjects() {
@@ -71,7 +80,7 @@ import _ from 'lodash';
         if (this.$refs.input.validate()) {
           this.loading = true;
           await axios.post(`http://localhost:5000/entities/${this.project.id}`, {fileName: this.fileName}, {responseType: 'blob'} ).then(response => {
-            
+
             FileSaver.saveAs(response.data, this.fileName);
 
           }).catch(error => {

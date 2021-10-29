@@ -1,23 +1,31 @@
-version: '3'
+version: "3"
 services:
-  ui:
-    build: ./ui
-    command: 'npm run serve'
+  app:
+    build: ./app
+    command: "npm run serve"
     ports:
-      - '${VUE_APP_UI_PORT}:${VUE_APP_UI_PORT}'
+      - "${VUE_APP_UI_PORT}:${VUE_APP_UI_PORT}"
     volumes:
-      - './ui:/usr/src/app/ui'
-      - '/usr/src/app/ui/node_modules'
+      - "./app:/usr/src/app"
+      - "/usr/src/app/node_modules"
     env_file:
-      - '.env'
+      - ".env"
   server:
     build: ./server
-    command: 'npm run serve'
+    command: "npm run serve"
     ports:
-      - '${VUE_APP_SERVER_PORT}:${VUE_APP_SERVER_PORT}'
+      - "${VUE_APP_SERVER_PORT}:${VUE_APP_SERVER_PORT}"
     volumes:
-      - './server:/usr/src/app/server'
-      - '/usr/src/app/server/node_modules'
-      - './server/assets:/usr/src/app/server/assets'
-    env_file: 
-      - '.env'
+      - "./server:/usr/src/server"
+      - "/usr/src/server/node_modules"
+    env_file:
+      - ".env"
+  paged:
+    build: ./paged
+    privileged: true
+    command: "python3 app.py"
+    ports:
+      - "5001:5001"
+    volumes:
+      - "./paged:/usr/src/paged"
+      - "./server:/usr/src/server"

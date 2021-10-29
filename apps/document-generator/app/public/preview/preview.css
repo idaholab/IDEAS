@@ -1,0 +1,72 @@
+@page {
+	size: letter undefined;
+	margin: undefinedmm undefinedmm;
+}
+@page title {
+	background-image: url('./undefined');
+	background-size: 100% auto;
+}
+.title {
+	page: title;
+}
+@page disclaimer {
+	background-image: url('./undefined');
+	background-size: 100% auto;
+}
+.disclaimer {
+	page: disclaimer;
+}
+@page table-of-contents {
+	background-image: url('./undefined');
+	background-size: 100% auto;
+}
+.table-of-contents {
+	page: table-of-contents;
+	list-style: none;
+	overflow-x: hidden;
+	color: black;
+}
+.toc-element {
+	display: flex;
+}
+.toc-element::after {
+	content: '..........................................................................................................................................';
+	float: left;
+	width: 0;
+	padding-left: 5px;
+	letter-spacing: 2px;
+}
+.toc-element a::after {
+	position: absolute;
+	right: 0;
+	background-color: white;
+	padding-left: 6px;
+}
+a {
+	color: black;
+	text-decoration: none;
+}
+@page data {
+	background-image: url('./undefined');
+	background-size: 100% auto;
+}
+.data {
+	page: data;
+	break-before: page;
+	font-weight: lighter;
+}
+.title > h1 {
+	font-family: undefined;
+}
+h1 {
+	font-family: undefined;
+}
+h2 {
+	font-family: undefined;
+}
+h3 {
+	font-family: undefined;
+}
+p {
+	font-family: "Roboto";
+}

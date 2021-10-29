@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  adapter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    volumes:
+      - ./src:/home/node/app/src
+      - ./nodemon.json:/home/node/app/nodemon.json
+    container_name: innoslate_adapter
+    expose:
+      - '${INNOSLATE_ADAPTER_PORT}'
+    ports:
+      - '${INNOSLATE_ADAPTER_PORT}:${INNOSLATE_ADAPTER_PORT}'
+    env_file:
+      - '.env'
+    command: "npm run dev"

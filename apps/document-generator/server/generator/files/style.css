@@ -1,0 +1,68 @@
+@page {
+  size: letter;
+  margin: 50mm 30mm;
+}
+
+@page title {
+  background-image: url("./templates/nric/nric-title.jpg");
+  background-size: 100% auto;
+}
+.title {
+  page: title;
+}
+
+@page disclaimer {
+  background-image: url("./templates/nric/nric-disclaimer.jpg");
+  background-size: 100% auto;
+}
+.disclaimer {
+  page: disclaimer;
+}
+
+@page table-of-contents {
+  background-image: url("./templates/nric/nric-letter.jpg");
+  background-size: 100% auto;
+}
+.table-of-contents {
+  page: table-of-contents;
+  list-style: none;
+  overflow-x: hidden;
+  color: black;
+}
+.toc-element {
+  display: flex;
+}
+.toc-element::after {
+  content: "..........................................."
+    ".............................................."
+    "..............................................""...";
+  float: left;
+  width: 0;
+  padding-left: 5px;
+  letter-spacing: 2px;
+}
+.toc-element a::after {
+  position: absolute;
+  right: 0;
+  background-color: white;
+  padding-left: 6px;
+}
+a {
+  color: black;
+  text-decoration: none;
+}
+
+@page data {
+  background-image: url("./templates/nric/nric-letter.jpg");
+  background-size: 100% auto;
+}
+.data {
+  page: data;
+}
+.data {
+  break-before: page;
+  font-weight: lighter;
+}
+p {
+  font-family: "Times New Roman";
+}

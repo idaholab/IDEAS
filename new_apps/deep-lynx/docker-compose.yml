@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  deep-lynx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    volumes:
+      - ./src:/home/node/app/src
+      - ./nodemon.json:/home/node/app/nodemon.json
+    container_name: deep-lynx
+    expose:
+      - '${DEEP_LYNX_PORT}'
+    ports:
+      - '${DEEP_LYNX_PORT}:${DEEP_LYNX_PORT}'
+    env_file:
+      - '.env'
+    command: >
+      bash -c "npm run build
+      && npm run start"

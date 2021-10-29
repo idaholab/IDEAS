@@ -1,0 +1,21 @@
+{
+  "name": "core-backend",
+  "version": "0.1.0",
+  "description": "A backend express service to access the ecosystem of NRIC services",
+  "author": "Brennan Harris <brennan.harris@inl.gov>",
+  "main": "app.js",
+  "keywords": [
+    "nodejs",
+    "express",
+    "vue"
+  ],
+  "dependencies": {
+    "express": "4.17.1",
+    "cors": "^2.8.5",
+    "axios": "^0.21.1",
+    "express-http-proxy": "^1.6.2"
+  },
+  "scripts": {
+    "serve": "node app.js"
+  }
+}

@@ -1,0 +1,7 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: npm run serve
+    ports:
+      - "7171:7171"

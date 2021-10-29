@@ -1,0 +1,108 @@
+# Copyright 2021, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
+
+version: '3'
+
+services:
+
+  core:
+    build: .
+    command: 'npm run serve'
+    ports:
+      - '${VUE_APP_PORT}:${VUE_APP_PORT}'
+    volumes:
+      - '.:/usr/src'
+      - '/usr/src/node_modules'
+    env_file:
+      - '.env'
+    links:
+      - 'vault-api'
+      - 'file-tracer'
+    networks:
+      - 'external'
+
+  backend:
+    build: ./backend
+    command: 'npm run serve'
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    env_file:
+      - '.env'
+    networks:
+      - 'external'
+      - 'internal'
+
+  vault-api:
+    build: ../new_apps/vault-api
+    command: 'npm run serve'
+    expose:
+      - "${VAULT_PORT}"
+    env_file:
+      - '.env'
+    networks:
+      - 'internal'
+      - 'external'
+
+  file-tracer:
+    build: ../new_apps/file-tracer
+    command: 'npm run serve'
+    expose:
+      - "${FILETRACER_PORT}"
+    env_file:
+      - '.env'
+    networks:
+      - 'external'
+      - 'internal'
+
+  deep-lynx:
+    build: ../new_apps/deep-lynx
+    command: 'npm run dev'
+    expose:
+      - "${DEEP_LYNX_PORT}"
+    env_file:
+      - '.env'
+    networks:
+      - 'external'
+      - 'internal'
+
+  # file-tracer-db:
+  #   image: postgres:12.3-alpine
+  #   ports:
+  #     - '${FILETRACERDB_PORT}:5432'
+  #   environment:
+  #     POSTGRES_DB: '${FILETRACERDB_NAME}'
+  #     POSTGRES_USER: '${FILETRACERDB_USER}'
+  #     POSTGRES_PASSWORD: '${FILETRACERDB_PASSWORD}'
+  #     POSTGRES_HOST_AUTH_METHOD: "trust"
+  #   env_file:
+  #     - '.env'
+  #   networks:
+  #     - 'external'
+  #     - 'internal'
+
+  vault-adapter:
+    build: ../new_adapters/vault
+    command: 'npm run dev'
+    expose:
+      - "${VAULT_ADAPTER_PORT}"
+    env_file:
+      - '.env'
+    networks:
+      - 'external'
+      - 'internal'
+
+  innoslate-adapter:
+    build: ../new_adapters/innoslate
+    command: 'npm run dev'
+    expose:
+      - "${INNOSLATE_ADAPTER_PORT}"
+    env_file:
+      - '.env'
+    networks:
+      - 'external'
+      - 'internal'
+
+networks:
+  internal:
+    internal: true
+  external:
+    internal: false

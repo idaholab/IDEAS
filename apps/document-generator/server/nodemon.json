@@ -1,0 +1,3 @@
+{
+    "watch": ["app.js", "server.js", "./deeplynx/", "./generator/", "./objects/"]
+}

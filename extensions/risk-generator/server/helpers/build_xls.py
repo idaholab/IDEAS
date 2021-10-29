@@ -81,14 +81,7 @@ def build_xls(workbook, risk):
 
     # Risk Sub-Category
     worksheet.merge_range('H8:I8', "Risk Sub-Category:", title)
-    rsc_dropdown = worksheet.data_validation('J8', 
-        {'validate': 'list', 
-        # This complicated function is how dependent dropdowns are accomplished in Excel.
-        # Match the value in F8 with the header in the range E3:H3, and return the corresponding column in the table defined by E4:H11
-        'source': '=INDEX(Reference_Data!$E$4:$H$11, 0, MATCH(F8, Reference_Data!$E$3:$H$3, 0))'
-        }
-    )
-    worksheet.merge_range('J8:K8', rsc_dropdown)
+    worksheet.merge_range('J8:K8', ", ".join(risk['risk_sub_category']), merge)
 
     # Date Risk Identified
     worksheet.write('A9', "Date Risk Identified:", title)
@@ -104,8 +97,7 @@ def build_xls(workbook, risk):
 
     # Impacted WBS Elements
     worksheet.write('A10', "Impacted WBS Element(s):", title)
-    wbs_dropdown = worksheet.data_validation('B10', {'validate': 'list', 'source': '=Reference_Data!$J$2:$J$41'})
-    worksheet.merge_range('B10:G10', wbs_dropdown, merge)
+    worksheet.merge_range('B10:G10', ", ".join(risk['impacted_wbs_elements']), merge)
 
     # Secondary Risks
     worksheet.merge_range('H10:I10', "Secondary Risk(s):", title)
@@ -143,7 +135,7 @@ def build_xls(workbook, risk):
     # Initial Risk Rating
     worksheet.write('A13', "Initial Risk Rating:", title)
     worksheet.merge_range('B13:C13', None, merge)
-    worksheet.write_formula('B13', 
+    worksheet.write_formula('B13',
     # This complicated function is how matrix lookups are accomplished in Excel
     # Match the value in B11 with the row defined by A14:A18, and the value in B12 with the column defined by B13:F13, and return the result from the table defined by B14:F18
     # If there is an error (no selection), suppress the warning
@@ -180,7 +172,7 @@ def build_xls(workbook, risk):
     # Residual Risk Rating
     worksheet.merge_range('H13:I13', "Residual Risk Rating:", title)
     worksheet.merge_range('J13:K13', None, merge)
-    worksheet.write_formula('J13', 
+    worksheet.write_formula('J13',
     # This complicated function is how matrix lookups are accomplished in Excel
     # Match the value in J11 with the row defined by A14:A18, and the value in J12 with the column defined by B13:F13, and return the result from the table defined by B14:F18
     # If there is an error (no selection), suppress the warning
@@ -244,4 +236,3 @@ def build_xls(workbook, risk):
     # Historical Comments and Notes
     worksheet.merge_range('A20:B20', "Historical Comments and Notes:", title)
     worksheet.merge_range('C20:K20', risk['historical_comments'], merge)
-    

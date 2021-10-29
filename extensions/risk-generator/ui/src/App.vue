@@ -1,7 +1,8 @@
 <template>
   <v-app>
     <v-app-bar app dark>
-      <h1>Risk Generator</h1>
+      <v-img class="mx-2" contain max-height="65" max-width="95" src="NRIClogo.png"></v-img>
+      <h1>NRIC Risk Generator</h1>
       <v-spacer></v-spacer>
       <v-btn
         href="https://gitlab.software.inl.gov/b650/nric-de/-/tree/main/extensions/risk-generator"
@@ -12,6 +13,7 @@
     </v-app-bar>
 
     <v-main>
+
       <Generator />
     </v-main>
   </v-app>

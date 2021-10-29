@@ -30,11 +30,13 @@ def risks(projectId):
 
     filename = request.get_json().get("fileName")+'.xlsx'
     workbook = xlsxwriter.Workbook(f'reports/{filename}')
-    
+    print(data_host+"/o/nric/entities", flush=True)
+    print(projectId, flush=True)
+
 
     r = requests.get(
-        data_host+"/o/nric/entities", 
-        params={"query": "class:Risk", "projectId": projectId}, 
+        data_host+"/o/nric/entities",
+        params={"query": "class:Risk", "projectId": projectId},
         headers={
             "Authorization": f'basic {key}',
             "User-Agent": "Docker"
@@ -45,13 +47,14 @@ def risks(projectId):
     if (len(data) == 0):
         abort(404)
 
-    try: 
+    try:
         # For each risk, generate a new risk assessment form in the workbook
         for risk_data in data:
             generate(workbook, risk_data)
-        
+
         workbook.close()
-    except:
+    except Exception as e:
+        print(e, flush=True)
         abort(500)
 
 
@@ -72,7 +75,7 @@ def projects():
         )
 
     my_keys = ("id", "name", "description")
-    
+
     data = r.json()
     projects = []
 

@@ -24,4 +24,8 @@ app.use('/deeplynx', deepLynxRouter);
 const appDatabaseRouter = require('./routers/AppDatabaseRouter');
 app.use('/appdatabase', appDatabaseRouter);
 
+// LibreDWG Router
+const libreDWGRouter = require('./routers/LibreDWGRouter');
+app.use('/libredwg', libreDWGRouter);
+
 module.exports = app;
