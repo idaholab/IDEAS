@@ -16,6 +16,7 @@ services:
       - '${DEEP_LYNX_PORT}:${DEEP_LYNX_PORT}'
     env_file:
       - '.env'
-    command: >
-      bash -c "npm run build
-      && npm run start"
+    # command: >
+    #   bash -c "npm run build
+    #   && npm run start"
+    command: npm run dev

@@ -3,6 +3,7 @@
     <app-nav-drawer v-if="$route.name!='Login'"/>
     <app-app-bar v-if="$route.name!='Login'"/>
     <v-main>
+      <Message />
       <v-container fluid class="view-container">
         <transition name="fade" mode="out-in">
           <router-view></router-view>
@@ -13,10 +14,12 @@
 </template>
 
 <script>
+import Message from '@/../components/status/Message.vue'
 export default {
   components: {
     appNavDrawer: () => import('../components/menus/NavDrawer'),
-    appAppBar: () => import('../components/menus/AppBar')
+    appAppBar: () => import('../components/menus/AppBar'),
+    Message
   },
   props: {
     source: String
@@ -28,6 +31,7 @@ export default {
 </script>
 
 <style scoped>
+
 .view-container {
   max-width: 2000px;
 }
@@ -48,6 +52,10 @@ export default {
 </style>
 
 <style>
+.v-application {
+  font-family: "Montserrat", sans-serif !important;
+}
+
 .v-btn {
   text-transform: none !important;
   letter-spacing: normal !important

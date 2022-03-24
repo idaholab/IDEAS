@@ -2,7 +2,10 @@
 <div style="height:100%">
   <v-card style="display: flex; flex-direction: column" flat>
     <v-card-title class="text-h4">
-      <div class="card-title">{{ cardTitle }}</div>
+      <div class="card-title">
+        <v-icon class="card_icon" v-if="icon != ''">{{ icon }}</v-icon>
+        {{ cardTitle }}
+      </div>
       <div v-if="hasStatus" class="card-status">
         <TrafficLight :status="status" />
       </div>
@@ -31,6 +34,10 @@ export default {
     status: {
       type: Boolean,
       default: false
+    },
+    icon: {
+      type: String,
+      default: ''
     }
   }
 }
@@ -39,6 +46,7 @@ export default {
 <style lang="scss" scoped>
 
 .v-card {
+  font-family: 'Montserrat' !important;
   background: #1e1e1e !important;
 
   & ::v-deep .v-card__title {
@@ -49,6 +57,7 @@ export default {
     flex-wrap: nowrap;
 
     div.card-title {
+      font-family: 'Montserrat' !important;
       display: flex;
       width: 100%;
       font-size: 1rem;
@@ -82,6 +91,13 @@ export default {
 .card-body {
   padding: 1rem;
   color: #4ebf94 !important;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.card_icon {
+  padding-right: 0.5rem;
 }
 
 

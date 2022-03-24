@@ -1,0 +1,162 @@
+stages:
+    - build
+    - deploy
+
+build_core:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/core --cache=true --dockerfile $CI_PROJECT_DIR/core/Dockerfile --destination $CI_REGISTRY/$CI_REGISTRY_PATH/core:$CI_PIPELINE_IID --destination $CI_REGISTRY/$CI_REGISTRY_PATH/core:latest
+  only:
+    - main
+
+build_backend:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/core/backend --cache=true --dockerfile $CI_PROJECT_DIR/core/backend/Dockerfile --destination $CI_REGISTRY/$CI_REGISTRY_PATH/core-backend:$CI_PIPELINE_IID --destination $CI_REGISTRY/$CI_REGISTRY_PATH/core-backend:latest
+  only:
+    - main
+
+build_vault_api_apps:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/new_apps/vault-api --cache=true --dockerfile $CI_PROJECT_DIR/new_apps/vault-api/Dockerfile --destination $CI_REGISTRY/$CI_REGISTRY_PATH/vault-api:$CI_PIPELINE_IID --destination $CI_REGISTRY/$CI_REGISTRY_PATH/vault-api:latest
+  only:
+    - main
+
+build_deep_lynx:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/new_apps/deep-lynx --cache=true --dockerfile $CI_PROJECT_DIR/new_apps/deep-lynx/Dockerfile --destination $CI_REGISTRY/$CI_REGISTRY_PATH/deep-lynx:$CI_PIPELINE_IID --destination $CI_REGISTRY/$CI_REGISTRY_PATH/deep-lynx:latest
+  only:
+    - main
+
+build_manufacturing:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/new_apps/manufacturing --cache=true --dockerfile $CI_PROJECT_DIR/new_apps/manufacturing/Dockerfile --destination $CI_REGISTRY/$CI_REGISTRY_PATH/manufacturing:$CI_PIPELINE_IID --destination $CI_REGISTRY/$CI_REGISTRY_PATH/manufacturing:latest
+  only:
+    - main
+
+build_innoslate_reports:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/new_apps/innoslate-reports --cache=true --dockerfile $CI_PROJECT_DIR/new_apps/innoslate-reports/Dockerfile --destination $CI_REGISTRY/$CI_REGISTRY_PATH/innoslate-reports:$CI_PIPELINE_IID --destination $CI_REGISTRY/$CI_REGISTRY_PATH/innoslate-reports:latest
+  only:
+    - main
+
+build_doe_parser:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/new_apps/doe-parser --cache=true --dockerfile $CI_PROJECT_DIR/new_apps/doe-parser/Dockerfile --destination $CI_REGISTRY/$CI_REGISTRY_PATH/doe-parser:$CI_PIPELINE_IID --destination $CI_REGISTRY/$CI_REGISTRY_PATH/doe-parser:latest
+  only:
+    - main
+
+build_vault:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/new_adapters/vault --cache=true --dockerfile $CI_PROJECT_DIR/new_adapters/vault/Dockerfile --destination $CI_REGISTRY/$CI_REGISTRY_PATH/vault-adapter:$CI_PIPELINE_IID --destination $CI_REGISTRY/$CI_REGISTRY_PATH/vault-adapter:latest
+  only:
+    - main
+
+build_innoslate_adapter:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/new_adapters/innoslate --cache=true --dockerfile $CI_PROJECT_DIR/new_adapters/innoslate/Dockerfile --destination $CI_REGISTRY/$CI_REGISTRY_PATH/innoslate-adapter:$CI_PIPELINE_IID --destination $CI_REGISTRY/$CI_REGISTRY_PATH/innoslate-adapter:latest
+  only:
+    - main
+
+build_windchill_adapter:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/new_adapters/windchill --cache=true --dockerfile $CI_PROJECT_DIR/new_adapters/windchill/Dockerfile --destination $CI_REGISTRY/$CI_REGISTRY_PATH/windchill-adapter:$CI_PIPELINE_IID --destination $CI_REGISTRY/$CI_REGISTRY_PATH/windchill-adapter:latest
+  only:
+    - main
+
+deploy_development:
+  stage: deploy
+  image: mcr.microsoft.com/azure-cli:latest
+  variables:
+    ENV: "dev"
+  script:
+    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    - mkdir -p $HOME/.kube
+    - echo -n $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl apply -f $CONFIG
+    - apk add gettext
+    - envsubst < $CI_PROJECT_DIR/core/kubernetes/build.yaml > $CI_PROJECT_DIR/core/kubernetes/build_env.yaml
+    - kubectl apply -f $CI_PROJECT_DIR/core/kubernetes/build_env.yaml
+  environment:
+    name: development
+  only:
+    - main
+
+deploy_production:
+  stage: deploy
+  image: mcr.microsoft.com/azure-cli:latest
+  variables:
+    ENV: "prd"
+  script:
+    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    - mkdir -p $HOME/.kube
+    - echo -n $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl apply -f $CONFIG
+    - apk add gettext
+    - envsubst < $CI_PROJECT_DIR/core/kubernetes/build.yaml > $CI_PROJECT_DIR/core/kubernetes/build_env.yaml
+    - kubectl apply -f $CI_PROJECT_DIR/core/kubernetes/build_env.yaml
+  environment:
+    name: production
+  when: manual
+  only:
+    - main

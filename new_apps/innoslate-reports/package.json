@@ -1,0 +1,26 @@
+{
+  "name": "innoslate-report-generator",
+  "version": "0.1.0",
+  "description": "custom report generator for Innoslate data views",
+  "author": "Brennan Harris <brennan.harris@inl.gov>",
+  "main": "app.js",
+  "keywords": [
+    "nodejs",
+    "express",
+    "promise",
+    "vue"
+  ],
+  "dependencies": {
+    "express": "4.17.1",
+    "axios": "0.19.2",
+    "docx": "5.1.1",
+    "tmp": "0.2.1",
+    "image-size": "0.8.3",
+    "chokidar": "3.4.0",
+    "vue": "2.6.11",
+    "vuetify": "2.3.8"
+  },
+  "scripts": {
+    "dev": "node app.js"
+  }
+}

@@ -11,15 +11,30 @@ const routes = [
     component: () => import(/* webpackChunkName: "login" */ '../views/Applications.vue'),
     children: [
       {
+        path: 'manufacturing',
+        name: 'Manufacturing',
+        component: () => import(/* webpackChunkName: "home" */ '../views/subviews/applications/Manufacturing.vue')
+      },
+      {
         path: 'vault-api',
         name: 'Vault API',
         component: () => import(/* webpackChunkName: "home" */ '../views/subviews/applications/VaultAPI.vue')
       },
       {
-        path: 'file-tracer',
-        name: 'File Tracer',
-        component: () => import(/* webpackChunkName: "home" */ '../views/subviews/applications/FileTracer.vue')
-      }
+        path: 'windchill',
+        name: 'Windchill',
+        component: () => import('../views/subviews/applications/Windchill.vue')
+      },
+      {
+        path: 'innoslate-reports',
+        name: 'Innoslate Reports',
+        component: () => import('../views/subviews/applications/InnoslateReports.vue')
+      },
+      {
+        path: 'doe-parser',
+        name: 'DOE Parser',
+        component: () => import('../views/subviews/applications/DOEParser.vue')
+      },
     ]
   },
   {

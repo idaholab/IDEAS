@@ -1,0 +1,14 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: npm run dev
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    expose:
+      - '${INNOSLATE_REPORTS_PORT}'
+    ports:
+      - '${INNOSLATE_REPORTS_PORT}:${INNOSLATE_REPORTS_PORT}'
+    env_file:
+      - .env

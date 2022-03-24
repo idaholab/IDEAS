@@ -1,0 +1,522 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: de-nric-core
+  namespace: de-nric-${ENV}
+  labels:
+    service: de-nric-core
+    app: de-nric-core
+
+spec:
+  serviceName: de-nric-core
+  replicas: 1
+  selector:
+    matchLabels:
+      app: de-nric-core
+  template:
+    metadata:
+      labels:
+        app: de-nric-core
+    spec:
+      containers:
+      - args:
+        - npm
+        - run
+        - serve
+        envFrom:
+            - configMapRef:
+                name: env
+        name: de-nric-core
+        image: ${CI_REGISTRY}/${CI_REGISTRY_PATH}/core:$CI_PIPELINE_IID
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8181
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: de-nric-${ENV}
+  labels:
+    service: backend
+    app: backend
+  name: backend
+spec:
+  serviceName: backend
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - args:
+        - npm
+        - run
+        - serve
+        envFrom:
+            - configMapRef:
+                name: env
+        image: ${CI_REGISTRY}/${CI_REGISTRY_PATH}/core-backend:$CI_PIPELINE_IID
+        imagePullPolicy: Always
+        name: backend
+        ports:
+        - containerPort: 7171
+      restartPolicy: Always
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vault-api
+  namespace: de-nric-${ENV}
+  labels:
+    service: vault-api
+    app: vault-api
+
+spec:
+  serviceName: vault-api
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault-api
+  template:
+    metadata:
+      labels:
+        app: vault-api
+    spec:
+      containers:
+      - args:
+        - npm
+        - run
+        - serve
+        envFrom:
+            - configMapRef:
+                name: env
+        name: vault-api
+        image: ${CI_REGISTRY}/${CI_REGISTRY_PATH}/vault-api:$CI_PIPELINE_IID
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 6161
+
+---
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: deep-lynx
+  namespace: de-nric-${ENV}
+  labels:
+    service: deep-lynx
+    app: deep-lynx
+
+spec:
+  serviceName: deep-lynx
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deep-lynx
+  template:
+    metadata:
+      labels:
+        app: deep-lynx
+    spec:
+      containers:
+      - command: ["/bin/sh", "-c"]
+        args: ["npm run build && npm run start"]
+        envFrom:
+            - configMapRef:
+                name: env
+        name: deep-lynx
+        image: ${CI_REGISTRY}/${CI_REGISTRY_PATH}/deep-lynx:$CI_PIPELINE_IID
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 6363
+
+---
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: manufacturing
+  namespace: de-nric-${ENV}
+  labels:
+    service: manufacturing
+    app: manufacturing
+
+spec:
+  serviceName: manufacturing
+  replicas: 1
+  selector:
+    matchLabels:
+      app: manufacturing
+  template:
+    metadata:
+      labels:
+        app: manufacturing
+    spec:
+      containers:
+      - command: ["/bin/sh", "-c"]
+        args: ["npm run build && npm run start"]
+        envFrom:
+            - configMapRef:
+                name: env
+        name: manufacturing
+        image: ${CI_REGISTRY}/${CI_REGISTRY_PATH}/manufacturing:$CI_PIPELINE_IID
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 6464
+
+---
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: innoslate-reports
+  namespace: de-nric-${ENV}
+  labels:
+    service: innoslate-reports
+    app: innoslate-reports
+
+spec:
+  serviceName: innoslate-reports
+  replicas: 1
+  selector:
+    matchLabels:
+      app: innoslate-reports
+  template:
+    metadata:
+      labels:
+        app: innoslate-reports
+    spec:
+      containers:
+      - args:
+        - npm
+        - run
+        - dev
+        envFrom:
+            - configMapRef:
+                name: env
+        name: innoslate-reports
+        image: ${CI_REGISTRY}/${CI_REGISTRY_PATH}/innoslate-reports:$CI_PIPELINE_IID
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 6565
+
+---
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: doe-parser
+  namespace: de-nric-${ENV}
+  labels:
+    service: doe-parser
+    app: doe-parser
+
+spec:
+  serviceName: doe-parser
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doe-parser
+  template:
+    metadata:
+      labels:
+        app: doe-parser
+    spec:
+      containers:
+      - args:
+        - python3
+        - main.py
+        envFrom:
+            - configMapRef:
+                name: env
+        name: doe-parser
+        image: ${CI_REGISTRY}/${CI_REGISTRY_PATH}/doe-parser:$CI_PIPELINE_IID
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 6767
+
+---
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vault-adapter
+  namespace: de-nric-${ENV}
+  labels:
+    service: vault-adapter
+    app: vault-adapter
+
+spec:
+  serviceName: vault-adapter
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault-adapter
+  template:
+    metadata:
+      labels:
+        app: vault-adapter
+    spec:
+      containers:
+      - command: ["/bin/sh", "-c"]
+        args: ["npm run build && npm run start"]
+        envFrom:
+            - configMapRef:
+                name: env
+        name: vault-adapter
+        image: ${CI_REGISTRY}/${CI_REGISTRY_PATH}/vault-adapter:$CI_PIPELINE_IID
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5151
+
+---
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: innoslate-adapter
+  namespace: de-nric-${ENV}
+  labels:
+    service: innoslate-adapter
+    app: innoslate-adapter
+
+spec:
+  serviceName: innoslate-adapter
+  replicas: 1
+  selector:
+    matchLabels:
+      app: innoslate-adapter
+  template:
+    metadata:
+      labels:
+        app: innoslate-adapter
+    spec:
+      containers:
+      - command: ["/bin/sh", "-c"]
+        args: ["npm run build && npm run start"]
+        envFrom:
+            - configMapRef:
+                name: env
+        name: innoslate-adapter
+        image: ${CI_REGISTRY}/${CI_REGISTRY_PATH}/innoslate-adapter:$CI_PIPELINE_IID
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5252
+
+
+---
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: windchill-adapter
+  namespace: de-nric-${ENV}
+  labels:
+    service: windchill-adapter
+    app: windchill-adapter
+
+spec:
+  serviceName: windchill-adapter
+  replicas: 1
+  selector:
+    matchLabels:
+      app: windchill-adapter
+  template:
+    metadata:
+      labels:
+        app: windchill-adapter
+    spec:
+      containers:
+      - command: ["/bin/sh", "-c"]
+        args: ["npm run build && npm run start"]
+        envFrom:
+            - configMapRef:
+                name: env
+        name: windchill-adapter
+        image: ${CI_REGISTRY}/${CI_REGISTRY_PATH}/windchill-adapter:$CI_PIPELINE_IID
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5353
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: de-nric-core
+  namespace: de-nric-${ENV}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8181
+  selector:
+    app: de-nric-core
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: de-nric-${ENV}
+  name: backend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 7171
+    targetPort: 7171
+  selector:
+    app: backend
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-api
+  namespace: de-nric-${ENV}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6161
+    targetPort: 6161
+  selector:
+    app: vault-api
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: file-tracer
+  namespace: de-nric-${ENV}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6262
+    targetPort: 6262
+  selector:
+    app: file-tracer
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: deep-lynx
+  namespace: de-nric-${ENV}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6363
+    targetPort: 6363
+  selector:
+    app: deep-lynx
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: manufacturing
+  namespace: de-nric-${ENV}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6464
+    targetPort: 6464
+  selector:
+    app: manufacturing
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: innoslate-reports
+  namespace: de-nric-${ENV}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6565
+    targetPort: 6565
+  selector:
+    app: innoslate-reports
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: doe-parser
+  namespace: de-nric-${ENV}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6767
+    targetPort: 6767
+  selector:
+    app: doe-parser
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-adapter
+  namespace: de-nric-${ENV}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5151
+    targetPort: 5151
+  selector:
+    app: vault-adapter
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: innoslate-adapter
+  namespace: de-nric-${ENV}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5252
+    targetPort: 5252
+  selector:
+    app: innoslate-adapter
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: windchill-adapter
+  namespace: de-nric-${ENV}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5353
+    targetPort: 5353
+  selector:
+    app: windchill-adapter

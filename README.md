@@ -1,6 +1,8 @@
-# NRIC Digital Engineering Ecosystem
+# IDEAS
 
-Repository for the shared development of digital engineering tools to serve the goals and needs of the National Reactor Innovation Center [(NRIC)](https://www.energy.gov/sites/prod/files/2019/08/f65/NRIC_Fact_Sheet.pdf)
+Ion Digital Engineering Application Suite. Apps, adapters, and utilities created by or in conjunction with researchers in the Digital Engineering (B710) department
+
+One of the tool sponsors is the National Reactor Innovation Center [(NRIC)](https://www.energy.gov/sites/prod/files/2019/08/f65/NRIC_Fact_Sheet.pdf)
 
 The NRIC Digital Engineering Ecosystem is a software suite designed to eliminate procedural failures in the engineering lifecycle of complex projects. It focuses on improving the flow of scheduling data, safety information, engineering requirements, and CAD files among stakeholders of complex engineering projects. The project comprises software adapters that move engineering data from disparate software tools in and out of a central database. The ecosystem is designed to efficiently incorporate data sources from many different engineering toolsets, making it software agnostic, and adaptable to many different engineering applications.
 
@@ -15,13 +17,42 @@ Idaho National Laboratory is a cutting edge research facility which is a constan
 
 [Unsupported Open Source Software](https://github.com/IdahoLabCuttingBoard)
 
-## Toolsets
+## Installation and use
+This toolset is bundled as a `docker-compose` project.
+1. Install or update [Docker Desktop](https://www.docker.com/products/docker-desktop) on your computer.
+1. Clone this project to a home directory: git clone `https://gitlab.software.inl.gov/b650/nric-de`
+1. Rename the file .env-sample to .env in the `core` directory
+1. Any variable represented with the value `####` should be reset by the user
+1. Open a terminal in the project's `core` directory
+1. Launch the command docker-compose build. This may take a few minutes to initially build the image.
+1. Launch the command docker-compose up. This should execute quickly.
 
-### Autodesk Vault JavaScript Utilities
+## Applications
+
+The applications that are available in the project are split. Their Vue-based UI elements live in the `/core` directory, specifically at `/core/src/views/subviews/applications`. Any corresponding backend microservices for these apps can be found in the `/new_apps` directory, with each application microservice contained in its own subdirectory.
+
+### Manufacturing
+This is an application for defining and editing the representations of advanced manufacturing processes. Its development is being funded by the INL LDRD Advanced Material Property Prediction through Digital Twins
+
+### Vault API
 This library uses the Autodesk Vault SOAP API to make Vault Client actions accessible to JavaScript. See the directory README for more information and build instructions.
 
-### Report Generator
-Utilities to generate documents that serve the needs of engineering groups, such as requirements management documents. See the directory README for more information and build instructions.
+### Windchill utilities
+This application makes automation actions available to users who have `Basic` type Windchill credentials to execute bulk actions on directories in Windchill containers
+
+## Adapters
+
+### Deep Lynx
+This is a Deep Lynx client to execute bundled actions to the Deep Lynx API. This adapter may become redundant if the [Deep Lynx JS SDK](https://www.npmjs.com/package/deep-lynx-sdk) is implemented correctly through the app.
+
+### Autodesk Vault
+This adapter pulls CAD files and associated metadata from NRIC's cloud instance of Autodesk Vault. The user must supply a valid username and password as a set in a `Basic` auth header.
+
+### Innoslate
+This adapter allows requirement data to be pushed from Deep Lynx to Innoslate.
+
+### Windchill
+This adapter allows custom actions to be performed on a PTC Windchill instance. It is used by the frontend Vue component in the Windchill subview.
 
 ## License
 
