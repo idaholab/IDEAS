@@ -2,6 +2,8 @@
 
 import axios from 'axios';
 import { IFile } from '../interfaces/IFile'
+import FormData from 'form-data';
+import {Blob} from 'buffer';
 
 export class DeepLynxServer {
 
@@ -10,13 +12,14 @@ export class DeepLynxServer {
     data: any;
 
     constructor(host: string, token: string="NONE") {
-        this.host = host,
+        this.host = host;
         this.config = {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}`,
+                'content-type': 'application/json'
             }
-        },
-        this.data = {}
+        };
+        this.data = {};
     }
 
     async getHealth() {
@@ -34,7 +37,7 @@ export class DeepLynxServer {
             this.data.error = error;
             console.log(error)
         });
-        return this.data;
+        return [this.data];
     }
 
     async getToken(apiKey: string, apiSecret: string, tokenExpiry: string) {
@@ -42,7 +45,8 @@ export class DeepLynxServer {
             {headers:{
                 'x-api-key': apiKey,
                 'x-api-secret': apiSecret,
-                'x-api-expiry': tokenExpiry
+                'x-api-expiry': tokenExpiry,
+                'content-type': 'application/json'
             }}
         ).then(response => {
             try {
@@ -55,7 +59,7 @@ export class DeepLynxServer {
         }).catch(error => {
             this.data.error = error;
         });
-        return this.data;
+        return [this.data];
     }
 
     async getContainers() {
@@ -74,7 +78,7 @@ export class DeepLynxServer {
         }).catch(error => {
             this.data.error = error;
         });
-        return this.data;
+        return [this.data];
     }
 
     async getDatasources(container_id: string) {
@@ -93,7 +97,20 @@ export class DeepLynxServer {
         }).catch(error => {
             this.data.error = error;
         });
-        return this.data;
+        return [this.data];
+    }
+
+    async getMetatypeDefinition(container_id: string, metatype_name: string) {
+      await axios.get(
+        `${this.host}/containers/${container_id}/metatypes?limit=1&offset=0&name=${metatype_name}`,
+        this.config
+      ).then(response => {
+        this.data.metatype_definition = response.data.value[0]
+      }).catch(error => {
+        this.data.error = error;
+      });
+
+      return [this.data];
     }
 
     async getFiles(container_id: string) {
@@ -123,7 +140,7 @@ export class DeepLynxServer {
         }).catch(error => {
             this.data.error = error;
         });
-        return this.data;
+        return [this.data];
     }
 
     async getNodes(container_id: string, node_name: string) {
@@ -137,7 +154,60 @@ export class DeepLynxServer {
         }).catch(error => {
             this.data.error = error;
         });
-        return this.data;
+        return [this.data];
+    }
+
+    async query(container_id: string, query_body: any) {
+      await axios.post(
+        `${this.host}/containers/${container_id}/query`,
+        query_body,
+        this.config
+      ).then(response => {
+          this.data = response.data;
+      }).catch(error => {
+          this.data.error = error;
+      });
+      return [this.data];
+    }
+
+    async postObject(container_id: string, datasource_id: string, post_body: any) {
+        await axios.post(
+          `${this.host}/containers/${container_id}/import/datasources/${datasource_id}/imports`,
+          post_body,
+          this.config
+        ).then(response => {
+            this.data = response.data;
+        }).catch(error => {
+            this.data.error = error;
+        });
+        return [this.data];
+    }
+
+    async postFiles(container_id: string, datasource_id: string, post_files: any) {
+        delete this.config.headers['content-type']
+        this.config.headers['Content-Type'] = 'multipart/form-data'
+        this.config.headers['Accept'] = 'application/json'
+
+        let formData = new FormData()
+
+        for (var i in post_files) {
+          let { buffer, originalname, fieldname, mimetype, encoding, size } = post_files[i];
+          console.log(originalname, fieldname, mimetype, encoding, size)
+          formData.append(fieldname, buffer, {filename: originalname})
+        }
+
+        this.config.headers['Content-Type'] += `; boundary=${formData.getBoundary()}`
+
+        await axios.post(
+          `${this.host}/containers/${container_id}/import/datasources/${datasource_id}/files`,
+          formData,
+          this.config
+        ).then(response => {
+            this.data = response.data;
+        }).catch(error => {
+            this.data.error = error;
+        });
+        return [this.data];
     }
 
     async downloadFile(container_id: string, file_id: string, output_path: string) {
@@ -151,7 +221,7 @@ export class DeepLynxServer {
         console.log(error);
         this.data.error = error;
       });
-      return this.data;
+      return [this.data];
     }
 
 }

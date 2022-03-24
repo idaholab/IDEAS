@@ -76,17 +76,29 @@ export default {
       var url = this.endpoint.extension;
 
       if (elements) {
-        elements.forEach(element => {
-          if (element) {
-            if (element.name == "basic|username") {
-              username = element.value;
-            } else if (element.name == "basic|password") {
-              password = element.value;
-            } else if (element.name[0] == ":") {
-              param_map[element.name] = element.value
+        for (var i=0; i < elements.length; i++) {
+          if (elements[i]) {
+            if (elements[i].name == "basic|username") {
+              username = elements[i].value;
+            } else if (elements[i].name == "basic|password") {
+              password = elements[i].value;
+            } else if (elements[i].name[0] == ":") {
+              param_map[elements[i].name] = elements[i].value
             }
           }
-        });
+        }
+
+        // elements.forEach(element => {
+        //   if (element) {
+        //     if (element.name == "basic|username") {
+        //       username = element.value;
+        //     } else if (element.name == "basic|password") {
+        //       password = element.value;
+        //     } else if (element.name[0] == ":") {
+        //       param_map[element.name] = element.value
+        //
+        //   }
+        // });
       }
 
 
@@ -117,11 +129,19 @@ export default {
     url_parameters() {
       var parameters = [];
       var temp_params = this.endpoint.extension.split('/');
-      temp_params.forEach( param => {
-        if (param[0] == ":") {
-          parameters.push(param);
+      if (temp_params) {
+        for (var i=0; i < temp_params.length; i++) {
+          if (temp_params[i][0] == ":") {
+            parameters.push(temp_params[i]);
+          }
         }
-      });
+
+        // temp_params.forEach( param => {
+        //   if (param[0] == ":") {
+        //     parameters.push(param);
+        //   }
+        // });
+      }
 
       return parameters;
     }

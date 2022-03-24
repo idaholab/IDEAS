@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  moose:
+    build: .
+    ports:
+      - '4321:4321'
+    volumes:
+      - './app:/opt/moose/app'
+    stdin_open: true
+    tty: true
+    command: "/bin/bash"

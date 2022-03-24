@@ -14,7 +14,9 @@
     "vue": "^2.6.14",
     "vue-router": "^3.5.2",
     "vuetify": "^2.2.11",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "deep-lynx-sdk": "^0.1.0",
+    "uuid-random": "^1.3.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.0",

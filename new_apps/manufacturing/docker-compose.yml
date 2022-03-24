@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  manufacturing:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    volumes:
+      - ./src:/home/node/app/src
+      - ./nodemon.json:/home/node/app/nodemon.json
+    container_name: manufacturing
+    expose:
+      - '${MANUFACTURING_PORT}'
+    ports:
+      - '${MANUFACTURING_PORT}:${MANUFACTURING_PORT}'
+    env_file:
+      - '.env'
+    command: "npm run dev"

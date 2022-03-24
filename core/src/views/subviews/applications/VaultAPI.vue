@@ -1,44 +1,45 @@
 <template>
   <div>
-    <h2>Vault API</h2><br>
+    <h2 class="vaultapi_title">Vault API <VaultInfo /></h2><br><br>
     <!-- {{ vault_data }} -->
-    <h3>Information Services</h3>
-    <VaultService v-for="service in vault_data.information_services"
-      v-bind:key="service" service_type="information"
-      :service="service" color="#2BA8E0"/><br><br>
-    <h3>Filestore Services</h3>
-    <VaultService v-for="service in vault_data.filestore_services"
-      v-bind:key="service" service_type="filestore"
-      :service="service" color="#CF1E4C"/><br><br>
-    <h3>Standard Services</h3>
-    <VaultService v-for="service in vault_data.standard_services"
-      v-bind:key="service" service_type="standard"
-      :service="service" color="#F68C20"/><br><br>
+    <Card icon="mdi-information-variant" cardTitle="Information Services">
+      <VaultService v-for="service in vault_data.information_services"
+        v-bind:key="service.name" service_type="information"
+        :service="service" color="#2BA8E0"/>
+    </Card>
+    <br><br>
+    <Card icon="mdi-file-cabinet" cardTitle="Filestore Services">
+      <VaultService v-for="service in vault_data.filestore_services"
+        v-bind:key="service.name" service_type="filestore"
+        :service="service" color="#4ebf94"/>
+    </Card>
+    <br><br>
+    <Card icon="mdi-console" cardTitle="Standard Services">
+      <VaultService v-for="service in vault_data.standard_services"
+        v-bind:key="service.name" service_type="standard"
+        :service="service" color="#8C1823"/>
+    </Card>
   </div>
 </template>
 
 <script>
-//import { ADSKClient } from '../../../api/adsk_api'
-
-//const axios = require('axios');
 import VaultService from './VaultAPI/VaultService.vue'
+import VaultInfo from './VaultAPI/VaultInfo.vue'
+import Card from '@/../components/card/Card.vue'
 export default {
   name: 'VaultAPI',
   data: () => ({
     vault_response: "TEST"
   }),
   components: {
-    VaultService
+    VaultService,
+    VaultInfo,
+    Card
   },
   methods: {
     async health_response () {
-      // const adsk_client = new ADSKClient()
-      // let response = await adsk_client.healthCheck()
       this.$store.commit('set_vault_apiStatus', "OK")
     }
-    // async authenticate () {
-    //
-    // }
   },
   computed: {
     vault_data() {
@@ -47,3 +48,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.vaultapi_title {
+  font-weight: 100;
+}
+</style>

@@ -54,7 +54,7 @@ export default {
   props: {
     description: Object,
     service_function: String,
-    service: String,
+    service: Object,
     service_type: String
   },
   data: () => ({
@@ -110,6 +110,10 @@ export default {
           'set_vault_userId',
           temp_response.data["USER_ID"]
         )
+        this.$store.commit(
+          'set_vault_token',
+          temp_response.data["TICKET"]
+        )
         // alert("Authenticated!")
         this.response = "Authenticated!"
       }
@@ -119,17 +123,17 @@ export default {
   computed: {
     form_address () {
       let address = `/api/apps/vault/soap/` +
-        `${this.service_type}/${this.service}/${this.service_function}/` +
+        `${this.service_type}/${this.service.name}/${this.service_function}/` +
         `${this.$store.getters['vault_token']}/` +
         `${this.$store.getters['vault_userId']}`
 
       return address
     },
     form_id() {
-      return `${this.service_type}|${this.service}|${this.service_function}`
+      return `${this.service_type}|${this.service.name}|${this.service_function}`
     },
     textarea_id() {
-      return `textarea|${this.service_type}|${this.service}|${this.service_function}`
+      return `textarea|${this.service_type}|${this.service.name}|${this.service_function}`
     },
     stringified_input () {
       return JSON.stringify(this.description.input, undefined, 4)

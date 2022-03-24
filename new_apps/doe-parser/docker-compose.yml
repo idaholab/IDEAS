@@ -1,0 +1,7 @@
+version: '3'
+services:
+  doe-parser:
+    build: .
+    command: python3 main.py
+    ports:
+      - "${DOEPARSER_PORT}:${DOEPARSER_PORT}"

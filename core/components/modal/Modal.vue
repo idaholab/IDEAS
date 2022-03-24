@@ -1,19 +1,17 @@
 <template>
   <div class="modal-backdrop">
     <div class="modal">
+
       <header class="modal-header">
-        <h2>
-          <slot name="header">
-            Title
-          </slot>
-        </h2>
-        <button
-          type="button"
-          class="btn-close"
-          @click="close"
-        >
-          <v-icon>mdi-close-outline</v-icon>&nbsp;&nbsp;
-        </button>
+        <div class="header-content">
+          <div class="header-title">
+            <slot name="header">
+              Title
+            </slot>
+          </div>
+          <div class="angle"></div>
+        </div>
+        <v-icon class="icon-close" @click="close">mdi-close</v-icon>
       </header>
 
       <section class="modal-body">
@@ -27,7 +25,7 @@
           type="button"
           @click="close"
         >
-          Close
+          <strong>Close</strong>
         </button>
       </footer>
     </div>
@@ -45,10 +43,10 @@
   };
 </script>
 
-<style>
+<style lang="scss">
 
 .modal-backdrop {
-  position: fixed;
+  position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
@@ -57,47 +55,65 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 999;
 }
 
 .modal {
-  background: #FFFFFF;
+  background: #1E1E1E;
   overflow-x: auto;
   max-height: calc(100vh - 10em);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   width: 80%;
-  border-radius: 0.25em;
+  max-width: 900px;
 }
 
-.modal-header,
 .modal-footer {
   padding: 15px;
   display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background: #3c3c3c;
 }
 
 .modal-header {
+  display: flex;
+  width: 99%;
+}
+
+.header-content {
+  font-size: 120%;
+  padding: 0;
+  max-width: 500px;
+  display: flex;
+  flex-wrap: nowrap;
   position: relative;
   justify-content: space-between;
   width: 100%;
   font-size: 1rem;
-  padding: .25rem .75rem .25rem 1rem;
   background: #3c3c3c;
   text-overflow: ellipsis;
   color: #ffffff !important;
 }
 
-.modal-footer {
-  flex-direction: column;
-  justify-content: flex-end;
-  background: #3c3c3c;
+.header-title {
+  margin: 1rem;
+  font-size:120%
+}
+
+.angle {
+  margin-left: -.125rem;
+  width: 1rem;
+  height: 3.8rem;
+  border-bottom: 3.8rem solid #1e1e1e;
+  border-left: 1rem solid #3c3c3c;
 }
 
 .modal-body {
   position: relative;
   padding: 20px 10px;
-  color: #121212;
+  color: #4ebf94 !important;
   background: #1e1e1e !important;
 }
 
@@ -114,11 +130,20 @@
   background: transparent;
 }
 
+.icon-close {
+  margin-left: auto;
+  padding-right:1rem;
+}
+
 .btn-green {
   color: white;
   background: #4ebf94;
   border: 1px solid #4ebf94;
   border-radius: 2px;
+}
+
+.button {
+  display: block !important;
 }
 
 </style>

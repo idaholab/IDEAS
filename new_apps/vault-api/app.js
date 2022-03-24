@@ -217,4 +217,4 @@ app.post("/soap/:service_type/:service/:service_function/:token/:userId", functi
   })
 })
 
-app.listen(port, () => console.log(`ADSKVault-JS app listening at http://localhost:${port}`))
+app.listen(port, () => console.log(`Autodesk Vault API listening at http://localhost:${port}`))

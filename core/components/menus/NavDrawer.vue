@@ -27,7 +27,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item link to="/apps/file-tracer">
+        <v-list-item link to="/apps/manufacturing">
           <v-list-item-action class="mr-2">
             <v-icon>mdi-application-braces</v-icon>
           </v-list-item-action>

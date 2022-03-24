@@ -1,42 +1,44 @@
 Copyright 2020, Battelle Energy Alliance, LLC  ALL RIGHTS RESERVED
 
 <template>
-  <v-app id="file_tracer">
-    <v-main>
-      <v-container>
-        <v-row>
-          <br><br>
-        </v-row>
-        <v-row>
-          <v-col cols="3">
-            <Card cardTitle="Assets">
-              <DeepLynx @assetSet="setAssetId" @containerSet="setContainerId" @tokenSet="setDLToken"/><br><br>
-              <div v-if="drawing_ids.length">
-                <span style="font-size:75%;">
-                  Drawing IDs
-                </span><br>
-                <ul style="font-size:75%;">
-                  <li v-for="idx in drawing_ids" v-bind:key="idx">{{ idx }}</li>
-                </ul><br><br>
-                <v-btn v-if="drawing_ids.length && selected_asset_id" v-on:click="createTrace()">Create Trace</v-btn>
-              </div>
-            </Card>
-          </v-col>
-          <v-col cols="9">
-            <Card cardTitle="Drawing">
-              <template v-if="file_obj">
-                <Canvas v-bind:file_obj="file_obj" :max_width="800" @clicked="handleID" @unclicked="popID" @clearCanvas="clearCanvas"/>
-              </template>
-              <template v-else>
-                <DeepLynxFiles v-if="selected_container_id" :container_id="selected_container_id" :token="dl_token" @fileSet="getFile"/>
-                <span v-else>Select a DeepLynx container.</span>
-              </template>
-            </Card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-main>
-  </v-app>
+  <div id="file_tracer">
+    <h2 class="filectracer_title">File Tracer</h2><br>
+    <v-container>
+      <v-row>
+
+        <br><br>
+      </v-row>
+      <v-row>
+        <v-col cols="3">
+          <Card cardTitle="Assets">
+            <DeepLynx @assetSet="setAssetId" @containerSet="setContainerId" @tokenSet="setDLToken"/><br><br>
+            <div v-if="drawing_ids.length">
+              <span style="font-size:75%;">
+                Drawing IDs
+              </span><br>
+              <ul style="font-size:75%;">
+                <li v-for="idx in drawing_ids" v-bind:key="idx">{{ idx }}</li>
+              </ul><br><br>
+              <v-btn v-if="drawing_ids.length && selected_asset_id" v-on:click="createTrace()">Create Trace</v-btn>
+            </div>
+          </Card>
+        </v-col>
+        <v-col cols="9">
+          <Card cardTitle="Drawing">
+            <template v-if="file_obj">
+              <Canvas v-bind:file_obj="file_obj" :max_width="800" @clicked="handleID" @unclicked="popID" @clearCanvas="clearCanvas"/>
+            </template>
+            <template v-else>
+              <DeepLynxFiles v-if="selected_container_id" :container_id="selected_container_id" :token="dl_token" @fileSet="getFile"/>
+              <span v-else>Select a DeepLynx container.</span>
+            </template>
+          </Card>
+        </v-col>
+      </v-row>
+    </v-container>
+
+  </div>
+
 </template>
 
 <script>
@@ -170,8 +172,10 @@ export default {
 
 <style>
 #file_tracer {
-  background-color: #919191;
-  font-family: 'Montserrat';
+  background-color: #121212;
+}
+.filectracer_title {
+  font-weight: 100;
 }
 div.v-select__selections {
   color: #ffffff !important;
