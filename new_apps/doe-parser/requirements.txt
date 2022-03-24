@@ -1,0 +1,4 @@
+Flask
+python-docx
+docx2python
+python-dotenv

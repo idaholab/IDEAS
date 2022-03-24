@@ -8,12 +8,12 @@
       <v-app-bar-nav-icon @click.stop="setDrawer(!drawer)"></v-app-bar-nav-icon>
       <v-toolbar-title
         class="pl-0 mr-4"
-        v-if="dashboardChildCondition()"
+        v-if="$route.matched.slice(-2).shift().name"
         v-text="$route.matched.slice(-2).shift().name"
       />
       <v-toolbar-title
         class="pl-0 mr-4"
-        v-else
+        v-else-if="$route.name"
         v-text="$route.name"
       />
       <div
@@ -37,10 +37,10 @@
         >
           <v-btn
             value="scenario"
-            to="/apps/file-tracer"
+            to="/apps/manufacturing"
             class="dashboard-controls-button"
           >
-            File Tracer
+            Manufacturing
           </v-btn>
 
           <v-btn
@@ -50,6 +50,31 @@
           >
             Vault API
           </v-btn>
+
+          <v-btn
+            value="scenario"
+            to="/apps/windchill"
+            class="dashboard-controls-button"
+          >
+            Windchill
+          </v-btn>
+
+          <v-btn
+            value="scenario"
+            to="/apps/innoslate-reports"
+            class="dashboard-controls-button"
+          >
+            Innoslate Reports
+          </v-btn>
+
+          <v-btn
+            value="scenario"
+            to="/apps/doe-parser"
+            class="dashboard-controls-button"
+          >
+            DOE Parser
+          </v-btn>
+
         </v-btn-toggle>
       </div>
 
@@ -80,13 +105,6 @@ export default {
     ...mapMutations({
       setDrawer: 'SET_DRAWER'
     }),
-
-    dashboardChildCondition () {
-      //if (this.$route.name === 'ReactorMap' || this.$route.name === 'ScenarioStudy') {
-        return true
-      //}
-    },
-
     async mounted () {
     },
 
@@ -99,8 +117,9 @@ export default {
 </script>
 
 <style>
+
 .theme--dark.v-app-bar.v-toolbar.v-sheet {
-  background: grey;
+  background: #3c3c3c;
 }
 
 .dashboard-controls {

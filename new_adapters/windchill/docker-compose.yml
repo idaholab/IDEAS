@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  adapter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    volumes:
+      - ./src:/home/node/app/src
+      - ./nodemon.json:/home/node/app/nodemon.json
+    container_name: windchill_adapter
+    expose:
+      - '${WINDCHILL_ADAPTER_PORT}'
+    ports:
+      - '${WINDCHILL_ADAPTER_PORT}:${WINDCHILL_ADAPTER_PORT}'
+    env_file:
+      - '.env'
+    command: "npm run dev"

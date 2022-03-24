@@ -16,7 +16,6 @@ services:
       - '.env'
     links:
       - 'vault-api'
-      - 'file-tracer'
     networks:
       - 'external'
 
@@ -42,17 +41,6 @@ services:
       - 'internal'
       - 'external'
 
-  file-tracer:
-    build: ../new_apps/file-tracer
-    command: 'npm run serve'
-    expose:
-      - "${FILETRACER_PORT}"
-    env_file:
-      - '.env'
-    networks:
-      - 'external'
-      - 'internal'
-
   deep-lynx:
     build: ../new_apps/deep-lynx
     command: 'npm run dev'
@@ -64,20 +52,38 @@ services:
       - 'external'
       - 'internal'
 
-  # file-tracer-db:
-  #   image: postgres:12.3-alpine
-  #   ports:
-  #     - '${FILETRACERDB_PORT}:5432'
-  #   environment:
-  #     POSTGRES_DB: '${FILETRACERDB_NAME}'
-  #     POSTGRES_USER: '${FILETRACERDB_USER}'
-  #     POSTGRES_PASSWORD: '${FILETRACERDB_PASSWORD}'
-  #     POSTGRES_HOST_AUTH_METHOD: "trust"
-  #   env_file:
-  #     - '.env'
-  #   networks:
-  #     - 'external'
-  #     - 'internal'
+  manufacturing:
+    build: ../new_apps/manufacturing
+    command: 'npm run dev'
+    expose:
+      - "${MANUFACTURING_PORT}"
+    env_file:
+      - '.env'
+    networks:
+      - 'external'
+      - 'internal'
+
+  doe-parser:
+    build: ../new_apps/doe-parser
+    command: 'python3 main.py'
+    ports:
+      - "${DOEPARSER_PORT}:${DOEPARSER_PORT}"
+    env_file:
+      - '.env'
+    networks:
+      - 'external'
+      - 'internal'
+
+  innoslate-reports:
+    build: ../new_apps/innoslate-reports
+    command: 'npm run dev'
+    expose:
+      - "${INNOSLATE_REPORTS_PORT}"
+    env_file:
+      - '.env'
+    networks:
+      - 'external'
+      - 'internal'
 
   vault-adapter:
     build: ../new_adapters/vault
@@ -95,6 +101,17 @@ services:
     command: 'npm run dev'
     expose:
       - "${INNOSLATE_ADAPTER_PORT}"
+    env_file:
+      - '.env'
+    networks:
+      - 'external'
+      - 'internal'
+
+  windchill-adapter:
+    build: ../new_adapters/windchill
+    command: 'npm run dev'
+    expose:
+      - "${WINDCHILL_ADAPTER_PORT}"
     env_file:
       - '.env'
     networks:

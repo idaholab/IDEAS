@@ -125,6 +125,57 @@ export class VaultServer {
     }
   }
 
+  async add_folder(name: string, parent_id: string) {
+    const add_folder_address = `${this.address}/standard/DocumentService/AddFolder/${this.ticket}/${this.user_id}`;
+
+    try {
+      var add_folder_response = await axios.get(
+        add_folder_address,
+        {params: {
+          'name': name,
+          'parentId': parent_id,
+          'isLibrary': false
+        }}
+      );
+
+      var added_folder = add_folder_response.data.RESULT.AddFolderResult;
+
+      return added_folder;
+    } catch (err) {
+      return {"message": "Failed to add folder."}
+    }
+  }
+
+  async get_co_items(change_order_number: string) {
+    const co_address = `${this.address}/standard/ChangeOrderService/GetChangeOrderByNumber/${this.ticket}/${this.user_id}`;
+    const co_items_address = `${this.address}/standard/ChangeOrderService/GetChangeOrderGroupByChangeOrderId/${this.ticket}/${this.user_id}`;
+
+    try {
+      var co_response: any = await axios.get(
+        co_address,
+        {params: {
+          'changeOrderNumber': change_order_number
+        }}
+      )
+
+      var co_id = co_response.data.RESULT.GetChangeOrderByNumberResult.attributes.Id;
+
+      var co_items_response = await axios.get(
+        co_items_address,
+        {params: {
+          'changeOrderId': co_id
+        }}
+      )
+
+      var items = co_items_response.data.RESULT.GetChangeOrderGroupByChangeOrderIdResult.ItemIdArray
+
+      return items;
+    } catch (err) {
+      console.log(err)
+      return {"message": "Failed to get items by change order."}
+    }
+  }
+
   async get_latest_files(folder_id: string) {
     const latest_files_address = `${this.address}/standard/DocumentService/GetLatestFilesByFolderId/${this.ticket}/${this.user_id}`;
 

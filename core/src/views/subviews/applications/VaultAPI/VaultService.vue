@@ -1,9 +1,9 @@
 <template>
   <span class="button_wrap">
-    <v-btn :style="style" @click="get_functions()">{{ service }}</v-btn>&nbsp;
+    <v-btn :style="style" @click="get_functions()">{{ service.name }}</v-btn>&nbsp;
     <Modal v-show="isModalVisible" @close="closeModal">
       <template v-slot:header>
-        {{ service }} Functions
+        {{ service.name }} Functions
       </template>
       <template v-slot:body>
         <VaultFunction
@@ -31,7 +31,7 @@ export default {
   name: 'VaultService',
   props: {
     service_type: String,
-    service: String,
+    service: Object,
     color: String
   },
   components: {
@@ -44,7 +44,12 @@ export default {
   }),
   computed: {
     style() {
-      return `background-color: ${this.color};`
+      if (this.service.auth_required && this.$store.getters['vault_token'] == "NONE") {
+        return `cursor: not-allowed;pointer-events: none;color: #c0c0c0;background-color: #ffffff;`
+      } else {
+        return `background-color: ${this.color};`
+      }
+
     }
   },
   methods: {
@@ -54,7 +59,7 @@ export default {
       const adsk_client = new ADSKClient()
       let service_description = await adsk_client.serviceDescribe(
         this.service_type,
-        this.service
+        this.service.name
       )
 
       for (let func in service_description["DESCRIPTION"]) {

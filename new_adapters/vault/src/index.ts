@@ -88,6 +88,51 @@ app.get('/:vault/folder/:folder_id/child_folders', async function(req, res) {
 
 });
 
+app.get('/:vault/add_folder/:name/:parent_id', async function(req, res) {
+  const vault_server = new VaultServer(...vault_vars, req.params['vault']);
+
+  var authentication = await vault_server.authenticate(req.headers.authorization);
+
+  if (authentication.success) {
+    var creation_response = await vault_server.add_folder(
+      req.params['name'],
+      req.params['parent_id']
+    );
+    res.status(200).send(
+      creation_response
+    );
+  } else {
+    res.status(401).send(
+      { "message": authentication.message }
+    );
+  }
+
+  return;
+
+});
+
+app.get('/:vault/get_co_items/:change_order_id', async function(req, res) {
+  const vault_server = new VaultServer(...vault_vars, req.params['vault']);
+
+  var authentication = await vault_server.authenticate(req.headers.authorization);
+
+  if (authentication.success) {
+    var items = await vault_server.get_co_items(
+      req.params['change_order_id']
+    );
+    res.status(200).send(
+      items
+    );
+  } else {
+    res.status(401).send(
+      { "message": authentication.message }
+    );
+  }
+
+  return;
+
+});
+
 app.get('/:vault/folder/:folder_id/files', async function(req, res) {
   const vault_server = new VaultServer(...vault_vars, req.params['vault']);
 
@@ -139,5 +184,5 @@ app.get('/:vault/get_file/:file_id', async function(req, res) {
 });
 
 app.listen(port, () => {
-  console.log(`server running on port ${port}`);
+  console.log(`Vault adapter backend server running on port ${port}`);
 });
