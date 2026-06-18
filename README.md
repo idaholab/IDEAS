@@ -1,3 +1,10 @@
+> [!WARNING]
+> **This repository has been archived and is no longer maintained.**
+> The code is provided for historical reference and may contain unpatched
+> or unknown vulnerabilities. It should not be used in production systems.
+
+---
+
 # IDEAS
 
 Ion Digital Engineering Application Suite. Apps, adapters, and utilities created by or in conjunction with researchers in the Digital Engineering (B710) department
